@@ -1,0 +1,120 @@
+{
+  "id": "bollinger_bands",
+  "name": "Bollinger Bands",
+  "category": "volatility_overlay",
+  "description": "Bollinger Bands consist of a middle band (20-period SMA), an upper band (middle + 2 standard deviations), and a lower band (middle - 2 standard deviations). They adapt to volatility: bands widen during high volatility and narrow during low volatility. Approximately 95% of price action occurs within the bands under normal conditions. Bollinger Bands are used to identify volatility regimes, potential breakouts, mean reversion setups, and trend strength via band walking.",
+  "parameters": {
+    "period": 20,
+    "standard_deviations": 2,
+    "source": "close",
+    "middle_band": "20-period SMA",
+    "upper_band": "middle + 2 standard deviations",
+    "lower_band": "middle - 2 standard deviations",
+    "percent_b_formula": "(price - lower_band) / (upper_band - lower_band)"
+  },
+  "signals": [
+    {
+      "condition": "Bollinger Band Squeeze: bands are at their narrowest in recent history (bandwidth at multi-period low)",
+      "interpretation": "Low volatility compression phase; a significant directional breakout is building; direction undetermined until breakout candle; watch for volume confirmation"
+    },
+    {
+      "condition": "Price breaks out of squeeze with strong candle and volume",
+      "interpretation": "Volatility expansion beginning; breakout direction is the likely trend direction; do not fade the initial breakout bar"
+    },
+    {
+      "condition": "Price walks along or repeatedly touches the upper band",
+      "interpretation": "Strong uptrend in progress; band walking is a sign of trend strength, not overbought; do not short just because price is at upper band"
+    },
+    {
+      "condition": "Price walks along or repeatedly touches the lower band",
+      "interpretation": "Strong downtrend in progress; band walking is a sign of trend weakness, not oversold; do not buy just because price is at lower band"
+    },
+    {
+      "condition": "Price touches lower band in a ranging market with middle band flat",
+      "interpretation": "Mean reversion long opportunity; look for bullish candlestick confirmation before entry"
+    },
+    {
+      "condition": "Price touches upper band in a ranging market with middle band flat",
+      "interpretation": "Mean reversion short opportunity; look for bearish candlestick confirmation before entry"
+    },
+    {
+      "condition": "Price closes outside upper band then returns inside",
+      "interpretation": "Potential reversal or exhaustion of upward move; watch for follow-through sell on the next bar"
+    },
+    {
+      "condition": "Price closes outside lower band then returns inside",
+      "interpretation": "Potential reversal or exhaustion of downward move; watch for follow-through buy on the next bar"
+    },
+    {
+      "condition": "%B above 1.0 (price above upper band)",
+      "interpretation": "Extremely extended to the upside; in ranging markets this signals high reversal probability; in trends this is normal band walk"
+    },
+    {
+      "condition": "%B below 0.0 (price below lower band)",
+      "interpretation": "Extremely extended to the downside; in ranging markets this signals high reversal probability; in trends this is normal band walk"
+    },
+    {
+      "condition": "%B crossing above 0.5 from below",
+      "interpretation": "Price reclaiming the middle band from below; bullish momentum shift; potential long entry in trending context"
+    },
+    {
+      "condition": "%B crossing below 0.5 from above",
+      "interpretation": "Price losing the middle band from above; bearish momentum shift; potential short entry in trending context"
+    },
+    {
+      "condition": "Bands widening rapidly after a period of contraction",
+      "interpretation": "Volatility expansion confirmed; the squeeze has resolved; momentum in breakout direction is real"
+    }
+  ],
+  "rules": [
+    {
+      "id": "bb_r1",
+      "rule": "Never use band touches alone as buy or sell signals. First determine if the market is trending or ranging using the slope of the middle band and price structure.",
+      "rationale": "Band touches in a trend (band walking) are continuation signals, not reversal signals. Treating them as reversals leads to trading against the trend."
+    },
+    {
+      "id": "bb_r2",
+      "rule": "In a ranging market (flat middle band), use lower band touches as long setups and upper band touches as short setups. Require a confirming candlestick reversal pattern before entry.",
+      "rationale": "Mean reversion to the middle band works in ranges but not in trends. The confirming candle reduces false entries when a range is breaking down."
+    },
+    {
+      "id": "bb_r3",
+      "rule": "In a trending market (sloping middle band), trade band touches in the trend direction only. A touch of the lower band in an uptrend is a pullback entry opportunity, not a short signal.",
+      "rationale": "Trends frequently see price pull back to the lower band without reversing. These pullbacks offer low-risk trend continuation entries."
+    },
+    {
+      "id": "bb_r4",
+      "rule": "Monitor bandwidth (upper band minus lower band) for squeeze identification. When bandwidth falls to the lowest level in 20 or more bars, classify as a squeeze and watch for breakout.",
+      "rationale": "Volatility is cyclical. Extended periods of contraction reliably precede expansion. Squeeze identification gives early warning of impending large moves."
+    },
+    {
+      "id": "bb_r5",
+      "rule": "Do not predict breakout direction from a squeeze. Wait for price and volume to confirm the direction. The first strong candle with expanding volume determines the breakout direction.",
+      "rationale": "Squeezes resolve in either direction. Anticipating direction without confirmation leads to 50/50 trades with poor setup quality."
+    },
+    {
+      "id": "bb_r6",
+      "rule": "Use %B indicator to normalize price position within the bands. %B below 0.2 in a range = buy zone; %B above 0.8 in a range = sell zone. Middle band (%B = 0.5) is the mean reversion target.",
+      "rationale": "%B translates band position into a 0-1 scale that is easier to compare across instruments and time frames."
+    },
+    {
+      "id": "bb_r7",
+      "rule": "Combine Bollinger Bands with RSI or volume indicators. A lower band touch with RSI divergence and decreasing sell volume is a high-probability mean reversion long setup.",
+      "rationale": "Bollinger Bands identify the location of price relative to volatility boundaries; momentum and volume indicators confirm whether reversal pressure is actually building."
+    }
+  ],
+  "related_concepts": [
+    "volatility",
+    "standard_deviation",
+    "mean_reversion",
+    "band_squeeze",
+    "band_walk",
+    "percent_b",
+    "bandwidth",
+    "trend_vs_range",
+    "breakout",
+    "atr",
+    "sma"
+  ],
+  "agent_use": "Use Bollinger Bands to classify volatility regime and identify setup type. First assess middle band slope: flat = range mode, sloping = trend mode. In range mode: flag lower band touches as mean reversion long candidates and upper band touches as mean reversion short candidates; require confirming candlestick. In trend mode: flag band touches in the trend direction as continuation entries; flag band touches against trend as caution. Calculate bandwidth and flag squeeze (bandwidth at 20-bar low) as a pre-breakout alert. Report %B value, bandwidth status (squeeze/normal/expanded), middle band slope direction, and setup classification (mean_reversion/trend_continuation/squeeze_alert) in every analysis output."
+}

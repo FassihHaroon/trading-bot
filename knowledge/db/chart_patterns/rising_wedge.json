@@ -1,0 +1,49 @@
+{
+  "id": "rising_wedge",
+  "name": "Rising Wedge",
+  "category": "reversal",
+  "bias": "bearish",
+  "description": "A pattern where price makes higher highs and higher lows, but both the upper resistance and lower support trendlines slope upward and converge. The narrowing range indicates weakening bullish momentum and typically resolves with a bearish breakdown. Can appear as a reversal at the top of an uptrend or as a bearish continuation in a downtrend.",
+  "formation_rules": [
+    "Price forms at least two higher highs and two higher lows",
+    "Both the upper trendline (connecting higher highs) and lower trendline (connecting higher lows) slope upward",
+    "The upper trendline has a lower slope than the lower trendline, causing the two lines to converge",
+    "The pattern requires a minimum of 3 weeks to form on a daily chart",
+    "Price should touch each trendline at least twice; three touches per line is ideal",
+    "The range between the trendlines must be narrowing over time",
+    "Volume should be declining throughout the pattern formation"
+  ],
+  "volume_rules": "Volume should decline progressively as the wedge develops, reflecting diminishing buying interest despite rising prices. Volume must expand at least 1.5x average on the breakdown candle below the lower trendline. Rising price with declining volume is the key bearish divergence signal.",
+  "measured_target_method": "Measure the height of the wedge at its widest point (the vertical distance between the two trendlines at the start of the pattern). Project that distance downward from the breakdown point. An alternative target is the origin of the wedge (the starting price).",
+  "confirmation_conditions": [
+    "Price closes below the lower rising trendline on a daily candle",
+    "Breakdown candle volume is at least 1.5x the 20-period average volume",
+    "A retest of the broken lower trendline from below that fails as resistance confirms the breakdown",
+    "RSI showing bearish divergence (lower highs on RSI while price makes higher highs) within the wedge strengthens the signal"
+  ],
+  "invalidation_conditions": [
+    "Price breaks above the upper trendline of the wedge with a daily close",
+    "Price closes back above the lower trendline after a confirmed breakdown",
+    "Volume increases significantly on a bullish candle pushing to new highs within the wedge",
+    "The two trendlines diverge rather than converge, negating the wedge structure"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "rw_rule_01",
+      "rule": "Breakdown is confirmed only on a daily close below the lower rising trendline; recompute the trendline dynamically using the two most recent higher lows before each check."
+    },
+    {
+      "id": "rw_rule_02",
+      "rule": "Volume on the breakdown candle must be >= 1.5x the 20-period SMA of volume; absence of volume expansion increases the probability of a false breakdown, requiring a second confirming close below."
+    },
+    {
+      "id": "rw_rule_03",
+      "rule": "Pattern is invalidated if a daily close occurs above the upper trendline of the wedge; flip bias to neutral and await a new pattern structure."
+    },
+    {
+      "id": "rw_rule_04",
+      "rule": "Require bearish RSI divergence (RSI making lower highs while price makes higher highs) as a secondary confirmation filter before flagging the rising wedge as a high-probability setup."
+    }
+  ]
+}

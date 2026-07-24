@@ -1,0 +1,97 @@
+{
+  "id": "range_trading",
+  "name": "Range Trading",
+  "market_conditions": [
+    "price oscillating between clearly defined upper and lower boundaries",
+    "ADX below 20 indicating absence of a trend",
+    "at least two confirmed touches of both the upper and lower boundaries",
+    "market in accumulation or distribution phase",
+    "no imminent breakout catalyst or news event"
+  ],
+  "phase_requirements": [
+    "accumulation phase with defined range boundaries",
+    "distribution phase with defined range boundaries",
+    "consolidation phase after a prior trend"
+  ],
+  "entry_conditions": [
+    "for long: price reaches the lower boundary of the range",
+    "for short: price reaches the upper boundary of the range",
+    "rejection candle forms at the respective boundary",
+    "volume is average to above-average at the boundary confirming the zone",
+    "RSI near 30-40 for long entries at lower boundary",
+    "RSI near 60-70 for short entries at upper boundary",
+    "price has not closed outside the range boundaries on the macro timeframe"
+  ],
+  "confirmation_requirements": [
+    "clear reversal candle at boundary: hammer or bullish engulfing for longs, shooting star or bearish engulfing for shorts",
+    "follow-through candle in the direction toward the opposing boundary",
+    "volume on confirmation candle above the 10-period average",
+    "Stochastic crossing from oversold for longs or from overbought for shorts",
+    "price closes back inside the range after any temporary boundary breach"
+  ],
+  "stop_loss_logic": "For longs: stop below the lower boundary by 0.5-1 ATR. For shorts: stop above the upper boundary by 0.5-1 ATR. Stops must be tight as range trades have defined invalidation points at zone edges.",
+  "take_profit_logic": "Target the opposing boundary of the range. For longs: target the upper boundary. For shorts: target the lower boundary. Set TP at 80-90% of the range width to account for zone thickness. No trailing stop needed as price typically stalls near the opposing boundary.",
+  "invalidation_conditions": [
+    "price closes outside the range boundary with a full candle body for two consecutive candles",
+    "volume spike accompanying a breakout beyond the range boundary",
+    "ADX rises above 25 indicating a trend is forming",
+    "major news event causes a gap outside the range",
+    "range structure is violated by a candle with a body larger than 50% of the entire range width",
+    "price fails to reach the opposing boundary after 10 candles and starts consolidating near the entry level"
+  ],
+  "related_indicators": [
+    "ADX",
+    "RSI",
+    "Stochastic",
+    "Bollinger_Bands",
+    "volume",
+    "ATR",
+    "VWAP",
+    "support_resistance_zones"
+  ],
+  "related_patterns": [
+    "rectangle_pattern",
+    "double_top",
+    "double_bottom",
+    "equal_highs",
+    "equal_lows",
+    "trading_range"
+  ],
+  "required_features": {
+    "range_defined": "true with clear upper and lower boundaries",
+    "boundary_touches": ">=2 on each boundary",
+    "adx_value": "<20",
+    "rejection_candle_at_boundary": "present",
+    "rsi_at_lower_boundary": "<45 for longs",
+    "rsi_at_upper_boundary": ">55 for shorts",
+    "range_width_in_atr": ">2 ATR to provide sufficient profit potential"
+  },
+  "timeframe_requirements": {
+    "macro": "1D or 4H to confirm range structure and absence of trend",
+    "entry": "1H or 15M for timing entry at boundary with reversal candle"
+  },
+  "risk_notes": "Range trading requires strict discipline at stop levels. Ranges break, and when they do they can move significantly. Do not add to losing positions hoping for a bounce. Keep position sizes smaller than trend trades because ranges can expand unexpectedly. Avoid range trading around major economic events. The most profitable range trades happen in the middle of accumulation phases, not near range boundaries that have been tested many times.",
+  "typical_rr": "1:1.5 to 1:2 (range midpoint to opposing boundary)",
+  "agent_rules": [
+    {
+      "id": "rt_001",
+      "rule": "Never range trade unless both upper and lower boundaries have been touched at least twice each."
+    },
+    {
+      "id": "rt_002",
+      "rule": "If ADX rises above 25 while in a range trade, exit immediately — the range may be breaking into a trend."
+    },
+    {
+      "id": "rt_003",
+      "rule": "Set take profit at 80-90% of the range width, not at the exact boundary — ranges rarely touch perfectly on every cycle."
+    },
+    {
+      "id": "rt_004",
+      "rule": "If price breaks the boundary on a high-volume candle, do not fade the move — switch to breakout strategy rules."
+    },
+    {
+      "id": "rt_005",
+      "rule": "Do not enter range trades if a major scheduled news event is within 4 hours."
+    }
+  ]
+}

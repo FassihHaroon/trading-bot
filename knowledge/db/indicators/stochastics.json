@@ -1,0 +1,102 @@
+{
+  "id": "stochastics",
+  "name": "Stochastic Oscillator",
+  "category": "momentum",
+  "description": "The Stochastic Oscillator compares a closing price to its price range over a specified period, generating a value between 0 and 100. It consists of %K (the fast line) and %D (a smoothed signal line). Standard settings: %K period 14, %K smoothing 3, %D period 3. Overbought above 80, oversold below 20. Works best in ranging markets. In strong trends, stochastics can remain overbought or oversold for extended periods, making it unreliable for reversals without trend context. Stochastic divergence and %K/%D crossovers are primary signals.",
+  "parameters": {
+    "k_period": 14,
+    "k_smoothing": 3,
+    "d_period": 3,
+    "overbought": 80,
+    "oversold": 20,
+    "k_formula": "((Close - Lowest Low(14)) / (Highest High(14) - Lowest Low(14))) * 100",
+    "d_formula": "SMA(%K, 3)"
+  },
+  "signals": [
+    {
+      "condition": "Stochastic crosses above 20 from below (exits oversold zone)",
+      "interpretation": "In a ranging market, this is a bullish signal indicating recovery from oversold. Confirm with price structure support before entering long."
+    },
+    {
+      "condition": "Stochastic crosses below 80 from above (exits overbought zone)",
+      "interpretation": "In a ranging market, this is a bearish signal indicating reversal from overbought. Confirm with price structure resistance before entering short."
+    },
+    {
+      "condition": "%K crosses above %D in the oversold zone (below 20)",
+      "interpretation": "Bullish cross signal — %K recovering faster than the signal line. More reliable when it occurs at or below 20 in a ranging market."
+    },
+    {
+      "condition": "%K crosses below %D in the overbought zone (above 80)",
+      "interpretation": "Bearish cross signal — %K declining faster than the signal line. More reliable when it occurs at or above 80 in a ranging market."
+    },
+    {
+      "condition": "Stochastic remains above 80 for an extended period",
+      "interpretation": "Strong uptrend — stochastic is locked up. Do not short based on overbought reading alone. This is a trend continuation signal, not a reversal."
+    },
+    {
+      "condition": "Stochastic remains below 20 for an extended period",
+      "interpretation": "Strong downtrend — stochastic is locked down. Do not buy based on oversold reading alone. This is a trend continuation signal, not a reversal."
+    },
+    {
+      "condition": "Bullish divergence: price makes lower low, stochastic makes higher low",
+      "interpretation": "Bearish momentum weakening despite lower price — potential bullish reversal. More reliable at key structural support."
+    },
+    {
+      "condition": "Bearish divergence: price makes higher high, stochastic makes lower high",
+      "interpretation": "Bullish momentum weakening despite higher price — potential bearish reversal. More reliable at key structural resistance."
+    },
+    {
+      "condition": "%K crosses above %D while both are rising from below 20",
+      "interpretation": "High-quality bullish entry signal in a ranging market — both momentum and direction are aligned for a bounce."
+    },
+    {
+      "condition": "Stochastic hooks lower after touching 80 without a %K/%D cross",
+      "interpretation": "Early warning of a potential bearish move — momentum stalling at overbought. Wait for %K/%D cross for confirmation."
+    }
+  ],
+  "rules": [
+    {
+      "id": "stoch-rule-1",
+      "rule": "Use Stochastics primarily in ranging markets. In trending markets, avoid using overbought/oversold signals to enter counter-trend trades. Require ADX below 25 or a ranging price structure before applying standard stochastic fade logic.",
+      "rationale": "Stochastics can remain overbought or oversold for the entire duration of a strong trend. Counter-trend trades based on these readings in trending markets will produce sustained losses."
+    },
+    {
+      "id": "stoch-rule-2",
+      "rule": "Require the %K to cross %D inside the overbought or oversold zone for a valid signal. A cross outside these zones (between 20-80) is a weak signal and should be filtered out.",
+      "rationale": "Crosses inside the extreme zones carry more signal value because they indicate momentum reversal from a genuine extreme. Mid-range crosses are noisy."
+    },
+    {
+      "id": "stoch-rule-3",
+      "rule": "Confirm stochastic signals with price action at key levels. The stochastic signal should coincide with price at support (for longs) or resistance (for shorts). Do not trade stochastic signals in open space.",
+      "rationale": "A stochastic reversal signal in open space without structural context has poor expectancy. The level provides the trade's logic and the invalidation point."
+    },
+    {
+      "id": "stoch-rule-4",
+      "rule": "In an uptrend, use stochastics to time pullback entries. Wait for stochastic to pull back toward oversold (below 30-40 in an uptrend) and then turn up with a %K/%D cross for a long entry.",
+      "rationale": "Using stochastics to time entries within a trend rather than against it converts a ranging tool into a useful trend trade timing mechanism."
+    },
+    {
+      "id": "stoch-rule-5",
+      "rule": "Treat stochastic divergence as a warning and wait for price confirmation. Divergence can persist for many bars. The %K/%D cross or a structure break provides the entry trigger.",
+      "rationale": "Acting on divergence too early leads to premature entries. Divergence identifies the setup; price action provides the timing."
+    },
+    {
+      "id": "stoch-rule-6",
+      "rule": "On higher timeframes (daily, weekly), stochastic signals carry more weight. A weekly stochastic turning up from oversold is a significant signal. Align lower timeframe stochastic signals with higher timeframe readings for best results.",
+      "rationale": "Higher timeframe stochastic readings represent more significant momentum states. A multi-timeframe aligned stochastic setup (both higher and lower TF oversold and turning up) is a high-probability confluence."
+    }
+  ],
+  "related_concepts": [
+    "momentum",
+    "overbought",
+    "oversold",
+    "ranging_market",
+    "divergence",
+    "percent_k",
+    "percent_d",
+    "signal_line_cross",
+    "pullback_timing",
+    "multi_timeframe_analysis"
+  ],
+  "agent_use": "Use Stochastics primarily in identified ranging markets to time entries at extremes. Always check if the market is trending first (use EMA fan or ADX) — if trending, avoid standard overbought/oversold fade logic. In ranges, look for %K/%D cross inside overbought/oversold zones at key structural levels. In trends, use stochastic to time pullback entries (wait for oversold in uptrend, then %K cross above %D). Flag stochastic divergence at key levels as a reversal confluence. Always combine with price action and structure."
+}

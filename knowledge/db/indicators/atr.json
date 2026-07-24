@@ -1,0 +1,98 @@
+{
+  "id": "atr",
+  "name": "Average True Range (ATR)",
+  "category": "volatility",
+  "description": "ATR measures market volatility by calculating the average of true ranges over a lookback period. True range is the greatest of: current high minus current low, absolute value of current high minus previous close, or absolute value of current low minus previous close. ATR does not indicate direction — it measures the magnitude of price movement. Used for stop placement, position sizing, and identifying volatility regimes. Default period is 14.",
+  "parameters": {
+    "period": 14,
+    "source": "true_range",
+    "smoothing": "wilder_smoothing",
+    "stop_multiplier_conservative": 1.5,
+    "stop_multiplier_standard": 2.0,
+    "stop_multiplier_wide": 3.0
+  },
+  "signals": [
+    {
+      "condition": "ATR is rising significantly",
+      "interpretation": "Volatility is expanding; market is entering a high-volatility regime; widen stops, reduce position size, expect larger swings"
+    },
+    {
+      "condition": "ATR is falling or at multi-period lows",
+      "interpretation": "Volatility is contracting; market is in a low-volatility compression phase; often precedes a breakout in either direction"
+    },
+    {
+      "condition": "ATR spikes to extreme high relative to recent history",
+      "interpretation": "Panic or euphoria move in progress; mean reversion in volatility likely; avoid chasing entries; wait for ATR to normalize"
+    },
+    {
+      "condition": "ATR percentile in top 20% of 52-week range",
+      "interpretation": "High volatility regime; use wider stops, smaller position sizes, expect faster moves"
+    },
+    {
+      "condition": "ATR percentile in bottom 20% of 52-week range",
+      "interpretation": "Low volatility regime; expect compression and eventual expansion; Bollinger Band squeeze may confirm"
+    },
+    {
+      "condition": "ATR rising while price consolidates in a range",
+      "interpretation": "Warning: hidden volatility building inside the range; breakout could be imminent and explosive"
+    },
+    {
+      "condition": "Stop distance calculated as 1.5x ATR from entry",
+      "interpretation": "Conservative stop placement; suitable for lower volatility instruments or tighter risk tolerance"
+    },
+    {
+      "condition": "Stop distance calculated as 2x ATR from entry",
+      "interpretation": "Standard stop placement; accounts for normal market noise while protecting against adverse moves"
+    }
+  ],
+  "rules": [
+    {
+      "id": "atr_r1",
+      "rule": "Always use ATR-based stops rather than arbitrary fixed pip or point stops. Place stops at 1.5x to 2x ATR below entry for longs, above entry for shorts.",
+      "rationale": "Fixed stops ignore market volatility context. ATR-based stops adapt to current market conditions, reducing the chance of being stopped out by normal market noise."
+    },
+    {
+      "id": "atr_r2",
+      "rule": "Reduce position size proportionally when ATR is elevated. If ATR doubles, halve position size to maintain consistent dollar risk per trade.",
+      "rationale": "Higher volatility means larger price swings per bar. Unadjusted position sizes in high-ATR environments dramatically increase dollar risk per trade."
+    },
+    {
+      "id": "atr_r3",
+      "rule": "Use ATR percentile (current ATR relative to its 52-week or 252-period range) to classify the volatility regime before entering any position.",
+      "rationale": "Raw ATR values are not comparable across instruments or time. ATR percentile provides normalized context for strategy and sizing decisions."
+    },
+    {
+      "id": "atr_r4",
+      "rule": "Do not chase breakouts when ATR is already at extreme highs. Wait for ATR to normalize before entering breakout follow-through trades.",
+      "rationale": "Entries during peak volatility often result in getting caught at extremes. Volatility mean-reverts and entering at ATR highs increases the risk of adverse reversals."
+    },
+    {
+      "id": "atr_r5",
+      "rule": "Use ATR to set profit targets in addition to stops. A minimum reward target of 2x to 3x ATR ensures favorable risk-to-reward ratios on most trades.",
+      "rationale": "ATR-derived targets ensure profit targets are calibrated to actual market movement potential, avoiding targets that are too tight or unrealistically wide."
+    },
+    {
+      "id": "atr_r6",
+      "rule": "Monitor ATR contraction periods closely. Low ATR periods often precede significant breakouts. Alert on ATR below 20th percentile as a pre-breakout condition.",
+      "rationale": "Markets alternate between expansion and contraction. Extended low-ATR periods compress energy that is eventually released in a volatility expansion."
+    },
+    {
+      "id": "atr_r7",
+      "rule": "When scaling into positions, use ATR to space entry levels. Each additional tranche should be separated by at least 0.5x ATR to avoid clustering entries too tightly.",
+      "rationale": "Entries clustered within normal ATR noise are effectively the same entry with inflated position size risk, negating the scaling-in risk management benefit."
+    }
+  ],
+  "related_concepts": [
+    "volatility",
+    "stop_loss",
+    "position_sizing",
+    "risk_management",
+    "volatility_regime",
+    "breakout",
+    "true_range",
+    "bollinger_bands",
+    "risk_reward_ratio",
+    "volatility_percentile"
+  ],
+  "agent_use": "Use ATR as the primary tool for stop placement and position sizing on every trade signal. Calculate stop distance as 2x current ATR (default). Calculate ATR percentile vs 52-period range and classify regime as: low (<20th percentile), normal (20-80th), or high (>80th). In high volatility regime: use 2.5x ATR stops and reduce position size by 30-50%. In low volatility regime: watch for breakout setup, tag as 'compression phase'. Always include ATR value, ATR percentile, recommended stop distance in ATR multiples, and volatility regime classification in every trade analysis output. Never output a trade setup without an ATR-based stop level."
+}

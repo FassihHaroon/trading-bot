@@ -1,0 +1,259 @@
+{
+  "topic": "Market Phases — Wyckoff Method",
+  "version": "1.0",
+  "last_updated": "2026-07-24",
+  "framework": "Wyckoff",
+  "phases": {
+    "accumulation": {
+      "phase_number": 1,
+      "name": "Accumulation",
+      "description": "Large operators (smart money) absorb supply from weak hands after a prolonged downtrend. Price is compressed into a trading range as institutions build positions without dramatically moving price.",
+      "duration": "weeks to months",
+      "price_behavior": "Sideways range with false breakdowns (springs) and failed breakouts",
+      "volume_behavior": "Decreasing volume during range; elevated volume on tests of support; volume dry-up on markup initiation",
+      "identification_criteria": [
+        "Prior downtrend has ended with a Selling Climax (SC)",
+        "Automatic Rally (AR) creates the top of the trading range",
+        "Secondary Test (ST) retests SC area on lower volume",
+        "Price oscillates between SC low and AR high",
+        "Spring (false breakdown below support) may occur",
+        "Volume decreases as range matures",
+        "Spread narrows toward end of range"
+      ],
+      "tradeable_signals": [
+        {
+          "signal": "Spring reversal",
+          "description": "Price briefly breaks below the trading range support on low volume then quickly reverses back into range",
+          "entry": "long on reclaim of support after spring",
+          "stop": "below spring low",
+          "target": "top of trading range and beyond"
+        },
+        {
+          "signal": "Last Point of Support (LPS) after Sign of Strength",
+          "description": "Price breaks above trading range (SOS), pulls back to former resistance now acting as support on low volume",
+          "entry": "long on the LPS test",
+          "stop": "below LPS low",
+          "target": "measured move from range depth"
+        },
+        {
+          "signal": "Secondary Test of SC",
+          "description": "Price retests the Selling Climax area on reduced volume confirming supply is exhausted",
+          "entry": "long at ST level",
+          "stop": "below SC low",
+          "target": "AR high and range top"
+        }
+      ],
+      "transition_to_markup": {
+        "trigger": "Sign of Strength (SOS) — price breaks above AR high with expanding volume",
+        "confirmation": "Pullback to former resistance holds as support (LPS); volume dries up on pullback",
+        "failure_risk": "Price breaks below SC low invalidating accumulation; re-enter markdown phase"
+      }
+    },
+    "markup": {
+      "phase_number": 2,
+      "name": "Markup",
+      "description": "Price trends upward as demand overwhelms supply. Smart money has completed accumulation and price rises to seek new equilibrium at higher levels.",
+      "duration": "weeks to years depending on timeframe",
+      "price_behavior": "Higher Highs and Higher Lows; healthy pullbacks to prior resistance turned support",
+      "volume_behavior": "Volume expands on rallies; contracts on pullbacks; potential climax volume near top",
+      "identification_criteria": [
+        "Clear break above accumulation range with volume expansion",
+        "Pullbacks find support at prior resistance levels",
+        "Higher High Higher Low structure on all lower timeframes",
+        "Volume confirms each new high",
+        "Sentiment transitions from bearish to bullish in public"
+      ],
+      "tradeable_signals": [
+        {
+          "signal": "Pullback to breakout level",
+          "description": "Price returns to the top of the accumulation range after breaking out",
+          "entry": "long at former resistance now support",
+          "stop": "below the re-test low",
+          "target": "next significant resistance or measured move"
+        },
+        {
+          "signal": "Back and Fill",
+          "description": "Price consolidates briefly in a flag/pennant pattern before continuing markup",
+          "entry": "long on breakout from consolidation with volume",
+          "stop": "below consolidation low",
+          "target": "flagpole projection"
+        }
+      ],
+      "transition_to_distribution": {
+        "trigger": "Buying Climax (BC) — large spread up candle on extremely high volume with reversal",
+        "confirmation": "Automatic Reaction (AR) creates distribution range low; price fails to make new highs",
+        "failure_risk": "If markup continues without BC, distribution phase may be subtle"
+      }
+    },
+    "distribution": {
+      "phase_number": 3,
+      "name": "Distribution",
+      "description": "Large operators sell their accumulated positions to the public (weak hands) who are now bullish after the markup phase. Supply exceeds demand but price appears to consolidate.",
+      "duration": "weeks to months",
+      "price_behavior": "Sideways range with false breakouts (upthrusts) at the highs",
+      "volume_behavior": "High volume on upward moves but price makes little progress; volume on down moves is concerning",
+      "identification_criteria": [
+        "Buying Climax (BC) after extended markup",
+        "Automatic Reaction (AR) creates the bottom of the distribution range",
+        "Secondary Test (ST) of the BC on lower volume",
+        "Upthrust After Distribution (UTAD) — false breakout above range on weak volume",
+        "Price oscillates in range with narrowing spreads",
+        "Failed rallies with easy downside"
+      ],
+      "tradeable_signals": [
+        {
+          "signal": "Upthrust reversal",
+          "description": "Price spikes above the trading range on weak volume then falls back below range high",
+          "entry": "short on return below range high after upthrust",
+          "stop": "above upthrust high",
+          "target": "bottom of trading range and beyond"
+        },
+        {
+          "signal": "Last Point of Supply (LPSY) after Sign of Weakness",
+          "description": "Price breaks below distribution range (SOW), rallies back to former support now resistance on low volume",
+          "entry": "short at the LPSY test",
+          "stop": "above LPSY high",
+          "target": "measured move from range depth"
+        }
+      ],
+      "transition_to_markdown": {
+        "trigger": "Sign of Weakness (SOW) — price breaks below AR low with expanding volume",
+        "confirmation": "Pullback to former support fails to hold; volume expands on the down leg",
+        "failure_risk": "Price breaks above BC high invalidating distribution; resume markup phase"
+      }
+    },
+    "markdown": {
+      "phase_number": 4,
+      "name": "Markdown",
+      "description": "Price trends downward as supply overwhelms demand. Weak hands are trapped long and forced to sell, accelerating the decline.",
+      "duration": "weeks to years depending on timeframe",
+      "price_behavior": "Lower Highs and Lower Lows; rallies fail at prior support turned resistance",
+      "volume_behavior": "Volume expands on declines; contracts on rallies; potential selling climax near bottom",
+      "identification_criteria": [
+        "Clear break below distribution range with volume expansion",
+        "Rallies fail at prior support now resistance levels",
+        "Lower High Lower Low structure",
+        "Sentiment transitions from bullish to bearish in public",
+        "Selling climax potential approaching support zones"
+      ],
+      "tradeable_signals": [
+        {
+          "signal": "Rally to breakdown level",
+          "description": "Price returns to the bottom of the distribution range after breaking down",
+          "entry": "short at former support now resistance",
+          "stop": "above the re-test high",
+          "target": "next significant support or measured move"
+        },
+        {
+          "signal": "Dead Cat Bounce short",
+          "description": "Brief sharp rally on low volume after a sharp decline",
+          "entry": "short as rally fades at resistance",
+          "stop": "above rally high",
+          "target": "resumption of downtrend lows"
+        }
+      ],
+      "transition_to_accumulation": {
+        "trigger": "Selling Climax (SC) — large spread down candle on extremely high volume with reversal",
+        "confirmation": "Automatic Rally (AR) and Secondary Test (ST) of SC area on low volume",
+        "failure_risk": "Decline continues below SC invalidating potential accumulation"
+      }
+    }
+  },
+  "special_patterns": {
+    "spring": {
+      "phase": "accumulation",
+      "definition": "A price move below the support of the trading range that quickly reverses back into the range",
+      "purpose": "Shakes out weak longs before the markup phase; allows smart money to buy remaining supply at low prices",
+      "volume_requirement": "Low to moderate volume on the break; volume should not confirm the breakdown",
+      "confirmation": "Quick reclaim of support; subsequent Sign of Strength (SOS)",
+      "trade_setup": {
+        "entry": "long on close back above support or on next HL formation",
+        "stop": "below spring low",
+        "target": "top of accumulation range and measured move beyond"
+      }
+    },
+    "upthrust": {
+      "phase": "distribution",
+      "definition": "A price move above the resistance of the trading range that quickly reverses back into the range",
+      "purpose": "Traps weak shorts and attracts breakout buyers before the markdown phase; allows smart money to sell into strength",
+      "volume_requirement": "Low to moderate volume on the break; volume should not confirm the breakout",
+      "confirmation": "Quick return below resistance; subsequent Sign of Weakness (SOW)",
+      "trade_setup": {
+        "entry": "short on close back below resistance or on next LH formation",
+        "stop": "above upthrust high",
+        "target": "bottom of distribution range and measured move beyond"
+      }
+    }
+  },
+  "phase_transition_risks": [
+    {
+      "risk": "Re-accumulation within markup",
+      "description": "During markup, price may pause in a secondary accumulation range before continuing higher; can be mistaken for distribution",
+      "differentiation": "Volume and spread behavior on rallies vs declines within the range; location in overall trend context"
+    },
+    {
+      "risk": "Re-distribution within markdown",
+      "description": "During markdown, price may pause in a secondary distribution range before continuing lower; can be mistaken for accumulation",
+      "differentiation": "Volume and spread behavior on rallies vs declines within the range; location in overall trend context"
+    },
+    {
+      "risk": "Premature spring identification",
+      "description": "Calling a breakdown a spring when supply is still present; price continues lower after re-entry",
+      "mitigation": "Require volume dry-up on the break and a decisive reversal back into range before acting"
+    },
+    {
+      "risk": "Premature upthrust identification",
+      "description": "Calling a breakout an upthrust when demand is still present; price continues higher after short entry",
+      "mitigation": "Require volume non-confirmation on the break and a decisive return into range before acting"
+    },
+    {
+      "risk": "Phase miscounting on higher timeframe",
+      "description": "Lower timeframe phases may not align with higher timeframe context; trading against higher timeframe trend",
+      "mitigation": "Always identify current phase on at least two timeframes; align lower timeframe trades with higher timeframe phase"
+    }
+  ],
+  "agent_rules": [
+    {
+      "rule_id": "MP-001",
+      "condition": "price in sideways range following a downtrend with declining volume and spring pattern",
+      "action": "classify phase as ACCUMULATION; bias long setups at range support and spring reversals",
+      "priority": 1
+    },
+    {
+      "rule_id": "MP-002",
+      "condition": "price breaking above accumulation range with volume expansion",
+      "action": "classify phase as MARKUP; bias long on pullbacks to breakout level",
+      "priority": 1
+    },
+    {
+      "rule_id": "MP-003",
+      "condition": "price in sideways range following a markup with high volume non-progress and upthrust pattern",
+      "action": "classify phase as DISTRIBUTION; bias short setups at range resistance and upthrust reversals",
+      "priority": 1
+    },
+    {
+      "rule_id": "MP-004",
+      "condition": "price breaking below distribution range with volume expansion",
+      "action": "classify phase as MARKDOWN; bias short on rallies to breakdown level",
+      "priority": 1
+    },
+    {
+      "rule_id": "MP-005",
+      "condition": "spring pattern identified — price dips below support on low volume and reverses",
+      "action": "trigger long setup; set stop below spring low; target range top minimum",
+      "priority": 2
+    },
+    {
+      "rule_id": "MP-006",
+      "condition": "upthrust pattern identified — price spikes above resistance on low volume and reverses",
+      "action": "trigger short setup; set stop above upthrust high; target range bottom minimum",
+      "priority": 2
+    },
+    {
+      "rule_id": "MP-007",
+      "condition": "phase classification ambiguous",
+      "action": "escalate to higher timeframe context; do not trade against higher timeframe phase",
+      "priority": 1
+    }
+  ]
+}

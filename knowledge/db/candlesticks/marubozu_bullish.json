@@ -1,0 +1,29 @@
+{
+  "id": "marubozu_bullish",
+  "name": "Bullish Marubozu",
+  "candle_count": 1,
+  "bias": "bullish",
+  "description": "A single large bullish candle with little to no wicks on either end. The open is at or near the low and the close is at or near the high, indicating that buyers were in complete control throughout the entire session with no meaningful pushback from sellers.",
+  "body_rules": {
+    "body_size": "large; body should make up at least 90-95% of the total candle range",
+    "body_color": "bullish (green/white)",
+    "open": "at or very near the candle low",
+    "close": "at or very near the candle high"
+  },
+  "wick_rules": {
+    "upper_wick": "none or negligible (less than 5% of total range)",
+    "lower_wick": "none or negligible (less than 5% of total range)",
+    "ideal": "completely wickless candle where open equals low and close equals high"
+  },
+  "context_requirement": "in a downtrend at support signals a strong reversal; in an uptrend signals strong continuation momentum; in ranging markets acts as a breakout signal if it breaks a key level",
+  "volume_requirement": "must be accompanied by significantly above-average volume; a marubozu on low volume is unreliable and may be a trap",
+  "reliability": "high",
+  "agent_rules": [
+    "High volume is mandatory for a valid marubozu signal; low volume marubozu should be ignored",
+    "At support after a downtrend: signals aggressive buyers; consider long entries on the next candle",
+    "In an uptrend: signals strong continuation; can add to existing positions",
+    "A breakout marubozu that closes above a key resistance with high volume is a strong breakout signal",
+    "Beware of buying a marubozu that has already extended far from the nearest support; risk-reward may be poor",
+    "Watch for a retest of the marubozu open price as a potential entry zone on subsequent candles"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "double_top",
+  "name": "Double Top",
+  "category": "reversal",
+  "bias": "bearish",
+  "description": "A pattern forming two consecutive peaks at approximately the same price level, separated by a trough. It signals that buyers failed to push price beyond a resistance level on the second attempt, indicating a potential trend reversal from bullish to bearish.",
+  "formation_rules": [
+    "Price must be in a confirmed uptrend prior to pattern formation",
+    "First peak forms as price rallies to a resistance high, then pulls back at least 10% to a trough",
+    "Second peak forms as price rallies back toward the first peak high, within 3% of the first peak",
+    "The second peak must not exceed the first peak by more than 3%",
+    "The trough between the two peaks defines the neckline support level",
+    "Time between the two peaks should be at least 2 weeks on daily charts for significance",
+    "The pattern spans a minimum of 4 weeks to be considered valid"
+  ],
+  "volume_rules": "Volume is typically higher on the first peak than the second peak. Lower volume on the second peak relative to the first is a bearish signal. Volume must expand at least 1.5x average on the neckline breakdown candle for confirmation.",
+  "measured_target_method": "Measure the vertical distance from the peaks to the neckline trough. Project that distance downward from the neckline breakdown point to get the minimum price target.",
+  "confirmation_conditions": [
+    "Price closes below the neckline (trough low) on a daily candle",
+    "Breakout candle volume is at least 1.5x the 20-period average volume",
+    "A failed retest of the neckline from below confirms the breakdown",
+    "Bearish divergence on RSI between the two peaks strengthens the signal"
+  ],
+  "invalidation_conditions": [
+    "Price closes above either peak high, negating the double top structure",
+    "Price reclaims and closes above the neckline after a confirmed breakdown",
+    "The second peak forms on significantly higher volume than the first peak",
+    "A bullish engulfing candle forms at the neckline test from below"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "dt_rule_01",
+      "rule": "Breakdown is confirmed only when the closing price is strictly below the neckline (trough low); intraday violations without a close are not valid triggers."
+    },
+    {
+      "id": "dt_rule_02",
+      "rule": "Volume on the breakdown candle must be >= 1.5x the 20-period SMA of volume; record the pattern as unconfirmed if volume threshold is not met."
+    },
+    {
+      "id": "dt_rule_03",
+      "rule": "Pattern is invalidated if price closes above the higher of the two peaks at any point during or after formation; remove the bearish bias immediately."
+    },
+    {
+      "id": "dt_rule_04",
+      "rule": "The second peak is considered approximately equal to the first if it is within a 3% price range of the first peak; reject patterns where the second peak exceeds this threshold upward."
+    }
+  ]
+}

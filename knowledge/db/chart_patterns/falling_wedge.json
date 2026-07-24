@@ -1,0 +1,49 @@
+{
+  "id": "falling_wedge",
+  "name": "Falling Wedge",
+  "category": "reversal",
+  "bias": "bullish",
+  "description": "A pattern where price makes lower highs and lower lows, but both the upper resistance and lower support trendlines slope downward and converge. The narrowing range indicates weakening bearish momentum and typically resolves with a bullish breakout. Can appear as a reversal at the bottom of a downtrend or as a bullish continuation in an uptrend.",
+  "formation_rules": [
+    "Price forms at least two lower highs and two lower lows",
+    "Both the upper trendline (connecting lower highs) and lower trendline (connecting lower lows) slope downward",
+    "The upper trendline has a steeper negative slope than the lower trendline, causing the two lines to converge",
+    "The pattern requires a minimum of 3 weeks to form on a daily chart",
+    "Price should touch each trendline at least twice; three touches per line is ideal",
+    "The range between the trendlines must be narrowing over time",
+    "Volume should be declining throughout the pattern formation"
+  ],
+  "volume_rules": "Volume should decline progressively as the wedge develops, reflecting diminishing selling interest. Volume must expand at least 1.5x average on the breakout candle above the upper trendline. Falling price with declining volume signals that the downtrend is losing energy.",
+  "measured_target_method": "Measure the height of the wedge at its widest point (the vertical distance between the two trendlines at the start of the pattern). Project that distance upward from the breakout point. An alternative target is the origin of the wedge (the starting price).",
+  "confirmation_conditions": [
+    "Price closes above the upper falling trendline on a daily candle",
+    "Breakout candle volume is at least 1.5x the 20-period average volume",
+    "A retest of the broken upper trendline from above that holds as support confirms the breakout",
+    "RSI showing bullish divergence (higher lows on RSI while price makes lower lows) within the wedge strengthens the signal"
+  ],
+  "invalidation_conditions": [
+    "Price breaks below the lower trendline of the wedge with a daily close",
+    "Price closes back below the upper trendline after a confirmed breakout",
+    "Volume increases significantly on a bearish candle pushing to new lows within the wedge",
+    "The two trendlines diverge rather than converge, negating the wedge structure"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "fw_rule_01",
+      "rule": "Breakout is confirmed only on a daily close above the upper falling trendline; recompute the trendline dynamically using the two most recent lower highs before each check."
+    },
+    {
+      "id": "fw_rule_02",
+      "rule": "Volume on the breakout candle must be >= 1.5x the 20-period SMA of volume; absence of volume expansion increases the probability of a false breakout, requiring a second confirming close above."
+    },
+    {
+      "id": "fw_rule_03",
+      "rule": "Pattern is invalidated if a daily close occurs below the lower trendline of the wedge; flip bias to neutral and await a new pattern structure."
+    },
+    {
+      "id": "fw_rule_04",
+      "rule": "Require bullish RSI divergence (RSI making higher lows while price makes lower lows) as a secondary confirmation filter before flagging the falling wedge as a high-probability setup."
+    }
+  ]
+}

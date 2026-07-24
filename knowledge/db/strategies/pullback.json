@@ -1,0 +1,97 @@
+{
+  "id": "pullback",
+  "name": "Pullback to Key Level",
+  "market_conditions": [
+    "established trend on higher timeframe",
+    "price retracing against the primary trend",
+    "key level such as EMA, support/resistance, or Fibonacci retracement in proximity",
+    "overall market not in high-volatility news-driven mode"
+  ],
+  "phase_requirements": [
+    "trend phase confirmed on macro timeframe",
+    "retracement phase on entry timeframe",
+    "not during distribution or climactic selling/buying"
+  ],
+  "entry_conditions": [
+    "price retraces to 20 EMA, 50 EMA, or 200 EMA",
+    "price retraces to a prior support or resistance level that has flipped",
+    "price retraces to Fibonacci level between 0.382 and 0.618 of the prior impulse leg",
+    "retracement is on lower volume compared to the impulse move",
+    "pullback candles are small-bodied or overlapping indicating weak selling"
+  ],
+  "confirmation_requirements": [
+    "reversal candlestick at the key level: hammer, bullish engulfing, pin bar for longs",
+    "reversal candlestick at the key level: shooting star, bearish engulfing, pin bar for shorts",
+    "volume spike on reversal candle confirming absorption",
+    "RSI at or near 40 for long setups, at or near 60 for short setups",
+    "price closes beyond the reversal candle high for longs or below the low for shorts",
+    "MACD histogram turning or cross near the level"
+  ],
+  "stop_loss_logic": "Place stop below the key level for longs (e.g., below Fibonacci level or EMA with ATR buffer). For shorts, place stop above the key level. Minimum 1 ATR distance from key level to stop.",
+  "take_profit_logic": "First target at the most recent swing high (for longs) or swing low (for shorts). Second target at 1.618 Fibonacci extension of the retracement leg. Trail stop once first target is hit.",
+  "invalidation_conditions": [
+    "price closes below the key level with momentum for longs",
+    "price closes above the key level with momentum for shorts",
+    "volume increases sharply in the direction of the retracement indicating trend reversal",
+    "RSI breaks below 30 for longs or above 70 for shorts without bouncing",
+    "candle bodies expand during retracement indicating impulsive move against the trend",
+    "multiple failed reversal attempts at the key level"
+  ],
+  "related_indicators": [
+    "EMA_20",
+    "EMA_50",
+    "EMA_200",
+    "Fibonacci_retracement",
+    "RSI",
+    "MACD",
+    "volume",
+    "ATR",
+    "Stochastic"
+  ],
+  "related_patterns": [
+    "hammer",
+    "bullish_engulfing",
+    "pin_bar",
+    "shooting_star",
+    "bearish_engulfing",
+    "inside_bar",
+    "morning_star",
+    "evening_star"
+  ],
+  "required_features": {
+    "trend_on_macro": "confirmed bullish or bearish",
+    "retracement_depth": "0.382 to 0.618 Fibonacci level",
+    "key_level_type": "EMA or support/resistance or Fibonacci",
+    "retracement_volume": "declining",
+    "reversal_candle": "present at key level",
+    "reversal_candle_volume": "above average"
+  },
+  "timeframe_requirements": {
+    "macro": "1D to confirm trend direction and identify key levels",
+    "entry": "4H or 1H to identify reversal candle and entry trigger"
+  },
+  "risk_notes": "The key is patience — wait for price to actually reach the key level before looking for a reversal candle. Do not anticipate the bounce. Multiple confluences at a single level increase probability. Avoid pullback trades in choppy or ranging markets. Fibonacci levels are more reliable when they align with a horizontal support/resistance level or an EMA.",
+  "typical_rr": "1:2 to 1:3",
+  "agent_rules": [
+    {
+      "id": "pb_001",
+      "rule": "Do not enter a pullback trade until price has actually touched or tagged the key level — never pre-empt the move."
+    },
+    {
+      "id": "pb_002",
+      "rule": "Require at least two confluences at the pullback level (e.g., Fibonacci 0.5 + EMA50 + prior support)."
+    },
+    {
+      "id": "pb_003",
+      "rule": "Volume on the reversal candle must be higher than the average of the last 5 candles on the same timeframe."
+    },
+    {
+      "id": "pb_004",
+      "rule": "If price slices through the key level without pausing, do not enter — invalidate the setup."
+    },
+    {
+      "id": "pb_005",
+      "rule": "Enter only on close of the confirmation candle, not on wick touch of the key level."
+    }
+  ]
+}

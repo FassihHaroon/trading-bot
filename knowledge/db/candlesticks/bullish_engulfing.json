@@ -1,0 +1,29 @@
+{
+  "id": "bullish_engulfing",
+  "name": "Bullish Engulfing",
+  "candle_count": 2,
+  "bias": "bullish",
+  "description": "A two-candle bullish reversal pattern. The first candle is bearish and the second candle is a larger bullish candle whose real body completely engulfs the real body of the first candle. Signals a decisive shift from selling to buying pressure.",
+  "body_rules": {
+    "candle_1": "bearish (red/black) real body of any size",
+    "candle_2": "bullish (green/white) real body that opens at or below candle 1 close and closes at or above candle 1 open",
+    "engulfment": "candle 2 body must fully contain candle 1 body; the larger candle 2 body is relative to candle 1, the stronger the signal"
+  },
+  "wick_rules": {
+    "candle_1_wicks": "not relevant to the pattern definition",
+    "candle_2_wicks": "ideally small; large wicks on candle 2 reduce conviction",
+    "engulfment_wicks": "body-to-body engulfment is the primary rule; wick-to-wick engulfment is an even stronger version"
+  },
+  "context_requirement": "must appear at the end of a downtrend or at a key support level; engulfing patterns in ranging markets or mid-trend are less reliable",
+  "volume_requirement": "candle 2 volume should be significantly higher than candle 1 volume; this confirms the surge in buying pressure",
+  "reliability": "high",
+  "agent_rules": [
+    "Confirm the pattern is at a support zone, trendline, or significant Fibonacci level",
+    "Enter long at the open of candle 3 or after candle 2 closes",
+    "Stop loss below the low of candle 2 (or the pattern low)",
+    "The larger candle 2 is relative to candle 1, the stronger the reversal signal",
+    "High volume on candle 2 is a critical confirmation factor",
+    "An engulfing pattern that also engulfs the wicks of candle 1 is considered stronger",
+    "Avoid trading this pattern after a very small candle 1 (a tiny bearish candle is easily engulfed and may not signal enough prior selling)"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "shooting_star",
+  "name": "Shooting Star",
+  "candle_count": 1,
+  "bias": "bearish",
+  "description": "A single bearish reversal candle that forms after an uptrend. It has a small real body near the bottom of the candle's range and a long upper wick at least 2 times the body length, indicating that buyers pushed price up significantly but sellers drove it back down to near the open by close.",
+  "body_rules": {
+    "body_size": "small to medium",
+    "body_position": "must be in the lower third of the total candle range",
+    "body_color": "preferably bearish (red/black) but bullish body is still valid with confirmation"
+  },
+  "wick_rules": {
+    "upper_wick": "must be at least 2 times the length of the real body",
+    "lower_wick": "little to none; lower wick should be no more than 10-15% of the total range",
+    "wick_direction": "the long wick must point upward"
+  },
+  "context_requirement": "must form at or near a defined resistance level after an uptrend of at least 3-5 candles; shooting star in a downtrend or ranging market is not a valid signal",
+  "volume_requirement": "above-average volume on the shooting star candle strengthens the signal; high volume rejection at resistance is a strong bearish sign",
+  "reliability": "medium",
+  "agent_rules": [
+    "Only trade shooting star at a confirmed resistance zone, trendline, or Fibonacci level",
+    "Require a bearish confirmation candle closing below the shooting star's low before entering short",
+    "Stop loss should be placed above the shooting star's high",
+    "A shooting star with very high volume is a stronger signal than one on low volume",
+    "Do not trade a shooting star that gaps far away from price context",
+    "A bullish-bodied shooting star (inverted color) requires stronger confirmation from the next candle",
+    "The longer the prior uptrend, the more significant the shooting star reversal signal"
+  ]
+}

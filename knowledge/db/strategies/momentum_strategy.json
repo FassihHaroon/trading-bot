@@ -1,0 +1,104 @@
+{
+  "id": "momentum_strategy",
+  "name": "Momentum Strategy",
+  "market_conditions": [
+    "strong directional impulse visible on multiple timeframes",
+    "price making new highs or new lows with expanding volume",
+    "moving average fan alignment: shorter EMAs above longer EMAs for bullish momentum",
+    "OBV trending strongly in the direction of momentum",
+    "ADX above 30 indicating strong trend momentum",
+    "broader market aligned with momentum direction"
+  ],
+  "phase_requirements": [
+    "early to mid markup phase for bullish momentum",
+    "early to mid markdown phase for bearish momentum",
+    "impulse wave within an established trend"
+  ],
+  "entry_conditions": [
+    "strong breakout bar with body comprising at least 70% of the candle range",
+    "breakout bar closes near its high for bullish or near its low for bearish",
+    "volume on breakout bar is significantly above the 20-period average",
+    "EMA fan alignment: EMA8 above EMA21 above EMA50 for longs, reversed for shorts",
+    "OBV making new highs alongside price for longs or new lows for shorts",
+    "enter on close of the strong momentum candle or on the first pullback to EMA8"
+  ],
+  "confirmation_requirements": [
+    "EMA fan fully aligned with no crossover threat on the entry timeframe",
+    "OBV confirming the price move by trending in the same direction",
+    "volume on the impulse candle exceeds 1.5 times the 20-period average",
+    "MACD above zero and histogram increasing for bullish momentum",
+    "RSI above 60 for bullish momentum (shows strength, not overbought in a trend)",
+    "subsequent candles continue in the momentum direction without retracing more than 38.2% of the impulse"
+  ],
+  "stop_loss_logic": "For momentum entry on impulse bar: stop below the low of the impulse candle for longs or above the high for shorts. For pullback entry to EMA8: stop below the EMA21 or the most recent swing low. Use ATR-based stops of 1-1.5 ATR from entry given the higher volatility in momentum moves.",
+  "take_profit_logic": "Ride the impulse wave using a trailing stop. Trail stop behind the EMA8 on the entry timeframe. Take partial profits at 1:1 RR and 2:1 RR, trailing remainder. Exit fully if price closes below the EMA21 for longs or above EMA21 for shorts. Use measured move from prior consolidation as a guide for maximum target.",
+  "invalidation_conditions": [
+    "price closes below the EMA21 for bullish momentum",
+    "EMA fan begins to converge or cross — EMA8 approaches EMA21",
+    "OBV diverges: price making new highs but OBV not confirming",
+    "volume declines significantly as price advances indicating weak momentum",
+    "price retraces more than 50% of the impulse candle on the next candle",
+    "ADX starts declining below 25 indicating momentum is fading",
+    "MACD histogram turning negative while in a bullish momentum trade"
+  ],
+  "related_indicators": [
+    "EMA_8",
+    "EMA_21",
+    "EMA_50",
+    "OBV",
+    "MACD",
+    "RSI",
+    "ADX",
+    "volume",
+    "ATR"
+  ],
+  "related_patterns": [
+    "impulse_wave",
+    "bull_flag",
+    "bear_flag",
+    "momentum_candle",
+    "breakout_continuation",
+    "ema_fan_alignment"
+  ],
+  "required_features": {
+    "impulse_candle_body_ratio": ">=70% of candle range",
+    "ema_fan_alignment": "EMA8 > EMA21 > EMA50 for longs",
+    "obv_trend": "confirming price direction",
+    "volume_on_impulse": ">1.5x 20-period average",
+    "adx_value": ">30",
+    "macd_histogram": "expanding in direction of momentum",
+    "rsi_value": ">60 for bullish or <40 for bearish"
+  },
+  "timeframe_requirements": {
+    "macro": "1D or 4H to confirm EMA fan alignment and overall momentum direction",
+    "entry": "1H or 15M for impulse candle identification and entry execution"
+  },
+  "risk_notes": "Momentum strategies can experience sharp reversals when momentum exhausts. Never chase a momentum move that is already 3+ ATR extended without a pause. Position sizing should account for wider stops due to volatility. Do not hold momentum trades through major scheduled news events. The biggest risk is entering late in the momentum wave and getting caught at the top. Use the EMA8 trail aggressively to protect profits.",
+  "typical_rr": "1:2 to 1:5 when riding full impulse waves with trailing stops",
+  "agent_rules": [
+    {
+      "id": "mom_001",
+      "rule": "Require EMA fan alignment on both the macro and entry timeframe before any momentum entry."
+    },
+    {
+      "id": "mom_002",
+      "rule": "OBV must be trending in the same direction as price — any OBV divergence cancels the momentum setup."
+    },
+    {
+      "id": "mom_003",
+      "rule": "Do not enter a momentum trade if price is already more than 3 ATR from the EMA21 without a recent consolidation."
+    },
+    {
+      "id": "mom_004",
+      "rule": "Trail stop behind EMA8 on every new candle close — protect momentum gains aggressively."
+    },
+    {
+      "id": "mom_005",
+      "rule": "Exit immediately on a candle close below EMA21 for longs or above EMA21 for shorts — momentum has shifted."
+    },
+    {
+      "id": "mom_006",
+      "rule": "Scale in on momentum setups: 50% at impulse bar close, 50% on first EMA8 pullback."
+    }
+  ]
+}

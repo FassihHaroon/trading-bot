@@ -1,0 +1,96 @@
+{
+  "id": "support_bounce",
+  "name": "Support Zone Bounce",
+  "market_conditions": [
+    "price approaching a well-established support zone",
+    "support zone has been tested and held at least twice previously",
+    "broader trend is neutral to bullish or price is in a range",
+    "no major bearish catalyst or news event imminent",
+    "support zone is not in a steeply declining trend where it is likely to break"
+  ],
+  "phase_requirements": [
+    "retracement phase approaching support in an uptrend",
+    "lower boundary of a range in accumulation phase",
+    "not during aggressive markdown phase where support is likely to fail"
+  ],
+  "entry_conditions": [
+    "price reaches or tags the support zone boundary",
+    "rejection candle forms at the support zone: hammer, pin bar, bullish engulfing, or dragonfly doji",
+    "lower wick of rejection candle penetrates into the zone but candle closes above it",
+    "volume on rejection candle is above the 10-period average",
+    "RSI is at or approaching oversold region (30-45 range) on the entry timeframe"
+  ],
+  "confirmation_requirements": [
+    "rejection candle closes above the support zone midpoint",
+    "follow-through candle in the bullish direction confirms the bounce",
+    "volume on follow-through candle is above average",
+    "RSI turning upward from the 30-45 zone",
+    "price does not close below the support zone on any subsequent candle before entry",
+    "MACD histogram shows reducing bearish momentum or bullish cross near the zone"
+  ],
+  "stop_loss_logic": "Place stop loss below the lowest wick that tagged the support zone, plus a 0.5-1 ATR buffer below the zone's lower boundary. The stop must be below a level that would definitively invalidate the support zone.",
+  "take_profit_logic": "First target at the most recent swing high or resistance level above. Second target at the upper boundary of the range or prior structural high. Take partial profit at 1:1 RR and trail the rest with a 20 EMA on the entry timeframe.",
+  "invalidation_conditions": [
+    "price closes below the support zone lower boundary with a full bearish candle body",
+    "high volume bearish candle breaks through the zone indicating institutional selling",
+    "multiple consecutive candles close inside or below the zone without bouncing",
+    "RSI breaks below 25 indicating panic selling rather than a bounce setup",
+    "a gap down through the support zone on the open",
+    "broader market index breaks a key support level simultaneously"
+  ],
+  "related_indicators": [
+    "RSI",
+    "volume",
+    "ATR",
+    "MACD",
+    "EMA_20",
+    "EMA_50",
+    "Stochastic",
+    "support_resistance_zones"
+  ],
+  "related_patterns": [
+    "hammer",
+    "pin_bar",
+    "bullish_engulfing",
+    "dragonfly_doji",
+    "morning_star",
+    "tweezer_bottom",
+    "double_bottom"
+  ],
+  "required_features": {
+    "support_zone_quality": "tested at least twice, clear zone boundaries",
+    "rejection_candle": "present at zone with long lower wick",
+    "rejection_candle_volume": "above 10-period average",
+    "rsi_at_entry": "<50 preferably in 30-45 range",
+    "zone_proximity": "price within zone boundaries or tagging lower boundary",
+    "trend_on_macro": "neutral to bullish or range-bound"
+  },
+  "timeframe_requirements": {
+    "macro": "1D or 4H to identify and qualify the support zone",
+    "entry": "1H or 15M to spot the rejection candle and time the entry"
+  },
+  "risk_notes": "Support zones weaken each time they are tested. A third or fourth test of a support zone is less reliable than the first or second. Always check if the broader trend is against you. A support bounce trade in a strong downtrend carries higher risk of a false bounce. Ensure the support zone is drawn from significant swing lows, not arbitrary levels. Do not risk more than 1.5% on any single support bounce trade.",
+  "typical_rr": "1:1.5 to 1:3",
+  "agent_rules": [
+    {
+      "id": "sb_001",
+      "rule": "Only trade support zones that have been validated by at least two prior touches."
+    },
+    {
+      "id": "sb_002",
+      "rule": "Require a reversal candle with a prominent lower wick at the zone — a plain bearish close is not sufficient."
+    },
+    {
+      "id": "sb_003",
+      "rule": "If price closes a full candle body below the support zone, exit the trade immediately — do not wait for a bounce."
+    },
+    {
+      "id": "sb_004",
+      "rule": "Check the macro timeframe (1D) before entering — if the daily trend is strongly bearish, require additional confluences."
+    },
+    {
+      "id": "sb_005",
+      "rule": "Move stop to breakeven after price travels 1 ATR from entry in the intended direction."
+    }
+  ]
+}

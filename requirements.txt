@@ -1,0 +1,12 @@
+# Core — actually imported by the bot
+numpy>=1.26.0
+requests>=2.31.0          # HTTP client for all API calls (Binance + external feeds)
+urllib3>=2.0.0             # Retry adapter used by Binance connectors
+python-dotenv>=1.0.0      # .env file loading
+cachetools>=5.3.0         # TTL cache in data/cache.py
+
+# Testing
+pytest>=7.4.0
+
+# AI reports — Google Gemini free tier (new SDK)
+google-genai>=1.0.0

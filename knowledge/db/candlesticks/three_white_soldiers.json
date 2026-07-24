@@ -1,0 +1,29 @@
+{
+  "id": "three_white_soldiers",
+  "name": "Three White Soldiers",
+  "candle_count": 3,
+  "bias": "bullish",
+  "description": "A three-candle bullish continuation or reversal pattern consisting of three consecutive large bullish candles. Each candle opens within or near the previous candle's body and closes progressively higher, with small or no upper wicks. Signals strong and sustained buying pressure over multiple sessions.",
+  "body_rules": {
+    "candle_1": "large bullish body; first soldier, ideally forming at or near the end of a downtrend or consolidation",
+    "candle_2": "large bullish body; opens within candle 1's body and closes above candle 1's close",
+    "candle_3": "large bullish body; opens within candle 2's body and closes above candle 2's close",
+    "progression": "each candle should close higher than the previous; bodies should be of similar size"
+  },
+  "wick_rules": {
+    "upper_wicks": "should be small or nonexistent on all three candles; long upper wicks indicate hesitation and weaken the pattern",
+    "lower_wicks": "small lower wicks are acceptable and indicate that pullbacks within each session were bought up"
+  },
+  "context_requirement": "most powerful when forming at the end of a downtrend or at a major support level; also valid as a continuation signal after a breakout from consolidation; less reliable if forming deep into an extended uptrend (exhaustion risk)",
+  "volume_requirement": "volume should be consistently high across all three candles or progressively increasing; declining volume on the third candle is a warning sign of weakening momentum",
+  "reliability": "high",
+  "agent_rules": [
+    "Confirm the pattern forms at or near a support level, demand zone, or after a breakout of consolidation",
+    "Enter long after the third candle closes or at the open of candle 4",
+    "Stop loss below the low of candle 1 or below the midpoint of candle 1's body",
+    "Three white soldiers with long upper wicks are considered weakened soldiers — reduce position size or skip",
+    "If the third candle is significantly smaller than the first two, momentum may be fading — be cautious",
+    "Avoid chasing this pattern if price is already overextended above key moving averages",
+    "Volume consistency or increase across all three candles is a strong confirmation factor"
+  ]
+}

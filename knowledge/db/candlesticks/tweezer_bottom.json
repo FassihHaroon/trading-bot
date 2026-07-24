@@ -1,0 +1,29 @@
+{
+  "id": "tweezer_bottom",
+  "name": "Tweezer Bottom",
+  "candle_count": 2,
+  "bias": "bullish",
+  "description": "A two-candle bullish reversal pattern where two consecutive candles have matching or near-identical lows. The first candle is bearish and the second is bullish, both reaching the same price low. This equal low indicates that price was supported at the same level twice, signaling strong demand and a likely reversal.",
+  "body_rules": {
+    "candle_1": "bearish (red/black) body of any size",
+    "candle_2": "bullish (green/white) body of any size",
+    "body_relationship": "bodies do not need to be the same size; the key rule is matching lows, not matching bodies"
+  },
+  "wick_rules": {
+    "low_match": "the lows of both candles must be at or very near the same price level; this is the core rule of the pattern",
+    "lower_wicks": "either or both candles may have lower wicks; the bottoms of the wicks (or bodies if no wick) must align",
+    "upper_wicks": "not relevant to pattern definition"
+  },
+  "context_requirement": "must form at a defined support level, prior swing low, or demand zone after a downtrend; tweezer bottoms forming in the middle of a range or at random price levels are low quality signals",
+  "volume_requirement": "ideally candle 2 has equal or greater volume than candle 1, indicating that the second test of the low was met with equal or increasing buying pressure",
+  "reliability": "medium",
+  "agent_rules": [
+    "The pattern is only valid if the two lows are at or very close to a pre-identified support level",
+    "Enter long after candle 2 closes or on a break above the high of candle 2",
+    "Stop loss below the shared low of both candles minus a small buffer",
+    "The pattern is stronger when candle 2 has a long lower wick touching the shared low",
+    "Tweezer bottom formed by a hammer as candle 2 is a particularly strong bullish signal",
+    "Higher timeframe tweezer bottoms carry more weight than lower timeframe ones",
+    "Avoid trading tweezer bottoms at support that has already been tested many times — support may break instead"
+  ]
+}

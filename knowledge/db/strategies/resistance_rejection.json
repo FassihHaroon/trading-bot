@@ -1,0 +1,100 @@
+{
+  "id": "resistance_rejection",
+  "name": "Resistance Zone Rejection",
+  "market_conditions": [
+    "price approaching a well-established resistance zone",
+    "resistance zone has been tested and rejected at least twice previously",
+    "broader trend is neutral to bearish or price is in a range",
+    "no major bullish catalyst or news event imminent",
+    "resistance zone is not in a steeply rising trend where it is likely to break"
+  ],
+  "phase_requirements": [
+    "retracement phase rallying into resistance in a downtrend",
+    "upper boundary of a range in distribution phase",
+    "not during aggressive markup phase where resistance is likely to break"
+  ],
+  "entry_conditions": [
+    "price reaches or tags the resistance zone boundary",
+    "rejection candle forms at the resistance zone: shooting star, pin bar, bearish engulfing, or gravestone doji",
+    "upper wick of rejection candle penetrates into the zone but candle closes below it",
+    "volume on rejection candle is above the 10-period average",
+    "RSI is at or approaching overbought region (55-70 range) on the entry timeframe"
+  ],
+  "confirmation_requirements": [
+    "rejection candle closes below the resistance zone midpoint",
+    "follow-through candle in the bearish direction confirms the rejection",
+    "volume on follow-through candle is above average",
+    "RSI turning downward from the 55-70 zone",
+    "price does not close above the resistance zone on any subsequent candle before entry",
+    "MACD histogram shows reducing bullish momentum or bearish cross near the zone"
+  ],
+  "stop_loss_logic": "Place stop loss above the highest wick that tagged the resistance zone, plus a 0.5-1 ATR buffer above the zone's upper boundary. The stop must be above a level that would definitively invalidate the resistance zone.",
+  "take_profit_logic": "First target at the most recent swing low or support level below. Second target at the lower boundary of the range or prior structural low. Take partial profit at 1:1 RR and trail the rest with a 20 EMA on the entry timeframe.",
+  "invalidation_conditions": [
+    "price closes above the resistance zone upper boundary with a full bullish candle body",
+    "high volume bullish candle breaks through the zone indicating institutional buying",
+    "multiple consecutive candles close inside or above the zone without rejecting",
+    "RSI breaks above 75 indicating strong momentum rather than a rejection setup",
+    "a gap up through the resistance zone on the open",
+    "broader market index breaks to new highs simultaneously"
+  ],
+  "related_indicators": [
+    "RSI",
+    "volume",
+    "ATR",
+    "MACD",
+    "EMA_20",
+    "EMA_50",
+    "Stochastic",
+    "support_resistance_zones"
+  ],
+  "related_patterns": [
+    "shooting_star",
+    "pin_bar",
+    "bearish_engulfing",
+    "gravestone_doji",
+    "evening_star",
+    "tweezer_top",
+    "double_top"
+  ],
+  "required_features": {
+    "resistance_zone_quality": "tested at least twice, clear zone boundaries",
+    "rejection_candle": "present at zone with long upper wick",
+    "rejection_candle_volume": "above 10-period average",
+    "rsi_at_entry": ">50 preferably in 55-70 range",
+    "zone_proximity": "price within zone boundaries or tagging upper boundary",
+    "trend_on_macro": "neutral to bearish or range-bound"
+  },
+  "timeframe_requirements": {
+    "macro": "1D or 4H to identify and qualify the resistance zone",
+    "entry": "1H or 15M to spot the rejection candle and time the entry"
+  },
+  "risk_notes": "Resistance zones weaken each time they are tested. A third or fourth test of a resistance zone has a higher chance of breaking out. Always check if the broader trend is against you. A resistance rejection trade in a strong uptrend carries higher risk of a false rejection. Ensure the resistance zone is drawn from significant swing highs, not arbitrary levels. Do not risk more than 1.5% on any single resistance rejection trade.",
+  "typical_rr": "1:1.5 to 1:3",
+  "agent_rules": [
+    {
+      "id": "rr_001",
+      "rule": "Only trade resistance zones that have been validated by at least two prior rejections."
+    },
+    {
+      "id": "rr_002",
+      "rule": "Require a rejection candle with a prominent upper wick at the zone — a plain bullish close is not sufficient."
+    },
+    {
+      "id": "rr_003",
+      "rule": "If price closes a full candle body above the resistance zone, exit the trade immediately — do not wait for a drop."
+    },
+    {
+      "id": "rr_004",
+      "rule": "Check the macro timeframe (1D) before entering — if the daily trend is strongly bullish, require additional confluences."
+    },
+    {
+      "id": "rr_005",
+      "rule": "Move stop to breakeven after price travels 1 ATR from entry in the intended direction."
+    },
+    {
+      "id": "rr_006",
+      "rule": "If the same resistance zone has been tested more than 3 times, treat it as likely to break rather than reject — reduce position size or skip."
+    }
+  ]
+}

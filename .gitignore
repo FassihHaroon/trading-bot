@@ -1,0 +1,74 @@
+# ── SECRETS & CREDENTIALS (NEVER COMMIT) ─────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+*.env
+secrets.json
+credentials.json
+*_key.txt
+*_secret.txt
+
+# Allow the example template (no real keys)
+!.env.example
+
+# ── PYTHON ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+*.pyo
+*.pyd
+
+# ── LOGS & RUNTIME STATE ─────────────────────────────────────────────────────
+logs/
+*.log
+*.jsonl
+risk_state.json
+learned_state.json
+backtest_run.log
+
+# ── NODE / FRONTEND ───────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+frontend/.vite/
+node_modules/
+dist/
+.cache/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ── EDITOR ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── MISC ──────────────────────────────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig
+ecc/

@@ -1,0 +1,29 @@
+{
+  "id": "marubozu_bearish",
+  "name": "Bearish Marubozu",
+  "candle_count": 1,
+  "bias": "bearish",
+  "description": "A single large bearish candle with little to no wicks on either end. The open is at or near the high and the close is at or near the low, indicating that sellers were in complete control throughout the entire session with no meaningful pushback from buyers.",
+  "body_rules": {
+    "body_size": "large; body should make up at least 90-95% of the total candle range",
+    "body_color": "bearish (red/black)",
+    "open": "at or very near the candle high",
+    "close": "at or very near the candle low"
+  },
+  "wick_rules": {
+    "upper_wick": "none or negligible (less than 5% of total range)",
+    "lower_wick": "none or negligible (less than 5% of total range)",
+    "ideal": "completely wickless candle where open equals high and close equals low"
+  },
+  "context_requirement": "in an uptrend at resistance signals a strong reversal; in a downtrend signals strong continuation momentum; in ranging markets acts as a breakdown signal if it breaks a key support level",
+  "volume_requirement": "must be accompanied by significantly above-average volume; a marubozu on low volume is unreliable and may be a bear trap",
+  "reliability": "high",
+  "agent_rules": [
+    "High volume is mandatory for a valid marubozu signal; low volume marubozu should be ignored",
+    "At resistance after an uptrend: signals aggressive sellers; consider short entries on the next candle",
+    "In a downtrend: signals strong continuation; can add to existing short positions",
+    "A breakdown marubozu that closes below a key support with high volume is a strong breakdown signal",
+    "Beware of shorting a marubozu that has already extended far below the nearest resistance; risk-reward may be poor",
+    "Watch for a retest of the marubozu open price as a potential short entry zone on subsequent candles"
+  ]
+}

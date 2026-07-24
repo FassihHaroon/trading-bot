@@ -1,0 +1,49 @@
+{
+  "id": "symmetrical_triangle",
+  "name": "Symmetrical Triangle",
+  "category": "continuation",
+  "bias": "neutral",
+  "description": "A triangle pattern where both the resistance trendline (lower highs) and the support trendline (higher lows) converge symmetrically toward an apex. The pattern is neutral until a breakout direction is established, typically continuing the prior trend.",
+  "formation_rules": [
+    "Price forms at least two lower highs and two higher lows, creating two converging trendlines",
+    "The upper trendline connects progressively lower swing highs",
+    "The lower trendline connects progressively higher swing lows",
+    "Both trendlines must have a similar slope magnitude but in opposite directions",
+    "The pattern requires a minimum of 3 weeks to form on a daily chart",
+    "Price should oscillate between the two boundaries at least 4 times total",
+    "Price should break out before reaching 75-80% of the distance to the apex"
+  ],
+  "volume_rules": "Volume contracts steadily throughout the pattern formation as the price range narrows. A breakout in either direction must be accompanied by volume expansion of at least 1.5x the 20-period average to be considered valid. False breakouts often occur on low volume.",
+  "measured_target_method": "Measure the height of the triangle at its widest point (the distance between the first swing high and first swing low at the start of the pattern). Project that distance in the direction of the breakout from the breakout point.",
+  "confirmation_conditions": [
+    "Price closes above the upper trendline (bullish breakout) or below the lower trendline (bearish breakout)",
+    "Breakout candle volume is at least 1.5x the 20-period average volume",
+    "A retest of the broken trendline that holds in the breakout direction confirms the move",
+    "The breakout direction aligns with the prior trend for higher reliability"
+  ],
+  "invalidation_conditions": [
+    "Price breaks out but immediately reverses back inside the triangle within 1-2 candles (false breakout)",
+    "Price reaches the apex without a clear directional break",
+    "Breakout occurs on volume below the 20-period average, suggesting a false break",
+    "After a bullish breakout, price closes back below the upper trendline; after a bearish breakout, price closes back above the lower trendline"
+  ],
+  "reliability_score": 3,
+  "agent_rules": [
+    {
+      "id": "st_rule_01",
+      "rule": "Breakout direction is confirmed only on a daily close outside the applicable trendline boundary; do not assign directional bias until this close occurs."
+    },
+    {
+      "id": "st_rule_02",
+      "rule": "Volume on the breakout candle must be >= 1.5x the 20-period SMA of volume; if volume is below this threshold, tag the breakout as a potential false break and wait for a second confirming candle."
+    },
+    {
+      "id": "st_rule_03",
+      "rule": "If price re-enters the triangle body on a daily close within 3 candles of the breakout, classify the breakout as failed and reset pattern status to neutral."
+    },
+    {
+      "id": "st_rule_04",
+      "rule": "Assign higher probability to the breakout if it aligns with the trend direction prior to triangle formation; reduce position sizing by 50% when trading counter-trend breakouts."
+    }
+  ]
+}

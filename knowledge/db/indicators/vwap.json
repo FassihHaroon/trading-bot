@@ -1,0 +1,110 @@
+{
+  "id": "vwap",
+  "name": "Volume Weighted Average Price (VWAP)",
+  "category": "volume_price",
+  "description": "VWAP is the average price a security has traded at throughout the day, weighted by volume. It provides the true average transaction price and serves as a critical intraday benchmark for institutional traders. Price above VWAP indicates bullish intraday sentiment; price below VWAP indicates bearish intraday sentiment. VWAP resets at the start of each trading session. It is primarily an intraday tool and loses meaning on charts above the daily timeframe. Standard VWAP bands (±1 and ±2 standard deviations) create intraday support/resistance zones.",
+  "parameters": {
+    "formula": "VWAP = Cumulative(Typical Price * Volume) / Cumulative(Volume)",
+    "typical_price": "(High + Low + Close) / 3",
+    "reset": "Daily (at market open each session)",
+    "bands": {
+      "upper_band_1": "VWAP + 1 Standard Deviation",
+      "upper_band_2": "VWAP + 2 Standard Deviations",
+      "lower_band_1": "VWAP - 1 Standard Deviation",
+      "lower_band_2": "VWAP - 2 Standard Deviations"
+    },
+    "applicable_timeframes": ["1m", "3m", "5m", "15m", "30m", "1h"]
+  },
+  "signals": [
+    {
+      "condition": "Price is above VWAP and VWAP is sloping upward",
+      "interpretation": "Bullish intraday trend — buyers are in control on average. Prefer long setups. Pullbacks to VWAP from above are potential long entries."
+    },
+    {
+      "condition": "Price is below VWAP and VWAP is sloping downward",
+      "interpretation": "Bearish intraday trend — sellers are in control on average. Prefer short setups. Rallies to VWAP from below are potential short entries."
+    },
+    {
+      "condition": "Price pulls back to VWAP from above and holds with a bullish candle",
+      "interpretation": "VWAP acting as dynamic intraday support — high-quality long entry in a bullish intraday trend. Institutional buyers defending the VWAP level."
+    },
+    {
+      "condition": "Price rallies to VWAP from below and rejects with a bearish candle",
+      "interpretation": "VWAP acting as dynamic intraday resistance — high-quality short entry in a bearish intraday trend. Institutional sellers defending the VWAP level."
+    },
+    {
+      "condition": "Price crosses above VWAP with strong volume",
+      "interpretation": "Intraday trend shift to bullish — institutions are now net buyers above this level. A potential momentum long entry with VWAP as stop reference."
+    },
+    {
+      "condition": "Price crosses below VWAP with strong volume",
+      "interpretation": "Intraday trend shift to bearish — institutions are now net sellers below this level. A potential momentum short entry with VWAP as stop reference."
+    },
+    {
+      "condition": "Price reaches VWAP upper band 2 (VWAP + 2 SD)",
+      "interpretation": "Price is overextended above VWAP — statistically extended from the mean. In a range, potential mean reversion short. In a trend, potential pause or consolidation zone."
+    },
+    {
+      "condition": "Price reaches VWAP lower band 2 (VWAP - 2 SD)",
+      "interpretation": "Price is overextended below VWAP — statistically extended from the mean. In a range, potential mean reversion long. In a trend, potential capitulation zone."
+    },
+    {
+      "condition": "Price repeatedly tests VWAP but fails to close above it",
+      "interpretation": "VWAP acting as strong intraday resistance — bearish signal. Institutions are selling at VWAP repeatedly."
+    },
+    {
+      "condition": "Gap open far above VWAP at market open",
+      "interpretation": "Price opened well above fair value. High probability of a VWAP fill during the session. Gap fill trades targeting VWAP are common institutional strategies."
+    }
+  ],
+  "rules": [
+    {
+      "id": "vwap-rule-1",
+      "rule": "Use VWAP exclusively for intraday analysis. Do not apply VWAP to daily, weekly, or monthly charts. Anchored VWAP (from a specific swing point) can be used on higher timeframes as a substitute.",
+      "rationale": "VWAP resets each day, making it a single-session metric. Using daily VWAP on higher timeframes is methodologically incorrect as it represents only the current day's fair value."
+    },
+    {
+      "id": "vwap-rule-2",
+      "rule": "Use VWAP as the primary intraday trend filter. Only take long intraday trades when price is above VWAP; only take short intraday trades when price is below VWAP. Exceptions only in very clear momentum reversal setups.",
+      "rationale": "VWAP represents the average price paid by all market participants that day. Being on the wrong side of VWAP means trading against the average institutional positioning for the session."
+    },
+    {
+      "id": "vwap-rule-3",
+      "rule": "Treat VWAP pullback tests as high-quality entry opportunities within the intraday trend. Wait for price to return to VWAP, then look for a bullish/bearish price action candle before entering.",
+      "rationale": "Pullbacks to VWAP offer entries in the direction of the trend at a fair value level, improving risk/reward compared to chasing extended moves."
+    },
+    {
+      "id": "vwap-rule-4",
+      "rule": "Use VWAP band 1 (±1 SD) as profit targets and VWAP band 2 (±2 SD) as extended targets. Do not hold positions expecting price to extend beyond band 2 without strong momentum confirmation.",
+      "rationale": "Statistically, price spends most of its time within ±1 SD of VWAP. Targets beyond ±2 SD are achievable only in high-momentum or news-driven sessions."
+    },
+    {
+      "id": "vwap-rule-5",
+      "rule": "In the first 30 minutes after market open, VWAP is not yet meaningful as a reference because insufficient volume has built the average. Wait for the VWAP to stabilize before relying on it as a support/resistance level.",
+      "rationale": "Early in the session, VWAP is influenced by the first few trades and does not yet represent the session's true fair value. It becomes more reliable as volume accumulates."
+    },
+    {
+      "id": "vwap-rule-6",
+      "rule": "Use Anchored VWAP for multi-day or swing trade analysis by anchoring the VWAP to a significant swing high, swing low, or earnings event. This provides a volume-weighted average from a meaningful starting point.",
+      "rationale": "Anchored VWAP extends the utility of VWAP beyond the single session by using a meaningful price event as the anchor, giving multi-day fair value context."
+    },
+    {
+      "id": "vwap-rule-7",
+      "rule": "Combine VWAP with price action patterns and other intraday indicators (RSI, stochastics, key chart levels) for confluence before entering. A VWAP touch alone is not sufficient.",
+      "rationale": "VWAP provides a level but not a trade signal. Confluence with a rejection candle, an RSI oversold reading, or a horizontal support level at the VWAP improves trade quality significantly."
+    }
+  ],
+  "related_concepts": [
+    "intraday_trading",
+    "fair_value",
+    "institutional_reference",
+    "dynamic_support_resistance",
+    "volume_weighted",
+    "anchored_vwap",
+    "mean_reversion",
+    "gap_fill",
+    "session_reset",
+    "intraday_trend_filter"
+  ],
+  "agent_use": "Use VWAP as the primary intraday trend filter and fair value reference. Always check whether price is above or below VWAP when analyzing an intraday setup — this sets the directional bias. Flag VWAP pullback tests in the direction of the intraday trend as high-quality entry opportunities. Use VWAP bands as intraday profit targets. Avoid VWAP signals in the first 30 minutes of the session. Do not apply VWAP to timeframes above 1-hour. For swing trades, suggest anchored VWAP from the most recent swing point as a substitute. Report VWAP position (above/below), distance from VWAP, and band levels when analyzing any intraday setup."
+}

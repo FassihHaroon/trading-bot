@@ -1,0 +1,94 @@
+{
+  "id": "mean_reversion",
+  "name": "Mean Reversion",
+  "market_conditions": [
+    "price at a Bollinger Band extreme: touching or closing beyond the outer band",
+    "low to moderate volatility environment — Bollinger Bands not excessively wide",
+    "RSI divergence present: price at new extreme but RSI not confirming",
+    "no strong trend momentum — ADX below 25 preferred",
+    "price significantly deviated from its moving average mean"
+  ],
+  "phase_requirements": [
+    "range-bound or low-trend environment",
+    "price stretched far from the 20 EMA or 20-period mean",
+    "not in a parabolic or momentum-driven phase"
+  ],
+  "entry_conditions": [
+    "price closes at or beyond the outer Bollinger Band (2 standard deviations)",
+    "RSI is below 25 for bullish mean reversion or above 75 for bearish mean reversion",
+    "RSI divergence: price making new lows while RSI makes higher lows (bullish), or price making new highs while RSI makes lower highs (bearish)",
+    "Bollinger Band squeeze or narrowing preceding the extreme move",
+    "price is a minimum of 2 ATR away from the 20-period moving average"
+  ],
+  "confirmation_requirements": [
+    "price closes back inside the Bollinger Band after tagging the outer band",
+    "RSI turning back toward 50 from the extreme",
+    "reversal candle at the Bollinger Band extreme: pin bar, engulfing, or doji",
+    "volume declining on the final push to the extreme indicating exhaustion",
+    "Stochastic crossing from overbought/oversold region"
+  ],
+  "stop_loss_logic": "Place stop beyond the Bollinger Band extreme plus 0.5-1 ATR. For bullish mean reversion: stop below the low of the candle that closed beyond the lower band. For bearish: stop above the high of the candle that closed beyond the upper band.",
+  "take_profit_logic": "Primary target at the 20-period moving average (Bollinger Band midline). Secondary target at the opposing Bollinger Band if a range exists. Take 50-60% profit at the midline and hold remainder for the opposing band. Do not hold past the midline without strong momentum.",
+  "invalidation_conditions": [
+    "price continues to close beyond the Bollinger Band for 3 or more consecutive candles (band walking)",
+    "ADX rises above 30 indicating a trend is developing — mean reversion fails in strong trends",
+    "no RSI divergence present — price and RSI both at extremes without divergence",
+    "volume expanding on the move to the extreme indicating institutional participation",
+    "Bollinger Bands expanding rapidly (increasing volatility) rather than contracting",
+    "price gaps further beyond the band on the next open"
+  ],
+  "related_indicators": [
+    "Bollinger_Bands",
+    "RSI",
+    "ATR",
+    "EMA_20",
+    "Stochastic",
+    "ADX",
+    "volume",
+    "standard_deviation"
+  ],
+  "related_patterns": [
+    "pin_bar_at_band",
+    "engulfing_at_band",
+    "doji_at_extreme",
+    "rsi_divergence",
+    "macd_divergence",
+    "bollinger_band_squeeze"
+  ],
+  "required_features": {
+    "bollinger_band_position": "price at or beyond outer band (2 SD)",
+    "rsi_value": "<25 for bullish or >75 for bearish",
+    "rsi_divergence": "confirmed",
+    "adx_value": "<25 preferred",
+    "volatility_context": "low to moderate, not expanding",
+    "deviation_from_mean": ">=2 ATR from 20-period MA"
+  },
+  "timeframe_requirements": {
+    "macro": "4H or 1D to assess overall volatility context and trend absence",
+    "entry": "1H or 15M for Bollinger Band extreme and reversal candle confirmation"
+  },
+  "risk_notes": "Mean reversion fails catastrophically in trending markets — always check ADX. If the Bollinger Bands are expanding (volatility increasing), do not use this strategy. Band walking occurs in strong trends and will result in continuous losses if you keep fading it. This strategy works best in choppy, low-volatility environments. Risk only 0.75-1% per trade as mean reversion setups can require multiple attempts before the mean is reached.",
+  "typical_rr": "1:1.5 to 1:2.5 to the midline",
+  "agent_rules": [
+    {
+      "id": "mr_001",
+      "rule": "Never apply mean reversion if ADX is above 25 — the market is trending and the strategy will fail."
+    },
+    {
+      "id": "mr_002",
+      "rule": "Require RSI divergence at the extreme — a price at the Bollinger Band without divergence is not a valid setup."
+    },
+    {
+      "id": "mr_003",
+      "rule": "If price closes beyond the Bollinger Band for 3 consecutive candles, the trade is invalidated — this is band walking, not mean reversion."
+    },
+    {
+      "id": "mr_004",
+      "rule": "Primary take profit target is always the 20-period moving average (Bollinger midline) — do not be greedy on mean reversion."
+    },
+    {
+      "id": "mr_005",
+      "rule": "Check Bollinger Band width — if bands are expanding significantly, skip the trade; use only when volatility is low or contracting."
+    }
+  ]
+}

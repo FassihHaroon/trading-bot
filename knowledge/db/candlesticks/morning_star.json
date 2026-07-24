@@ -1,0 +1,29 @@
+{
+  "id": "morning_star",
+  "name": "Morning Star",
+  "candle_count": 3,
+  "bias": "bullish",
+  "description": "A three-candle bullish reversal pattern that forms at the bottom of a downtrend. Candle 1 is a large bearish candle, candle 2 is a small-bodied indecision candle (star) that gaps down, and candle 3 is a large bullish candle that closes well into candle 1's body. Represents the transition from bearish control to bullish control.",
+  "body_rules": {
+    "candle_1": "large bearish (red/black) body indicating strong selling momentum",
+    "candle_2": "small real body of either color (doji or spinning top); opens below candle 1 close; the gap down is ideal but not mandatory in forex/crypto",
+    "candle_3": "large bullish (green/white) body that closes at least 50% into candle 1's body; opens above candle 2 body"
+  },
+  "wick_rules": {
+    "candle_1_wicks": "not critical; long lower wick on candle 1 is acceptable",
+    "candle_2_wicks": "can have wicks in either direction; doji version is strongest signal",
+    "candle_3_wicks": "small upper wick preferred; long lower wick on candle 3 reduces conviction"
+  },
+  "context_requirement": "must form at the end of a downtrend at a key support level, Fibonacci retracement level, or demand zone; pattern appearing mid-range is not valid",
+  "volume_requirement": "candle 1 may have high volume; candle 2 should have lower volume signaling exhaustion; candle 3 should have the highest volume of the three confirming bullish commitment",
+  "reliability": "high",
+  "agent_rules": [
+    "Confirm the pattern is at a support zone, Fibonacci level (61.8% or 78.6%), or demand zone",
+    "Enter long after candle 3 closes or at the open of candle 4",
+    "Stop loss below the low of candle 2 (the star) or below the pattern low",
+    "The deeper candle 3 closes into candle 1's body, the stronger the reversal signal",
+    "A doji for candle 2 is the strongest star variation",
+    "Candle 3 volume should be visibly higher than candles 1 and 2",
+    "Do not trade this pattern if candle 3 fails to close at least halfway into candle 1's body"
+  ]
+}

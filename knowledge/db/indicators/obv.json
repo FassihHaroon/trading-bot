@@ -1,0 +1,95 @@
+{
+  "id": "obv",
+  "name": "On Balance Volume (OBV)",
+  "category": "volume",
+  "description": "On Balance Volume is a cumulative volume-based indicator that adds volume on up days and subtracts volume on down days. It reflects the flow of volume in relation to price direction, providing insight into whether smart money is accumulating or distributing. OBV itself is a running total — its absolute value is meaningless; only its direction and relationship to price matter. OBV trend confirmation and OBV divergence from price are the two primary use cases.",
+  "parameters": {
+    "formula_up_day": "OBV = Previous OBV + Volume (when Close > Previous Close)",
+    "formula_down_day": "OBV = Previous OBV - Volume (when Close < Previous Close)",
+    "formula_unchanged": "OBV = Previous OBV (when Close = Previous Close)",
+    "smoothing_optional": "EMA(OBV, 20) can be applied to smooth the OBV line for trend clarity"
+  },
+  "signals": [
+    {
+      "condition": "OBV rising in line with price rising",
+      "interpretation": "Volume confirming the uptrend — buying volume is exceeding selling volume. The trend has healthy participation and is likely to continue."
+    },
+    {
+      "condition": "OBV falling in line with price falling",
+      "interpretation": "Volume confirming the downtrend — selling volume is exceeding buying volume. The downtrend has healthy participation and is likely to continue."
+    },
+    {
+      "condition": "Price making new highs but OBV failing to make new highs (bearish divergence)",
+      "interpretation": "Volume is not confirming the price breakout — potential distribution or smart money selling into strength. High-probability warning of a reversal or significant pullback."
+    },
+    {
+      "condition": "Price making new lows but OBV failing to make new lows (bullish divergence)",
+      "interpretation": "Volume is not confirming the price breakdown — potential accumulation or smart money buying into weakness. High-probability warning of a reversal or significant bounce."
+    },
+    {
+      "condition": "OBV breaking out of a consolidation range before price does",
+      "interpretation": "OBV leading price — smart money positioning before the price move. A leading bullish (or bearish) signal depending on direction of OBV break."
+    },
+    {
+      "condition": "OBV making higher highs and higher lows (uptrend in OBV) while price is ranging",
+      "interpretation": "Accumulation pattern — volume is net positive during the range, suggesting price will eventually break upward."
+    },
+    {
+      "condition": "OBV making lower highs and lower lows (downtrend in OBV) while price is ranging",
+      "interpretation": "Distribution pattern — volume is net negative during the range, suggesting price will eventually break downward."
+    },
+    {
+      "condition": "OBV spikes sharply higher on a single day",
+      "interpretation": "Institutional buying or capitulation volume event — assess context. If at support after a decline, this may signal a bottom. If during a rally, it could signal a blow-off top."
+    },
+    {
+      "condition": "OBV trend line breaks down while price is still in an uptrend",
+      "interpretation": "Early warning signal — volume flow is deteriorating before price reflects it. Watch for price confirmation of the reversal."
+    }
+  ],
+  "rules": [
+    {
+      "id": "obv-rule-1",
+      "rule": "Use OBV as a confirmation tool, not a standalone entry signal. OBV must agree with the price trend for a trade to be considered high-conviction. OBV divergence is a warning, not an automatic entry.",
+      "rationale": "OBV represents volume flow but does not account for where within a candle the volume occurred. It is best used to confirm or question price moves rather than generate independent trade signals."
+    },
+    {
+      "id": "obv-rule-2",
+      "rule": "When price makes a new high but OBV does not confirm (bearish divergence), downgrade the trade setup quality. Do not take aggressive long entries at new highs without OBV confirmation.",
+      "rationale": "OBV divergence at price highs is one of the most reliable early warnings of distribution. Professional money tends to sell into new highs while retail buyers push price up on declining volume."
+    },
+    {
+      "id": "obv-rule-3",
+      "rule": "Apply trend analysis to OBV itself — look for higher highs and higher lows (OBV uptrend) or lower highs and lower lows (OBV downtrend). An OBV uptrend during a price range signals accumulation; an OBV downtrend during a price range signals distribution.",
+      "rationale": "Treating OBV as a trend indicator reveals accumulation and distribution within ranges before price moves. This gives early positioning information aligned with institutional behavior."
+    },
+    {
+      "id": "obv-rule-4",
+      "rule": "Watch for OBV breakouts that precede price breakouts. If OBV breaks a key level before price does, treat it as an early long/short bias signal and begin looking for price confirmation.",
+      "rationale": "Institutional accumulation or distribution often moves OBV before price, since large orders are executed over time. OBV leading price is one of the strongest advance signals available."
+    },
+    {
+      "id": "obv-rule-5",
+      "rule": "Do not use OBV in isolation for timing. Use it alongside price structure, EMA trends, and momentum indicators. OBV divergence combined with RSI divergence at a key structural level is a very high-confidence reversal setup.",
+      "rationale": "Multi-indicator confluence dramatically improves the reliability of any signal. OBV provides the volume dimension that price-only indicators miss."
+    },
+    {
+      "id": "obv-rule-6",
+      "rule": "Compare OBV trends across timeframes. A rising OBV on the weekly timeframe during a daily chart ranging period confirms accumulation and increases confidence for a daily breakout trade to the upside.",
+      "rationale": "Higher timeframe OBV trends represent larger institutional flows. Aligning lower timeframe trades with higher timeframe OBV trends improves win rate."
+    }
+  ],
+  "related_concepts": [
+    "volume",
+    "accumulation",
+    "distribution",
+    "smart_money",
+    "divergence",
+    "trend_confirmation",
+    "breakout",
+    "institutional_flow",
+    "leading_indicator",
+    "multi_timeframe_analysis"
+  ],
+  "agent_use": "Use OBV to validate or question price moves. When analyzing a trade setup, check if OBV confirms the price trend (both trending in same direction = confirmation). Flag OBV divergence from price as a quality downgrade — especially at key highs or lows. Check OBV trend structure during ranging markets to detect accumulation or distribution. Report OBV direction relative to price and any divergence conditions when analyzing setups. Combine OBV divergence with RSI divergence at key levels for highest confidence reversal signals."
+}

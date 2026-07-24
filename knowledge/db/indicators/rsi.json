@@ -1,0 +1,114 @@
+{
+  "id": "rsi",
+  "name": "Relative Strength Index (RSI)",
+  "category": "momentum_oscillator",
+  "description": "RSI measures the speed and magnitude of price changes on a scale of 0-100. It compares average gains to average losses over a lookback period to assess overbought and oversold conditions. Default period is 14 bars. RSI is most reliable in ranging markets and must be interpreted differently during strong trends.",
+  "parameters": {
+    "period": 14,
+    "overbought_threshold": 70,
+    "oversold_threshold": 30,
+    "trend_adjusted_overbought": 80,
+    "trend_adjusted_oversold": 40,
+    "source": "close"
+  },
+  "signals": [
+    {
+      "condition": "RSI crosses above 30 from below",
+      "interpretation": "Potential end of oversold condition; bullish reversal signal when confirmed by price action or structure"
+    },
+    {
+      "condition": "RSI crosses below 70 from above",
+      "interpretation": "Potential end of overbought condition; bearish reversal signal when confirmed by price action or structure"
+    },
+    {
+      "condition": "RSI above 70",
+      "interpretation": "Overbought in ranging market; in strong uptrend this is normal and does not signal reversal alone"
+    },
+    {
+      "condition": "RSI below 30",
+      "interpretation": "Oversold in ranging market; in strong downtrend this is normal and does not signal reversal alone"
+    },
+    {
+      "condition": "Regular bullish divergence: price makes lower low, RSI makes higher low",
+      "interpretation": "Bearish momentum is weakening; potential bullish reversal — high-probability signal especially at key support"
+    },
+    {
+      "condition": "Regular bearish divergence: price makes higher high, RSI makes lower high",
+      "interpretation": "Bullish momentum is weakening; potential bearish reversal — high-probability signal especially at key resistance"
+    },
+    {
+      "condition": "Hidden bullish divergence: price makes higher low, RSI makes lower low",
+      "interpretation": "Trend continuation signal in uptrend; pullback is likely over, trend likely to resume upward"
+    },
+    {
+      "condition": "Hidden bearish divergence: price makes lower high, RSI makes higher high",
+      "interpretation": "Trend continuation signal in downtrend; retracement is likely over, trend likely to resume downward"
+    },
+    {
+      "condition": "RSI ranging between 40-80 consistently",
+      "interpretation": "Strong uptrend regime; RSI does not reach oversold; pullbacks to 40-50 are buy zones not sell zones"
+    },
+    {
+      "condition": "RSI ranging between 20-60 consistently",
+      "interpretation": "Strong downtrend regime; RSI does not reach overbought; bounces to 50-60 are sell zones not buy zones"
+    },
+    {
+      "condition": "RSI crosses above 50",
+      "interpretation": "Bullish momentum shift; price is gaining upward momentum on average"
+    },
+    {
+      "condition": "RSI crosses below 50",
+      "interpretation": "Bearish momentum shift; price is losing upward momentum on average"
+    }
+  ],
+  "rules": [
+    {
+      "id": "rsi_r1",
+      "rule": "Never use RSI overbought/oversold thresholds as standalone entry signals. Always require confirmation from price structure, support/resistance, or candlestick patterns.",
+      "rationale": "RSI can remain overbought or oversold for extended periods in trending markets, leading to premature entries against the trend."
+    },
+    {
+      "id": "rsi_r2",
+      "rule": "Adjust RSI interpretation based on trend regime. In a strong uptrend, treat 40-50 as oversold and 70-80 as overbought. In a strong downtrend, treat 50-60 as overbought and 20-30 as oversold.",
+      "rationale": "Fixed thresholds fail in trending markets. RSI is biased by trend direction and must be recalibrated to the current regime."
+    },
+    {
+      "id": "rsi_r3",
+      "rule": "Prioritize regular divergence signals at key structural levels (swing highs/lows, S/R zones, Fibonacci levels). Divergence without a structural confluence is lower probability.",
+      "rationale": "Divergence signals the weakening of momentum but price needs a reason (structure) to actually reverse. Confluence increases probability significantly."
+    },
+    {
+      "id": "rsi_r4",
+      "rule": "Use hidden divergence for trend-following entries during pullbacks. Hidden bullish divergence on a pullback in an uptrend is a high-probability continuation signal.",
+      "rationale": "Hidden divergence aligns with the dominant trend, making it statistically more reliable than counter-trend regular divergence."
+    },
+    {
+      "id": "rsi_r5",
+      "rule": "The RSI 50 level acts as a bull/bear line. Price holding above 50 on pullbacks favors bulls; price failing to reclaim 50 on bounces favors bears.",
+      "rationale": "RSI 50 represents equilibrium between average gains and losses. Sustained bias above or below 50 reflects trend direction."
+    },
+    {
+      "id": "rsi_r6",
+      "rule": "Do not trade RSI divergence against a strong trend without higher-timeframe confirmation of a reversal. Wait for the higher timeframe to show a topping or bottoming pattern.",
+      "rationale": "Counter-trend trades carry higher risk. Higher-timeframe alignment dramatically improves reward-to-risk."
+    },
+    {
+      "id": "rsi_r7",
+      "rule": "Use multiple timeframe RSI analysis. Daily RSI gives trend bias; 4H RSI provides entry context; 1H RSI gives precise entry timing.",
+      "rationale": "Single-timeframe RSI analysis misses the broader context and leads to fighting the dominant trend."
+    }
+  ],
+  "related_concepts": [
+    "momentum",
+    "divergence",
+    "overbought_oversold",
+    "trend_regime",
+    "hidden_divergence",
+    "regular_divergence",
+    "mean_reversion",
+    "trend_continuation",
+    "multi_timeframe_analysis",
+    "support_resistance"
+  ],
+  "agent_use": "Use RSI to assess momentum context and divergence. First determine trend regime (ranging vs trending) by checking price structure and EMA alignment. Apply fixed 30/70 thresholds only in ranging markets. In trends, shift thresholds to 40/80 (uptrend) or 20/60 (downtrend). Flag regular divergence at structural confluence as potential reversal warnings. Flag hidden divergence during pullbacks as continuation entries. Always combine RSI signal with at least one structural confirmation before generating a trade signal. Report RSI value, regime, any active divergence type, and the 50-line bias in analysis output."
+}

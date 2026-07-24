@@ -1,0 +1,28 @@
+{
+  "id": "doji",
+  "name": "Doji",
+  "candle_count": 1,
+  "bias": "neutral",
+  "description": "A candle where the open and close are nearly equal, forming a cross or plus shape. Signals indecision between buyers and sellers. Its significance is entirely context-dependent — a doji after a long trend carries far more weight than one in consolidation.",
+  "body_rules": {
+    "body_size": "extremely small or nonexistent",
+    "open_close_relationship": "open and close are at or near the same price level",
+    "body_to_range_ratio": "body is less than 5% of the total candle range"
+  },
+  "wick_rules": {
+    "upper_wick": "present, variable length",
+    "lower_wick": "present, variable length",
+    "symmetry": "wicks can be equal (standard doji), long upper only (gravestone), long lower only (dragonfly), or both long (long-legged doji)"
+  },
+  "context_requirement": "must appear after a prolonged trend (up or down) to signal a potential reversal; in ranging markets it is noise",
+  "volume_requirement": "higher than average volume adds confirmation weight; low volume doji in a trend is less significant",
+  "reliability": "low",
+  "agent_rules": [
+    "Never act on a doji alone; always require confluence with support/resistance or a key level",
+    "A doji at resistance after an uptrend is bearish; at support after a downtrend is bullish",
+    "Wait for the next candle to confirm direction before entering",
+    "Gravestone doji (long upper wick) at resistance is a stronger bearish signal",
+    "Dragonfly doji (long lower wick) at support is a stronger bullish signal",
+    "Doji inside consolidation ranges should be ignored"
+  ]
+}

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "MACRO_MICRO_GATE_MANDATORY",
+    "category": "signal_generation",
+    "rule": "No trade signal on the micro (entry) timeframe is valid unless the macro (higher) timeframe trend direction is confirmed first. Macro timeframe must be analyzed before micro timeframe in every trade evaluation.",
+    "rationale": "Trading against the higher timeframe trend dramatically increases failure probability. The macro context defines the path of least resistance; micro signals are only meaningful when aligned with it.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Murphy - Technical Analysis of the Financial Markets; Elder - Trading for a Living"
+  },
+  {
+    "id": "STOP_REQUIRED_BEFORE_SIGNAL",
+    "category": "risk",
+    "rule": "A defined stop-loss price level must be identified and recorded before a trade signal is considered valid. A signal without a pre-defined stop is rejected outright.",
+    "rationale": "Without a stop, risk cannot be calculated and position sizing is undefined. Entering without a stop is speculation without a risk boundary, violating the foundation of disciplined trading.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Douglas - Trading in the Zone; Schwager - Market Wizards"
+  },
+  {
+    "id": "NO_SINGLE_FACTOR_TRADE",
+    "category": "signal_generation",
+    "rule": "A minimum of two independent confluent factors must align to generate a trade signal. A single indicator, pattern, or level in isolation is not sufficient to trigger a trade.",
+    "rationale": "Single-factor signals have a high false-positive rate. Confluence of independent signals (e.g., support level + RSI oversold + bullish engulfing) filters noise and raises signal quality.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Murphy - Technical Analysis of the Financial Markets; Pring - Technical Analysis Explained"
+  },
+  {
+    "id": "CONFIDENCE_NOT_POSITION_SCALER",
+    "category": "risk",
+    "rule": "Position size is determined solely by the pre-defined risk percentage of account equity and the distance to the stop-loss. Confidence level, conviction, or signal strength must NOT be used to increase position size beyond the risk ceiling.",
+    "rationale": "High confidence is a psychological state, not a statistical edge. Scaling up on conviction leads to over-leveraging on emotionally charged trades, which is a primary cause of account blowups.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Douglas - Trading in the Zone; Tharp - Trade Your Way to Financial Freedom"
+  },
+  {
+    "id": "NO_STOP_WIDENING",
+    "category": "risk",
+    "rule": "Once a trade is entered and the initial stop-loss is set, the stop may only be moved in the direction of the trade (trailing stop). Moving the stop further away from entry to avoid being stopped out is strictly prohibited.",
+    "rationale": "Widening stops converts a defined-risk trade into an undefined-risk trade. It is a form of loss aversion that invalidates the original trade thesis and compounds losses.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Douglas - Trading in the Zone; Livermore - How to Trade in Stocks"
+  },
+  {
+    "id": "COOLDOWN_AFTER_CONSECUTIVE_LOSSES",
+    "category": "psychology",
+    "rule": "After two consecutive losing trades, a mandatory cooldown period of at least 2 hours must be observed before evaluating any new trade. During cooldown, no trade signals may be generated or acted upon.",
+    "rationale": "Consecutive losses trigger emotional responses (revenge trading, tilt) that impair judgment. A forced pause breaks the emotional feedback loop and allows objective reassessment.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Douglas - Trading in the Zone; Steenbarger - The Psychology of Trading"
+  },
+  {
+    "id": "DAILY_CIRCUIT_BREAKER",
+    "category": "risk",
+    "rule": "If daily realized losses reach or exceed 3% of account equity, all trading activity must cease for the remainder of that trading day. No new positions may be opened.",
+    "rationale": "A daily loss limit prevents a single bad day from causing catastrophic drawdown. Emotional impairment worsens after significant daily losses, making further trading counterproductive.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Tharp - Trade Your Way to Financial Freedom; Schwager - Market Wizards"
+  },
+  {
+    "id": "WEEKLY_CIRCUIT_BREAKER",
+    "category": "risk",
+    "rule": "If weekly realized losses reach or exceed 6% of account equity, all trading activity must cease for the remainder of that trading week. Resume only after a documented review of the week's trades.",
+    "rationale": "A weekly loss limit prevents compounding drawdown across multiple bad days. The mandatory review ensures systematic errors are identified before re-engagement.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Tharp - Trade Your Way to Financial Freedom; Elder - Come Into My Trading Room"
+  },
+  {
+    "id": "NO_CERTAINTY_CLAIMS",
+    "category": "psychology",
+    "rule": "The system must never output language expressing certainty about future price direction (e.g., 'price will', 'guaranteed', 'definitely', 'must go'). All outputs must use probabilistic language (e.g., 'probability favors', 'setup suggests', 'confluence indicates').",
+    "rationale": "Certainty claims are epistemically false in markets. They create emotional attachment to outcomes, suppress adaptive thinking, and encourage overconfidence that leads to rule violations.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Douglas - Trading in the Zone; Taleb - The Black Swan"
+  },
+  {
+    "id": "VOLUME_CONFIRMATION_REQUIRED",
+    "category": "signal_generation",
+    "rule": "Breakout signals require volume at or above the 20-period average volume to be considered confirmed. A breakout on below-average volume reduces signal confidence by 0.20.",
+    "rationale": "Volume validates the conviction behind a price move. Low-volume breakouts frequently reverse as they lack institutional participation and are susceptible to false breakouts.",
+    "enforcement": "penalty",
+    "penalty_amount": -0.20,
+    "source": "Murphy - Technical Analysis of the Financial Markets; O'Neil - How to Make Money in Stocks"
+  },
+  {
+    "id": "RSI_TRENDING_ADJUSTMENT",
+    "category": "signal_generation",
+    "rule": "In a confirmed trending market, RSI overbought/oversold thresholds must be adjusted: in uptrends, oversold is defined as RSI < 40 (not 30) and overbought signals are treated as continuation cues; in downtrends, overbought is RSI > 60 (not 70). Standard 30/70 thresholds apply only in ranging markets.",
+    "rationale": "In trending markets, RSI routinely remains in overbought or oversold territory. Applying ranging-market thresholds generates premature counter-trend signals with negative expectancy.",
+    "enforcement": "soft",
+    "penalty_amount": null,
+    "source": "Wilder - New Concepts in Technical Trading Systems; Murphy - Technical Analysis of the Financial Markets"
+  },
+  {
+    "id": "DIVERGENCE_ALERT_NOT_TRIGGER",
+    "category": "signal_generation",
+    "rule": "RSI or MACD divergence alone is classified as an alert condition, not a trade trigger. Divergence must be accompanied by at least one additional confluence factor (e.g., key support/resistance, candlestick reversal pattern) before a signal is generated.",
+    "rationale": "Divergence can persist for extended periods before resolving. Trading divergence in isolation results in premature entries against strong trends. It is a warning signal, not an entry signal.",
+    "enforcement": "soft",
+    "penalty_amount": null,
+    "source": "Murphy - Technical Analysis of the Financial Markets; Pring - Technical Analysis Explained"
+  },
+  {
+    "id": "PATTERN_TIMEFRAME_MINIMUM",
+    "category": "signal_generation",
+    "rule": "Candlestick and chart patterns must be identified on a minimum 1-hour timeframe to be used as entry signals. Patterns identified on timeframes below 1 hour carry a confidence penalty of -0.15 and may not be used as standalone signals.",
+    "rationale": "Sub-hourly patterns contain significantly more noise and are frequently invalidated within minutes. Higher timeframe patterns represent more meaningful price action and have statistically higher completion rates.",
+    "enforcement": "penalty",
+    "penalty_amount": -0.15,
+    "source": "Bulkowski - Encyclopedia of Chart Patterns; Murphy - Technical Analysis of the Financial Markets"
+  },
+  {
+    "id": "NO_CHASING_BROKEN_LEVELS",
+    "category": "signal_generation",
+    "rule": "If a key support/resistance level has already been broken and price has moved more than 1 ATR beyond the level before entry, the trade opportunity is considered missed. Entry must not be initiated by chasing price beyond the established entry zone.",
+    "rationale": "Chasing price after a breakout dramatically worsens the risk-reward ratio and frequently results in entering at the point of maximum extension just before a retracement.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Livermore - How to Trade in Stocks; O'Neil - How to Make Money in Stocks"
+  },
+  {
+    "id": "NO_TARGET_EXTENSION_POSTENTRY",
+    "category": "psychology",
+    "rule": "Price targets must be set before entry and must not be extended or moved further from entry after a trade is open. If price approaches a target, the target must be honored or a trailing stop employed. The target may not be revised upward in real-time based on greed or momentum.",
+    "rationale": "Post-entry target extension is a form of greed-driven rule violation that converts a planned trade into an emotional trade. It negates the pre-defined risk-reward ratio and leads to giving back profits.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Douglas - Trading in the Zone; Elder - Trading for a Living"
+  },
+  {
+    "id": "NO_TRADE_IS_VALID_OUTPUT",
+    "category": "signal_generation",
+    "rule": "The output 'No trade identified' or 'No valid setup present' is a legitimate and acceptable system output. The system must not force a trade signal when confluence criteria are not met. Inaction is a valid decision.",
+    "rationale": "Forcing trades when conditions are suboptimal is a primary cause of unnecessary losses. The best traders are highly selective. Not every market session requires a trade.",
+    "enforcement": "soft",
+    "penalty_amount": null,
+    "source": "Douglas - Trading in the Zone; Schwager - Market Wizards"
+  },
+  {
+    "id": "COUNTER_TREND_MICRO_EXCLUDED",
+    "category": "signal_generation",
+    "rule": "Counter-trend trade signals on the micro (entry) timeframe are excluded when the macro timeframe trend is strong (defined as price trending with ADX > 25 or clear higher highs/lows on the macro chart). Only trend-aligned micro signals are permissible in strong trend conditions.",
+    "rationale": "Counter-trend trades against a strong macro trend have severely negative expectancy. The macro trend represents the dominant force; fighting it on the micro level is a low-probability activity.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Elder - Trading for a Living; Murphy - Technical Analysis of the Financial Markets"
+  },
+  {
+    "id": "TOP_DOWN_ANALYSIS_ORDER",
+    "category": "signal_generation",
+    "rule": "Analysis must always proceed in top-down order: (1) macro timeframe trend identification, (2) intermediate timeframe structure and key levels, (3) micro timeframe entry signal evaluation. Skipping or reversing this order invalidates the analysis.",
+    "rationale": "Top-down analysis ensures micro signals are contextualized within the larger market structure. Starting from the micro level creates confirmation bias toward a signal without validating the macro environment.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Elder - Trading for a Living; Murphy - Technical Analysis of the Financial Markets"
+  },
+  {
+    "id": "COMPLIANT_LOSS_LOGGING",
+    "category": "psychology",
+    "rule": "Every losing trade must be logged with: (1) entry and exit prices, (2) the original trade thesis, (3) the reason the trade failed, (4) whether all rules were followed, and (5) one actionable lesson. Losses without compliant logging reduce the system's confidence score for the next session by 0.10.",
+    "rationale": "Loss logging converts losses into learning events. Unlogged losses are repeated losses. Systematic review of losing trades is the primary mechanism for improving edge over time.",
+    "enforcement": "soft",
+    "penalty_amount": -0.10,
+    "source": "Steenbarger - The Psychology of Trading; Elder - Come Into My Trading Room"
+  },
+  {
+    "id": "RISK_PCT_HARD_CEILING",
+    "category": "risk",
+    "rule": "Maximum risk per trade must not exceed 2% of current account equity under any circumstances. This ceiling applies regardless of signal strength, confidence level, or recent performance. Position size must be calculated to enforce this ceiling before order submission.",
+    "rationale": "A 2% risk ceiling ensures that even a 10-trade losing streak reduces equity by no more than ~18%. Exceeding this ceiling exponentially increases the probability of an unrecoverable drawdown.",
+    "enforcement": "hard",
+    "penalty_amount": null,
+    "source": "Tharp - Trade Your Way to Financial Freedom; Elder - Come Into My Trading Room"
+  }
+]

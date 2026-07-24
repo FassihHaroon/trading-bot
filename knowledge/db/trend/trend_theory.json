@@ -1,0 +1,200 @@
+{
+  "topic": "Trend Theory",
+  "version": "1.0",
+  "last_updated": "2026-07-24",
+  "dow_theory_tenets": [
+    {
+      "tenet_number": 1,
+      "name": "The Market Discounts Everything",
+      "description": "All known and unknowable information is already reflected in market prices. Prices represent the collective knowledge of all participants."
+    },
+    {
+      "tenet_number": 2,
+      "name": "The Market Has Three Trends",
+      "description": "Primary trend lasts 1+ years, secondary trend lasts 3 weeks to 3 months as a correction, minor trend lasts less than 3 weeks as short-term fluctuations."
+    },
+    {
+      "tenet_number": 3,
+      "name": "Primary Trends Have Three Phases",
+      "description": "Bull market: accumulation, public participation, excess/distribution. Bear market: distribution, public participation, panic/despair."
+    },
+    {
+      "tenet_number": 4,
+      "name": "Indices Must Confirm Each Other",
+      "description": "No important bull or bear signal can occur unless both the Dow Jones Industrial and Transportation averages confirm the signal."
+    },
+    {
+      "tenet_number": 5,
+      "name": "Volume Must Confirm the Trend",
+      "description": "Volume should expand in the direction of the primary trend and contract on counter-trend moves. Rising prices with rising volume confirms uptrend."
+    },
+    {
+      "tenet_number": 6,
+      "name": "A Trend Is Assumed to Continue Until It Gives Definite Reversal Signals",
+      "description": "An established trend is presumed to continue until clear evidence of a reversal appears. Doubt should be resolved in favor of the existing trend."
+    }
+  ],
+  "trend_types": {
+    "primary": {
+      "duration": "1 year or more",
+      "description": "The main market direction, also called the tide. Most important for investors.",
+      "bull_phases": ["accumulation", "public_participation", "excess"],
+      "bear_phases": ["distribution", "public_participation", "panic"]
+    },
+    "secondary": {
+      "duration": "3 weeks to 3 months",
+      "description": "Counter-move against the primary trend, also called the wave. Typically retraces 33% to 66% of the prior primary move.",
+      "retracement_range_pct": [33, 66]
+    },
+    "minor": {
+      "duration": "less than 3 weeks",
+      "description": "Short-term fluctuations within the secondary trend, also called ripples. Less significant for trend analysis."
+    }
+  },
+  "wave_structure": {
+    "uptrend_definition": {
+      "pattern": "Higher Highs (HH) and Higher Lows (HL)",
+      "description": "Each successive peak is higher than the prior peak and each successive trough is higher than the prior trough.",
+      "confirmation_rule": "Uptrend intact as long as each HL holds above the prior HL"
+    },
+    "downtrend_definition": {
+      "pattern": "Lower Highs (LH) and Lower Lows (LL)",
+      "description": "Each successive peak is lower than the prior peak and each successive trough is lower than the prior trough.",
+      "confirmation_rule": "Downtrend intact as long as each LH is below the prior LH"
+    },
+    "sideways_definition": {
+      "pattern": "Equal Highs (EH) and Equal Lows (EL)",
+      "description": "Price oscillates between relatively equal highs and lows with no clear directional bias."
+    }
+  },
+  "trend_continuation_signals": [
+    {
+      "signal": "Pullback to prior resistance turned support",
+      "description": "Price breaks above resistance, pulls back to test the level, holds, and resumes upward",
+      "reliability": "high"
+    },
+    {
+      "signal": "Higher Low formation",
+      "description": "Each correction in an uptrend terminates at a higher price than the previous correction low",
+      "reliability": "high"
+    },
+    {
+      "signal": "Volume expansion on impulse legs",
+      "description": "Volume increases on the trending legs and decreases on pullbacks",
+      "reliability": "high"
+    },
+    {
+      "signal": "Flag and pennant patterns",
+      "description": "Brief consolidation on declining volume followed by breakout with volume expansion",
+      "reliability": "medium"
+    },
+    {
+      "signal": "Moving average support",
+      "description": "Price consistently finds support at a key moving average (e.g., 20 EMA in strong trends)",
+      "reliability": "medium"
+    }
+  ],
+  "trend_reversal_signals": [
+    {
+      "signal": "Break of Higher Low (HL) in uptrend",
+      "description": "Price closes below the most recent HL, suggesting the uptrend structure has been violated",
+      "severity": "warning"
+    },
+    {
+      "signal": "Failure to make new High",
+      "description": "Price rallies but fails to exceed the prior peak, forming a lower high",
+      "severity": "warning"
+    },
+    {
+      "signal": "Change of Character (CHOCH)",
+      "description": "First structural break against the prevailing trend direction after a run of trend-aligned breaks",
+      "severity": "alert"
+    },
+    {
+      "signal": "Break of Structure (BOS) against trend",
+      "description": "Price breaks through a significant swing high/low in the opposite direction of the trend",
+      "severity": "alert"
+    },
+    {
+      "signal": "Climax volume with reversal candle",
+      "description": "Extremely high volume accompanied by a reversal candlestick pattern at a key level",
+      "severity": "high"
+    },
+    {
+      "signal": "Divergence on momentum oscillators",
+      "description": "Price makes new highs/lows but momentum indicator fails to confirm, indicating weakening trend",
+      "severity": "medium"
+    }
+  ],
+  "volume_trend_relationship": {
+    "uptrend_healthy": {
+      "impulse_legs": "volume increases",
+      "corrective_legs": "volume decreases",
+      "interpretation": "Demand exceeds supply on rallies; sellers are not aggressive on pullbacks"
+    },
+    "uptrend_weakening": {
+      "impulse_legs": "volume decreases on rallies",
+      "corrective_legs": "volume increases on pullbacks",
+      "interpretation": "Demand is fading; supply is increasing; trend likely to reverse"
+    },
+    "downtrend_healthy": {
+      "impulse_legs": "volume increases on declines",
+      "corrective_legs": "volume decreases on bounces",
+      "interpretation": "Supply exceeds demand on declines; buyers are not aggressive on rallies"
+    },
+    "downtrend_weakening": {
+      "impulse_legs": "volume decreases on declines",
+      "corrective_legs": "volume increases on bounces",
+      "interpretation": "Selling pressure is fading; potential accumulation underway"
+    },
+    "climax_volume": {
+      "description": "Extremely high volume at the end of a trend move indicating exhaustion",
+      "bullish_climax": "selling climax at the bottom — potential trend reversal up",
+      "bearish_climax": "buying climax at the top — potential trend reversal down"
+    }
+  },
+  "agent_rules": [
+    {
+      "rule_id": "TT-001",
+      "condition": "price forms HH and HL sequence on chosen timeframe",
+      "action": "classify trend as UPTREND; bias long setups only",
+      "priority": 1
+    },
+    {
+      "rule_id": "TT-002",
+      "condition": "price forms LH and LL sequence on chosen timeframe",
+      "action": "classify trend as DOWNTREND; bias short setups only",
+      "priority": 1
+    },
+    {
+      "rule_id": "TT-003",
+      "condition": "price breaks below most recent HL in an uptrend",
+      "action": "flag potential trend reversal; reduce long bias; wait for confirmation",
+      "priority": 2
+    },
+    {
+      "rule_id": "TT-004",
+      "condition": "volume expands on impulse and contracts on correction",
+      "action": "confirm trend health; continue trend-following bias",
+      "priority": 2
+    },
+    {
+      "rule_id": "TT-005",
+      "condition": "volume expands against trend direction on corrective leg",
+      "action": "flag trend weakness; tighten stops; avoid new entries in trend direction",
+      "priority": 2
+    },
+    {
+      "rule_id": "TT-006",
+      "condition": "secondary indices fail to confirm primary index new high/low",
+      "action": "note non-confirmation per Dow Theory; treat signal as suspect until confirmation",
+      "priority": 3
+    },
+    {
+      "rule_id": "TT-007",
+      "condition": "trend classification unclear — overlapping highs and lows",
+      "action": "classify as SIDEWAYS; apply range-trading rules; avoid trend-following entries",
+      "priority": 1
+    }
+  ]
+}

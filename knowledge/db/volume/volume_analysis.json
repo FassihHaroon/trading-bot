@@ -1,0 +1,300 @@
+{
+  "topic": "Volume Analysis",
+  "version": "1.0",
+  "last_updated": "2026-07-24",
+  "core_principle": "Volume is the fuel of price movement. Price tells you what the market is doing; volume tells you how much conviction stands behind the move.",
+  "volume_confirms_trend": {
+    "principle": "Healthy trends are supported by volume expansion in the trend direction and volume contraction on counter-trend moves.",
+    "uptrend_healthy": {
+      "rally_legs": "volume expands",
+      "pullback_legs": "volume contracts",
+      "interpretation": "Buyers are aggressive and committed; sellers are passive on pullbacks",
+      "action": "maintain long bias; add on low-volume pullbacks"
+    },
+    "uptrend_unhealthy": {
+      "rally_legs": "volume contracts",
+      "pullback_legs": "volume expands",
+      "interpretation": "Buyers lack conviction; sellers are becoming more aggressive; distribution likely underway",
+      "action": "reduce long exposure; tighten stops; no new longs"
+    },
+    "downtrend_healthy": {
+      "decline_legs": "volume expands",
+      "rally_legs": "volume contracts",
+      "interpretation": "Sellers are aggressive; buyers are passive on rallies",
+      "action": "maintain short bias; add on low-volume rallies"
+    },
+    "downtrend_unhealthy": {
+      "decline_legs": "volume contracts",
+      "rally_legs": "volume expands",
+      "interpretation": "Sellers lack conviction; buyers are becoming more aggressive; accumulation likely underway",
+      "action": "reduce short exposure; tighten stops; no new shorts"
+    }
+  },
+  "climax_volume": {
+    "definition": "Extremely high volume — typically 2× to 5× average daily volume — occurring at the end of an extended trend move, signaling exhaustion of the dominant force.",
+    "selling_climax": {
+      "context": "occurs after a prolonged downtrend or sharp decline",
+      "characteristics": [
+        "Volume is extreme (2× to 5× average)",
+        "Wide spread down bar",
+        "Price closes off the lows (closes in upper half of bar range)",
+        "Rapid price reversal follows within 1-3 bars"
+      ],
+      "interpretation": "Panic selling exhausted; supply overwhelmed by buyers willing to absorb at any price; potential major low",
+      "follow_up_expectation": "Automatic rally (AR) follows; then secondary test on lower volume",
+      "trade_action": "do not buy the climax bar; wait for AR and secondary test confirmation"
+    },
+    "buying_climax": {
+      "context": "occurs after a prolonged uptrend or sharp rally",
+      "characteristics": [
+        "Volume is extreme (2× to 5× average)",
+        "Wide spread up bar",
+        "Price closes off the highs (closes in lower half of bar range)",
+        "Rapid price reversal follows within 1-3 bars"
+      ],
+      "interpretation": "Euphoric buying exhausted; demand overwhelmed by sellers (smart money distributing) at any price; potential major high",
+      "follow_up_expectation": "Automatic reaction (AR) follows; then secondary test on lower volume",
+      "trade_action": "do not short the climax bar; wait for AR and secondary test confirmation"
+    },
+    "volume_threshold": {
+      "minimum_multiplier": 2.0,
+      "strong_signal_multiplier": 3.0,
+      "extreme_signal_multiplier": 5.0,
+      "measurement_basis": "20-period average volume"
+    }
+  },
+  "dry_up_volume": {
+    "definition": "Volume that falls to significantly below average levels, indicating a temporary equilibrium where neither buyers nor sellers are aggressively active.",
+    "also_known_as": ["volume dry-up", "low volume node", "volume contraction"],
+    "significance_at_support": {
+      "interpretation": "Supply has dried up at support; sellers are not interested in selling at current prices; price likely to bounce",
+      "action": "valid long entry area; reduced risk as there is little selling pressure"
+    },
+    "significance_at_resistance": {
+      "interpretation": "Demand has dried up at resistance; buyers are not interested in buying at current prices; price likely to decline",
+      "action": "valid short entry area; reduced risk as there is little buying pressure"
+    },
+    "significance_in_trend_pullback": {
+      "interpretation": "Correction is running out of momentum; prevailing trend participants not aggressively exiting; trend likely to resume",
+      "action": "high probability entry in trend direction"
+    },
+    "volume_threshold_dry_up": "below 50% of 20-period average volume"
+  },
+  "obv_divergence": {
+    "indicator": "On-Balance Volume (OBV)",
+    "definition": "OBV is a cumulative volume indicator: adds volume on up days and subtracts volume on down days. OBV divergence occurs when OBV trend disagrees with price trend.",
+    "calculation": "OBV_today = OBV_yesterday + (volume if close > prior close) or - (volume if close < prior close)",
+    "bullish_divergence": {
+      "definition": "Price makes lower lows but OBV makes higher lows",
+      "interpretation": "Volume is accumulating on up days despite price declining; institutions buying on weakness; hidden accumulation underway",
+      "implication": "Potential trend reversal to upside; price likely to follow OBV higher",
+      "action": "watch for structural confirmation (CHOCH/BOS) to enter long",
+      "reliability": "high when combined with Wyckoff accumulation events"
+    },
+    "bearish_divergence": {
+      "definition": "Price makes higher highs but OBV makes lower highs",
+      "interpretation": "Volume is declining on up days despite price rising; institutions selling into strength; hidden distribution underway",
+      "implication": "Potential trend reversal to downside; price likely to follow OBV lower",
+      "action": "watch for structural confirmation (CHOCH/BOS) to enter short",
+      "reliability": "high when combined with Wyckoff distribution events"
+    },
+    "confirmation": {
+      "rule": "OBV divergence alone is not a trade signal; require price structure confirmation (BOS/CHOCH) before acting",
+      "false_signal_risk": "OBV divergences can persist for extended periods in strong trends"
+    }
+  },
+  "volume_at_breakout": {
+    "principle": "A valid breakout from a consolidation range, resistance level, or chart pattern must be accompanied by above-average volume to be considered genuine.",
+    "minimum_volume_requirement": {
+      "multiplier": 1.5,
+      "basis": "20-period average volume",
+      "description": "Breakout volume must be at least 1.5 times the 20-period average volume",
+      "strong_breakout_multiplier": 2.0,
+      "very_strong_breakout_multiplier": 3.0
+    },
+    "low_volume_breakout": {
+      "definition": "Breakout occurs but volume is at or below average",
+      "interpretation": "Breakout lacks conviction; likely to fail or require retest before continuation",
+      "action": "do not chase; wait for retest of breakout level; if retest holds on low volume, then enter",
+      "failure_risk": "high"
+    },
+    "high_volume_breakout": {
+      "definition": "Breakout occurs with volume 1.5× or more above average",
+      "interpretation": "Breakout has strong conviction; institutional participation likely; trend continuation probable",
+      "action": "valid entry on breakout or on first pullback to breakout level",
+      "failure_risk": "low"
+    },
+    "climax_volume_on_breakout": {
+      "definition": "Breakout occurs with extreme volume (3× or more above average)",
+      "interpretation": "May indicate buying/selling climax rather than continuation; risk of immediate reversal",
+      "action": "be cautious; watch for reversal signals in next 1-3 bars; may be a false breakout on extreme volume"
+    },
+    "pattern_specific_requirements": {
+      "range_breakout": "minimum 1.5× average",
+      "flag_pennant_breakout": "minimum 1.5× average; ideally 2× the volume seen during flag formation",
+      "trendline_break": "minimum 1.5× average",
+      "key_level_break": "minimum 1.5× average; higher is better"
+    }
+  },
+  "accumulation_vs_distribution_volume": {
+    "accumulation_volume_patterns": {
+      "definition": "Volume patterns suggesting smart money is buying (accumulating) while price appears bearish or sideways",
+      "patterns": [
+        {
+          "pattern": "Down bars on declining volume",
+          "interpretation": "Supply is drying up; sellers losing control",
+          "signal": "bullish"
+        },
+        {
+          "pattern": "Up bars on increasing volume with above-average advance",
+          "interpretation": "Demand is present and strong",
+          "signal": "bullish"
+        },
+        {
+          "pattern": "High volume down bar that closes in upper half (SC pattern)",
+          "interpretation": "Buyers absorbed all selling; demand overwhelmed supply",
+          "signal": "bullish reversal"
+        },
+        {
+          "pattern": "Test of lows on very low volume (dry-up at support)",
+          "interpretation": "No selling interest at lows; accumulation confirmed",
+          "signal": "strongly bullish"
+        },
+        {
+          "pattern": "OBV rising while price is flat or declining",
+          "interpretation": "Hidden accumulation; volume on up days exceeds volume on down days",
+          "signal": "bullish"
+        }
+      ]
+    },
+    "distribution_volume_patterns": {
+      "definition": "Volume patterns suggesting smart money is selling (distributing) while price appears bullish or sideways",
+      "patterns": [
+        {
+          "pattern": "Up bars on declining volume",
+          "interpretation": "Demand is drying up; buyers losing conviction",
+          "signal": "bearish"
+        },
+        {
+          "pattern": "Down bars on increasing volume with above-average decline",
+          "interpretation": "Supply is present and strong",
+          "signal": "bearish"
+        },
+        {
+          "pattern": "High volume up bar that closes in lower half (BC pattern)",
+          "interpretation": "Sellers absorbed all buying; supply overwhelmed demand",
+          "signal": "bearish reversal"
+        },
+        {
+          "pattern": "Test of highs on very low volume (dry-up at resistance)",
+          "interpretation": "No buying interest at highs; distribution confirmed",
+          "signal": "strongly bearish"
+        },
+        {
+          "pattern": "OBV declining while price is flat or rising",
+          "interpretation": "Hidden distribution; volume on down days exceeds volume on up days",
+          "signal": "bearish"
+        }
+      ]
+    },
+    "effort_vs_result_principle": {
+      "definition": "The relationship between volume (effort) and price movement (result). When effort and result are misaligned, the dominant force is likely being absorbed by the opposing force.",
+      "cases": [
+        {
+          "effort": "high volume",
+          "result": "little price progress",
+          "interpretation": "Absorption — opposing force is absorbing all the effort; likely reversal zone"
+        },
+        {
+          "effort": "low volume",
+          "result": "significant price progress",
+          "interpretation": "No resistance — price is moving into a vacuum; continuation likely until it meets supply/demand"
+        },
+        {
+          "effort": "high volume",
+          "result": "large price progress",
+          "interpretation": "Trend strength confirmed — effort and result aligned"
+        },
+        {
+          "effort": "low volume",
+          "result": "little price progress",
+          "interpretation": "Equilibrium — neither side interested; range likely to continue or major move pending"
+        }
+      ]
+    }
+  },
+  "agent_rules": [
+    {
+      "rule_id": "VOL-001",
+      "condition": "price in uptrend; volume expanding on rally legs and contracting on pullback legs",
+      "action": "confirm trend health; maintain long bias; enter on low-volume pullbacks",
+      "priority": 1
+    },
+    {
+      "rule_id": "VOL-002",
+      "condition": "price in uptrend; volume contracting on rallies and expanding on pullbacks",
+      "action": "flag trend weakness; reduce long exposure; tighten trailing stops; no new long entries",
+      "priority": 1
+    },
+    {
+      "rule_id": "VOL-003",
+      "condition": "climax volume bar appears after extended trend move",
+      "action": "mark as potential SC or BC; do not trade the bar; wait for AR and ST confirmation before positioning",
+      "priority": 1
+    },
+    {
+      "rule_id": "VOL-004",
+      "condition": "volume dries up at a key support level in an uptrend",
+      "action": "classify as valid long entry; reduced downside risk; enter long with stop below the low",
+      "priority": 2
+    },
+    {
+      "rule_id": "VOL-005",
+      "condition": "volume dries up at a key resistance level in a downtrend",
+      "action": "classify as valid short entry; reduced upside risk; enter short with stop above the high",
+      "priority": 2
+    },
+    {
+      "rule_id": "VOL-006",
+      "condition": "OBV making higher lows while price makes lower lows",
+      "action": "flag bullish OBV divergence; watch for structural CHOCH or BOS bullish confirmation before entering long",
+      "priority": 2
+    },
+    {
+      "rule_id": "VOL-007",
+      "condition": "OBV making lower highs while price makes higher highs",
+      "action": "flag bearish OBV divergence; watch for structural CHOCH or BOS bearish confirmation before entering short",
+      "priority": 2
+    },
+    {
+      "rule_id": "VOL-008",
+      "condition": "breakout from consolidation or key level with volume less than 1.5x 20-period average",
+      "action": "classify as low-confidence breakout; do not chase; wait for retest of level; require volume confirmation on retest or reject signal",
+      "priority": 1
+    },
+    {
+      "rule_id": "VOL-009",
+      "condition": "breakout from consolidation or key level with volume 1.5x or more above 20-period average",
+      "action": "classify as high-confidence breakout; valid entry on breakout bar close or first pullback to level",
+      "priority": 1
+    },
+    {
+      "rule_id": "VOL-010",
+      "condition": "high volume bar with little to no price progress at a key level",
+      "action": "classify as absorption; opposing force is absorbing pressure; prepare for reversal; do not trade in direction of the absorbed force",
+      "priority": 1
+    },
+    {
+      "rule_id": "VOL-011",
+      "condition": "down bars occurring on decreasing volume in a declining market",
+      "action": "flag potential accumulation volume pattern; sellers losing conviction; watch for SC and spring setup",
+      "priority": 2
+    },
+    {
+      "rule_id": "VOL-012",
+      "condition": "up bars occurring on decreasing volume in a rising market",
+      "action": "flag potential distribution volume pattern; buyers losing conviction; watch for BC and UTAD setup",
+      "priority": 2
+    }
+  ]
+}

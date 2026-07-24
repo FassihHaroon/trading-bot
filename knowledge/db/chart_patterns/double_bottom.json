@@ -1,0 +1,49 @@
+{
+  "id": "double_bottom",
+  "name": "Double Bottom",
+  "category": "reversal",
+  "bias": "bullish",
+  "description": "A pattern forming two consecutive troughs at approximately the same price level, separated by a peak. It signals that sellers failed to push price below a support level on the second attempt, indicating a potential trend reversal from bearish to bullish.",
+  "formation_rules": [
+    "Price must be in a confirmed downtrend prior to pattern formation",
+    "First trough forms as price declines to a support low, then bounces at least 10% to a peak",
+    "Second trough forms as price declines back toward the first trough low, within 3% of the first trough",
+    "The second trough must not be lower than the first trough by more than 3%",
+    "The peak between the two troughs defines the neckline resistance level",
+    "Time between the two troughs should be at least 2 weeks on daily charts for significance",
+    "The pattern spans a minimum of 4 weeks to be considered valid"
+  ],
+  "volume_rules": "Volume is typically higher on the first trough decline than the second. Lower volume on the second decline relative to the first is a bullish signal. Volume must expand at least 1.5x average on the neckline breakout candle for confirmation.",
+  "measured_target_method": "Measure the vertical distance from the troughs to the neckline peak. Project that distance upward from the neckline breakout point to get the minimum price target.",
+  "confirmation_conditions": [
+    "Price closes above the neckline (peak high) on a daily candle",
+    "Breakout candle volume is at least 1.5x the 20-period average volume",
+    "A successful retest of the neckline from above followed by a bounce confirms the breakout",
+    "Bullish divergence on RSI between the two troughs strengthens the signal"
+  ],
+  "invalidation_conditions": [
+    "Price closes below either trough low, negating the double bottom structure",
+    "Price reclaims and closes below the neckline after a confirmed breakout",
+    "The second trough forms on significantly higher volume than the first trough",
+    "A bearish engulfing candle forms at the neckline test from above"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "db_rule_01",
+      "rule": "Breakout is confirmed only when the closing price is strictly above the neckline (peak high between the two troughs); intraday violations without a close are not valid triggers."
+    },
+    {
+      "id": "db_rule_02",
+      "rule": "Volume on the breakout candle must be >= 1.5x the 20-period SMA of volume; record the pattern as unconfirmed if volume threshold is not met."
+    },
+    {
+      "id": "db_rule_03",
+      "rule": "Pattern is invalidated if price closes below the lower of the two troughs at any point during or after formation; remove the bullish bias immediately."
+    },
+    {
+      "id": "db_rule_04",
+      "rule": "The second trough is considered approximately equal to the first if it is within a 3% price range of the first trough; reject patterns where the second trough is deeper than this threshold."
+    }
+  ]
+}

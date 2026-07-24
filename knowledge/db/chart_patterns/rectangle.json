@@ -1,0 +1,49 @@
+{
+  "id": "rectangle",
+  "name": "Rectangle",
+  "category": "continuation",
+  "bias": "neutral",
+  "description": "A pattern where price consolidates between two horizontal parallel lines — a resistance level at the top and a support level at the bottom. It represents a period of equilibrium between buyers and sellers and typically resolves as a continuation of the prior trend, though breakouts in either direction are possible.",
+  "formation_rules": [
+    "Price must establish at least two comparable swing highs forming a horizontal resistance zone",
+    "Price must establish at least two comparable swing lows forming a horizontal support zone",
+    "The resistance and support levels must be approximately horizontal and parallel",
+    "The high and low boundaries should each be within 1-3% of each other across their respective touches",
+    "Price must oscillate between the two boundaries at least 4 times",
+    "The pattern should span a minimum of 3 weeks on a daily chart",
+    "The pattern height (distance between support and resistance) must be measurable and consistent"
+  ],
+  "volume_rules": "Volume typically contracts during the rectangle formation and may show slightly higher volume on the bounces at support and slightly lower volume on the approaches to resistance (or vice versa depending on direction). A breakout in either direction must be accompanied by volume expansion of at least 1.5x the 20-period average to be considered valid.",
+  "measured_target_method": "Measure the height of the rectangle (the vertical distance between the resistance and support levels). Project that distance in the direction of the breakout from the breakout point.",
+  "confirmation_conditions": [
+    "Price closes above the resistance level (bullish breakout) or below the support level (bearish breakdown)",
+    "Breakout or breakdown candle volume is at least 1.5x the 20-period average volume",
+    "A retest of the broken boundary that holds in the breakout direction confirms the move",
+    "The breakout direction aligns with the prior trend for higher reliability"
+  ],
+  "invalidation_conditions": [
+    "A breakout occurs but price reverses back inside the rectangle within 1-2 candles on a closing basis",
+    "The breakout occurs on volume below the 20-period average, suggesting a lack of conviction",
+    "Price oscillates far beyond either boundary intraday but consistently closes back inside the rectangle",
+    "After a bullish breakout, price closes back below the resistance level; after a bearish breakdown, price closes back above the support level"
+  ],
+  "reliability_score": 3,
+  "agent_rules": [
+    {
+      "id": "rect_rule_01",
+      "rule": "A breakout or breakdown is confirmed only when the closing price is strictly outside the rectangle boundary; define the resistance level as the average of all swing high closes and the support level as the average of all swing low closes within the pattern."
+    },
+    {
+      "id": "rect_rule_02",
+      "rule": "Volume on the breakout or breakdown candle must be >= 1.5x the 20-period SMA of volume; if not met, classify as a low-conviction break and require a second confirming close outside the boundary before acting."
+    },
+    {
+      "id": "rect_rule_03",
+      "rule": "If price returns inside the rectangle on a daily close within 3 candles of the breakout, classify the breakout as failed, reset bias to neutral, and do not re-enter until a new pattern break forms."
+    },
+    {
+      "id": "rect_rule_04",
+      "rule": "Assign higher directional probability to the breakout side that aligns with the trend prior to the rectangle; if the prior trend was bullish, weight the probability of an upside breakout at 60% and downside at 40%."
+    }
+  ]
+}

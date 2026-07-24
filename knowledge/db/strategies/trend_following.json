@@ -1,0 +1,96 @@
+{
+  "id": "trend_following",
+  "name": "Trend Following",
+  "market_conditions": [
+    "uptrend with higher highs and higher lows",
+    "downtrend with lower highs and lower lows",
+    "price above 50 EMA and 200 EMA for longs",
+    "price below 50 EMA and 200 EMA for shorts",
+    "ADX above 25 indicating strong trend"
+  ],
+  "phase_requirements": [
+    "markup phase for longs",
+    "markdown phase for shorts",
+    "not in distribution or accumulation phase"
+  ],
+  "entry_conditions": [
+    "price pulls back to 20 EMA or 50 EMA in an uptrend",
+    "price rallies to 20 EMA or 50 EMA in a downtrend",
+    "pullback is orderly with declining volume",
+    "structure of higher highs and higher lows remains intact for longs",
+    "structure of lower highs and lower lows remains intact for shorts"
+  ],
+  "confirmation_requirements": [
+    "bullish reversal candle at pullback level for longs",
+    "bearish reversal candle at rally level for shorts",
+    "volume increases on resumption candle",
+    "RSI bouncing from 40-50 zone in uptrend",
+    "RSI rejecting from 50-60 zone in downtrend",
+    "price closes back above pullback EMA for longs",
+    "price closes back below rally EMA for shorts"
+  ],
+  "stop_loss_logic": "Place stop loss below the most recent higher low for longs; above the most recent lower high for shorts. Add 0.5-1 ATR buffer beyond the swing point to avoid premature stop-out.",
+  "take_profit_logic": "Target the next swing high for longs or next swing low for shorts. Use partial exits at 1:1 RR and trail remaining position using a 20 EMA trail. Final target at measured move projection from the base of the trend leg.",
+  "invalidation_conditions": [
+    "price breaks below the last higher low for longs",
+    "price breaks above the last lower high for shorts",
+    "trend structure shifts from higher highs/higher lows to lower highs/lower lows",
+    "price closes below 200 EMA on daily chart for longs",
+    "ADX drops below 20 indicating trend exhaustion",
+    "major divergence on MACD or RSI without confirmation"
+  ],
+  "related_indicators": [
+    "EMA_20",
+    "EMA_50",
+    "EMA_200",
+    "ADX",
+    "RSI",
+    "MACD",
+    "ATR",
+    "volume"
+  ],
+  "related_patterns": [
+    "bull_flag",
+    "bear_flag",
+    "ascending_triangle",
+    "descending_triangle",
+    "higher_high_higher_low",
+    "lower_high_lower_low"
+  ],
+  "required_features": {
+    "trend_direction": "bullish or bearish",
+    "ema_alignment": "price above EMA20 above EMA50 above EMA200 for longs",
+    "adx_value": ">25",
+    "pullback_depth": "to EMA20 or EMA50",
+    "volume_on_pullback": "declining",
+    "volume_on_resumption": "increasing"
+  },
+  "timeframe_requirements": {
+    "macro": "1D or 1W to identify primary trend direction",
+    "entry": "4H or 1H for pullback confirmation and entry trigger"
+  },
+  "risk_notes": "Risk 1-2% per trade. Avoid entering during the final blow-off phase of a trend. Do not chase entries; wait for the pullback. Be cautious near major resistance for longs or major support for shorts. Trend following has a lower win rate but high RR; account for this in position sizing.",
+  "typical_rr": "1:2 to 1:4",
+  "agent_rules": [
+    {
+      "id": "tf_001",
+      "rule": "Never enter a trend-following trade against the 200 EMA direction on the daily chart."
+    },
+    {
+      "id": "tf_002",
+      "rule": "Wait for the pullback candle to show a reversal signal before entering; do not buy into a falling pullback."
+    },
+    {
+      "id": "tf_003",
+      "rule": "If ADX is below 20, do not apply trend-following strategy; switch to range-trading."
+    },
+    {
+      "id": "tf_004",
+      "rule": "Always confirm the higher low structure is intact before entry. One break of structure invalidates the setup."
+    },
+    {
+      "id": "tf_005",
+      "rule": "Scale out 50% at 1:1 RR, move stop to breakeven, and trail the rest."
+    }
+  ]
+}

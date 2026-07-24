@@ -1,0 +1,165 @@
+{
+  "topic": "Elliott Wave Theory",
+  "version": "1.0",
+  "inviolable_rules": {
+    "description": "These three rules are absolute. If a wave count violates any of them, the count is wrong and must be discarded. No exceptions.",
+    "rule_1": {
+      "name": "WAVE_2_CANNOT_RETRACE_BELOW_WAVE_1_START",
+      "statement": "Wave 2 can never retrace 100% or more of Wave 1. It may retrace up to 99.9% of Wave 1, but a single tick below the start of Wave 1 invalidates the count.",
+      "implication": "This rule defines the absolute stop loss level for any Wave 2 trade. Place the stop one tick below the origin of Wave 1.",
+      "common_miscount": "Deep corrections that breach Wave 1 origin are often Wave A-B-C corrections of a larger degree, not Wave 2."
+    },
+    "rule_2": {
+      "name": "WAVE_3_CANNOT_BE_THE_SHORTEST_IMPULSE_WAVE",
+      "statement": "Wave 3 can never be the shortest impulse wave when compared to Waves 1 and 5. It must be longer than at least one of the other two impulse waves. Note: Wave 3 does not have to be the longest — it just cannot be the shortest.",
+      "implication": "When measuring waves, if Wave 3 appears shorter than both Wave 1 and Wave 5, the count is incorrect.",
+      "common_miscount": "Confusing an extended Wave 1 or Wave 5 with Wave 3. If Wave 5 is very long, verify Wave 3 is still not the shortest."
+    },
+    "rule_3": {
+      "name": "WAVE_4_CANNOT_OVERLAP_WAVE_1_PRICE_TERRITORY",
+      "statement": "In a standard impulse wave, Wave 4 cannot enter the price territory of Wave 1. The low of Wave 4 (in a bull market) must not fall below the high of Wave 1.",
+      "implication": "If Wave 4 overlaps Wave 1, the structure is not a standard impulse. It may be a diagonal triangle or the count is wrong.",
+      "exception": "The only exception is a diagonal triangle (wedge) pattern, where overlap between Waves 1 and 4 is permitted by definition."
+    }
+  },
+  "wave_personality": {
+    "description": "Each wave in the Elliott Wave sequence has a characteristic personality reflecting the underlying mass psychology driving price action.",
+    "impulse_waves": {
+      "wave_1": {
+        "name": "The Stealth Wave",
+        "characteristics": [
+          "Least obvious wave — hard to identify in real time.",
+          "Begins at the end of the previous trend as early adopters and smart money enter.",
+          "Volume is modest, sentiment is still bearish (in a new uptrend).",
+          "Fundamental news is still negative — the move seems counter-intuitive.",
+          "Often appears as a relief rally rather than the start of a new trend."
+        ],
+        "trader_psychology": "Most traders dismiss Wave 1 as a dead-cat bounce or short-covering. Only contrarians and early-trend followers participate."
+      },
+      "wave_2": {
+        "name": "The Doubt Wave",
+        "characteristics": [
+          "Corrects Wave 1, often retracing 50-78.6% of Wave 1.",
+          "Volume contracts significantly during this correction.",
+          "Sentiment turns negative again — many believe the original downtrend has resumed.",
+          "Often forms as a Zigzag (A-B-C) correction.",
+          "Creates a higher low (in an uptrend), which is the first sign of trend change."
+        ],
+        "trader_psychology": "Fear returns. Late sellers re-enter short. This creates the fuel for the powerful Wave 3 that follows."
+      },
+      "wave_3": {
+        "name": "The Momentum Wave",
+        "characteristics": [
+          "Typically the longest and most powerful wave.",
+          "Strong volume expansion — institutional participation is high.",
+          "Fundamental news begins to confirm the new trend direction.",
+          "Breakouts from consolidation zones are common in this wave.",
+          "Hard and fast moves with minimal pullbacks.",
+          "Most profitable wave to trade — clear direction, strong momentum."
+        ],
+        "trader_psychology": "The majority of traders recognize the trend and FOMO (fear of missing out) drives aggressive participation. Momentum traders join."
+      },
+      "wave_4": {
+        "name": "The Rest Wave",
+        "characteristics": [
+          "Complex, overlapping correction — often sideways rather than sharp.",
+          "Commonly forms as flats, triangles, or combinations (unlike the sharper Wave 2 Zigzag).",
+          "Volume is lower than Wave 3.",
+          "Sentiment is mixed — bulls take profits, bears attempt reversals.",
+          "Provides base for Wave 5 launch — often finds support at Wave 1 high (polarity)."
+        ],
+        "trader_psychology": "Traders who missed Wave 3 look to buy the dip but are frustrated by choppy, sideways action. Patience is tested."
+      },
+      "wave_5": {
+        "name": "The Exhaustion Wave",
+        "characteristics": [
+          "Final leg of the impulse — driven by sentiment rather than fundamentals.",
+          "Breadth narrows — fewer instruments participate in the rally.",
+          "Volume often diverges (lower than Wave 3) — a warning sign.",
+          "RSI and momentum indicators frequently show bearish divergence.",
+          "Retail euphoria peaks — 'this time is different' narrative dominates.",
+          "Often extends to 100% of Wave 1 length or Fibonacci extensions (1.272, 1.618 of Wave 1-3)."
+        ],
+        "trader_psychology": "Maximum optimism and public participation at the exact wrong time. The smart money distributes into retail buying."
+      }
+    },
+    "corrective_waves": {
+      "wave_A": {
+        "name": "The Denial Wave",
+        "characteristics": [
+          "First leg of the correction after the impulse.",
+          "Many traders believe it is just a brief pullback within the trend.",
+          "Bearish in a bull market — sharp initial decline.",
+          "Volume picks up as longs exit and early bears enter."
+        ]
+      },
+      "wave_B": {
+        "name": "The False Hope Wave",
+        "characteristics": [
+          "Counter-trend bounce within the correction.",
+          "Volume is lower than Wave A — the rally is unconvincing.",
+          "Creates illusion that the uptrend has resumed.",
+          "Often ends below the Wave 5 high — a lower high.",
+          "Traps bulls who buy the 'dip' thinking the trend continues.",
+          "Can be complex and prolonged, testing patience."
+        ]
+      },
+      "wave_C": {
+        "name": "The Capitulation Wave",
+        "characteristics": [
+          "Final and most damaging leg of the correction.",
+          "Strong, impulsive character — 5 sub-waves within it.",
+          "Forces final liquidation of longs who survived Wave A and B.",
+          "Maximum pessimism — often ends at or near the Wave 4 territory of the previous impulse.",
+          "Volume surges as panic selling climaxes.",
+          "Ends the corrective structure — new impulse begins from here."
+        ]
+      }
+    }
+  },
+  "fibonacci_relationships": {
+    "description": "Elliott Waves have natural Fibonacci ratio relationships that aid in projecting wave targets and validating counts.",
+    "impulse_relationships": {
+      "wave_2_vs_wave_1": "Typically retraces 50%, 61.8%, or 78.6% of Wave 1",
+      "wave_3_vs_wave_1": "Most commonly 161.8% of Wave 1. Can extend to 261.8% or 423.6% of Wave 1",
+      "wave_4_vs_wave_3": "Typically retraces 23.6% or 38.2% of Wave 3",
+      "wave_5_vs_wave_1": "Commonly equal to Wave 1 in length (100%), or 61.8% of Waves 1-3 combined"
+    },
+    "corrective_relationships": {
+      "wave_A": "No fixed ratio — marks start of correction",
+      "wave_B_vs_wave_A": "Typically retraces 38.2%, 50%, or 61.8% of Wave A",
+      "wave_C_vs_wave_A": "Commonly equal to Wave A (100%) or 161.8% of Wave A"
+    }
+  },
+  "agent_use": {
+    "wave_3_entries": {
+      "description": "Wave 3 is the highest-probability trade in Elliott Wave theory. The agent strategy for Wave 3 entries:",
+      "setup_requirements": [
+        "Confirm a 5-wave impulse structure has completed on a higher timeframe (the previous trend).",
+        "Identify Wave 1 of the new impulse — a sharp move against the prior trend.",
+        "Wait for Wave 2 correction to retrace to the 38.2%-78.6% Fibonacci zone of Wave 1.",
+        "Confirm Wave 2 correction is complete (momentum shift, rejection candle, or 5-wave A-B-C structure in Wave 2).",
+        "Enter at the end of Wave 2 with stop below the origin of Wave 1.",
+        "Target: 161.8% extension of Wave 1 from the Wave 2 low as the primary Wave 3 target."
+      ],
+      "confidence_conditions": [
+        "Wave 2 retracement aligns with a high-quality S/R zone",
+        "Wave 2 forms a classic A-B-C Zigzag structure",
+        "Volume expanded on Wave 1 and contracted on Wave 2",
+        "Fibonacci retracement of Wave 2 aligns with the 0.618 level"
+      ]
+    },
+    "wave_5_exhaustion_warnings": {
+      "description": "Wave 5 trades are lower probability. The agent issues exhaustion warnings rather than entry signals in most Wave 5 scenarios.",
+      "warning_triggers": [
+        "Price reaches 100% or 127.2% extension of Wave 1 from Wave 2 low",
+        "RSI or MACD shows bearish divergence while price makes new high",
+        "Volume is noticeably lower than the Wave 3 peak",
+        "Sentiment indicators show extreme bullishness (e.g., fear/greed index above 80)",
+        "The impulse wave count reaches Wave 5 on multiple timeframes simultaneously"
+      ],
+      "agent_action": "Issue a WAVE_5_EXHAUSTION_WARNING flag. Tighten stops on existing long positions. Reduce new long exposure. Begin monitoring for Wave A setup.",
+      "prohibited_action": "The agent must not initiate new long positions at Wave 5 exhaustion zones. Counter-trend shorts require strong confirmation and reduced size."
+    }
+  }
+}

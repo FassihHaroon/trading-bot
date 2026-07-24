@@ -1,0 +1,49 @@
+{
+  "id": "descending_triangle",
+  "name": "Descending Triangle",
+  "category": "continuation",
+  "bias": "bearish",
+  "description": "A triangle pattern with a flat horizontal support line at the bottom and a declining resistance trendline at the top. Lower highs indicate accumulating selling pressure, and the pattern typically resolves with a breakdown below the horizontal support.",
+  "formation_rules": [
+    "Price must be in a downtrend or consolidating after a downtrend",
+    "At least two swing lows must touch or approach the same horizontal support level within 1-2%",
+    "At least two swing highs must be progressively lower, forming a declining trendline",
+    "The pattern requires a minimum of 3 weeks to form on a daily chart",
+    "The horizontal support line and declining resistance line must converge toward an apex",
+    "Price should oscillate between the two boundaries at least 4 times total",
+    "The pattern width (time span) should be at least 4 candlesticks on the applicable timeframe"
+  ],
+  "volume_rules": "Volume typically contracts as the pattern develops. Volume should expand meaningfully, at least 1.5x average, on the breakdown candle below the horizontal support. Declining volume during formation and a volume spike on breakdown is the ideal signature.",
+  "measured_target_method": "Measure the maximum height of the triangle at its widest point (the vertical distance from the flat support to the highest point of the declining trendline). Project that distance downward from the breakdown point.",
+  "confirmation_conditions": [
+    "Price closes below the horizontal support line on a daily candle",
+    "Breakdown candle volume is at least 1.5x the 20-period average volume",
+    "A retest of the broken support level that fails as resistance confirms the breakdown",
+    "Price should break down before reaching 75% of the distance to the apex"
+  ],
+  "invalidation_conditions": [
+    "Price breaks above the declining resistance trendline with a daily close",
+    "Price reaches the apex without breaking either boundary, signaling indecision",
+    "Volume expands significantly on a move up through the declining resistance line",
+    "Price closes back above the horizontal support after a confirmed breakdown"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "dest_rule_01",
+      "rule": "Breakdown is valid only on a daily close strictly below the horizontal support; compute the support level as the average of the two lowest comparable swing lows."
+    },
+    {
+      "id": "dest_rule_02",
+      "rule": "Volume on the breakdown candle must be >= 1.5x the 20-period SMA of volume; log the breakdown as low-conviction if this threshold is not met."
+    },
+    {
+      "id": "dest_rule_03",
+      "rule": "Pattern is invalidated on a daily close above the declining resistance trendline; recalculate the trendline using the two most recent lower highs."
+    },
+    {
+      "id": "dest_rule_04",
+      "rule": "Do not initiate a short entry if price has already traveled more than 75% of the distance from the pattern start to the apex without breaking down; the pattern's energy is considered exhausted."
+    }
+  ]
+}

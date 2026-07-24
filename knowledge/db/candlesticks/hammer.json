@@ -1,0 +1,29 @@
+{
+  "id": "hammer",
+  "name": "Hammer",
+  "candle_count": 1,
+  "bias": "bullish",
+  "description": "A single bullish reversal candle that forms after a downtrend. It has a small real body near the top of the candle's range and a long lower wick at least 2 times the body length, indicating that sellers drove price down but buyers reclaimed most of the losses by close.",
+  "body_rules": {
+    "body_size": "small to medium",
+    "body_position": "must be in the upper third of the total candle range",
+    "body_color": "preferably bullish (green/white) but bearish body is still valid with confirmation"
+  },
+  "wick_rules": {
+    "lower_wick": "must be at least 2 times the length of the real body",
+    "upper_wick": "little to none; upper wick should be no more than 10-15% of the total range",
+    "wick_direction": "the long wick must point downward"
+  },
+  "context_requirement": "must form at or near a defined support level after a downtrend of at least 3-5 candles; hammer in an uptrend or ranging market is not a hammer pattern",
+  "volume_requirement": "volume on the hammer candle should be higher than the average of recent candles; high volume adds strong confirmation",
+  "reliability": "medium",
+  "agent_rules": [
+    "Only trade hammer at a confirmed support zone, trendline, or Fibonacci level",
+    "Require a bullish confirmation candle closing above the hammer's high before entering long",
+    "Stop loss should be placed below the hammer's low",
+    "A hammer with very high volume is a stronger signal than a hammer on low volume",
+    "Do not trade a hammer that gaps far away from price context",
+    "A bearish-bodied hammer (inverted color) requires stronger confirmation from the next candle",
+    "The longer the prior downtrend, the more significant the hammer reversal signal"
+  ]
+}

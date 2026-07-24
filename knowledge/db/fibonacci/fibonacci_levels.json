@@ -1,0 +1,145 @@
+{
+  "topic": "Fibonacci Levels",
+  "version": "1.0",
+  "retracement_levels": {
+    "description": "Fibonacci retracement levels identify potential support or resistance zones within a pullback of an established trend. Derived from the Fibonacci sequence ratios.",
+    "levels": {
+      "0.236": {
+        "percentage": "23.6%",
+        "description": "Shallow retracement. Indicates very strong trend momentum. Price rarely pauses here unless the trend is exceptionally powerful. Aggressive traders may add to positions here.",
+        "reliability": "Low as a standalone level — needs strong trend context and volume confirmation.",
+        "typical_behavior": "Price often blows through this level on strong momentum moves."
+      },
+      "0.382": {
+        "percentage": "38.2%",
+        "description": "Moderate retracement. Common pullback level in strong trending markets. Institutions often accumulate at this level during uptrends.",
+        "reliability": "Moderate. Most reliable in strong trending conditions with clean impulse waves.",
+        "typical_behavior": "Quick bounce in strong trends. Failure to hold signals deeper pullback to 0.5 or 0.618."
+      },
+      "0.5": {
+        "percentage": "50%",
+        "description": "Not a true Fibonacci ratio but included due to Dow Theory significance. The 50% level is widely watched by traders and often acts as a decision point.",
+        "reliability": "High due to widespread awareness and self-fulfilling nature.",
+        "typical_behavior": "Acts as a key pivot. Hold above = bullish continuation. Fail = deeper retracement expected."
+      },
+      "0.618": {
+        "percentage": "61.8%",
+        "description": "The Golden Ratio — the most significant Fibonacci retracement level. Derived directly from the Fibonacci sequence (each number divided by the next). The primary retracement level for high-probability entries.",
+        "reliability": "Highest. Known as the 'Golden Zone' when combined with 0.65-0.786 range.",
+        "typical_behavior": "Major reaction expected. Confluence with S/R zones makes this a top-tier entry location."
+      },
+      "0.786": {
+        "percentage": "78.6%",
+        "description": "Deep retracement level. Square root of 0.618. Last significant retracement before the move is considered a failure. Used in deeper correction patterns like ABCD or Gartley.",
+        "reliability": "Moderate to high when combined with other confluence. Deep retraces here test trader conviction.",
+        "typical_behavior": "Strong reaction or failure. If price closes beyond this level, the original swing is likely invalidated."
+      }
+    }
+  },
+  "extension_levels": {
+    "description": "Fibonacci extension levels project where price may travel beyond the original swing high (in an uptrend) or swing low (in a downtrend). Used for profit target placement.",
+    "levels": {
+      "1.272": {
+        "percentage": "127.2%",
+        "description": "First extension target. Square root of 1.618. Common Wave 3 or Wave C target in Elliott Wave analysis. Conservative profit target for breakout trades.",
+        "use_case": "First take-profit level. Close 33-50% of position here."
+      },
+      "1.414": {
+        "percentage": "141.4%",
+        "description": "Intermediate extension. Square root of 2. Less commonly used as a standalone target but significant when it coincides with structure.",
+        "use_case": "Secondary target in strong trending moves. Often skipped unless a clear S/R zone exists nearby."
+      },
+      "1.618": {
+        "percentage": "161.8%",
+        "description": "The Golden Extension. The primary extension target for Wave 3 in Elliott Wave theory and for harmonic pattern completions. Represents the most common target for strong trending moves.",
+        "use_case": "Primary profit target for trend-following trades. Close another 33-50% of position here. Move stop to breakeven after reaching 1.272."
+      }
+    }
+  },
+  "how_to_draw": {
+    "uptrend": {
+      "description": "In an uptrend, draw from the most significant swing low to the most significant swing high of the impulse move.",
+      "steps": [
+        "Identify the most recent significant swing low (point A) — the start of the impulse.",
+        "Identify the most recent significant swing high (point B) — the end of the impulse.",
+        "Anchor the Fibonacci tool at point A (swing low) and drag to point B (swing high).",
+        "The retracement levels plot downward from B toward A.",
+        "The extension levels plot upward from B beyond the swing high."
+      ],
+      "common_errors": [
+        "Using minor swings instead of the dominant impulse structure.",
+        "Drawing from left to right without identifying the correct anchor points.",
+        "Ignoring higher timeframe swing points in favor of lower timeframe ones."
+      ]
+    },
+    "downtrend": {
+      "description": "In a downtrend, draw from the most significant swing high to the most significant swing low of the impulse move.",
+      "steps": [
+        "Identify the most recent significant swing high (point A) — the start of the impulse.",
+        "Identify the most recent significant swing low (point B) — the end of the impulse.",
+        "Anchor the Fibonacci tool at point A (swing high) and drag to point B (swing low).",
+        "The retracement levels plot upward from B toward A.",
+        "The extension levels plot downward from B beyond the swing low."
+      ]
+    },
+    "timeframe_selection": "Use the highest timeframe that contains a clean, visible impulse swing. The cleaner and sharper the impulse, the more reliable the Fibonacci levels."
+  },
+  "confluence_with_sr_zones": {
+    "description": "Fibonacci levels are significantly more powerful when they align with pre-existing support and resistance zones. Confluence transforms a Fibonacci level from a probability into a high-confidence trade location.",
+    "confluence_types": [
+      {
+        "type": "Fibonacci + Horizontal S/R",
+        "description": "A retracement level aligns with a prior swing high or low. This is the most common and reliable confluence.",
+        "confidence_boost": "+2 to zone quality score"
+      },
+      {
+        "type": "Fibonacci + Round Number",
+        "description": "A retracement level aligns with a psychologically significant round number.",
+        "confidence_boost": "+1 to zone quality score"
+      },
+      {
+        "type": "Fibonacci + Volume Node",
+        "description": "A retracement level aligns with a high-volume node from the Volume Profile.",
+        "confidence_boost": "+2 to zone quality score"
+      },
+      {
+        "type": "Fibonacci + Trendline",
+        "description": "A retracement level aligns with a dynamic trendline or moving average.",
+        "confidence_boost": "+1 to zone quality score"
+      },
+      {
+        "type": "Multiple Fibonacci Levels",
+        "description": "Two or more Fibonacci levels drawn from different swing points cluster in the same zone. Known as a Fibonacci cluster.",
+        "confidence_boost": "+3 to zone quality score"
+      }
+    ],
+    "minimum_confluence_for_entry": "At least one additional confluence factor beyond the Fibonacci level alone before issuing a trade signal."
+  },
+  "agent_rules": {
+    "rule_1_anchor_point_validation": {
+      "name": "ANCHOR_POINT_VALIDATION",
+      "statement": "The agent must use the most significant swing high and swing low on the relevant timeframe as anchor points. Minor swings or arbitrary pivot points are not acceptable anchors. If no clean impulse swing can be identified, Fibonacci analysis must not be applied.",
+      "rationale": "Incorrectly anchored Fibonacci levels produce meaningless levels that have no market memory."
+    },
+    "rule_2_golden_zone_priority": {
+      "name": "GOLDEN_ZONE_PRIORITY",
+      "statement": "The 0.618 level is the primary Fibonacci entry zone. The agent must assign highest confidence to setups forming at the 0.618, followed by 0.5, then 0.382. The 0.236 level alone is insufficient for trade signals without exceptional confluence.",
+      "rationale": "The 0.618 has the highest historical hit rate and is watched by the largest number of institutional participants."
+    },
+    "rule_3_confluence_requirement": {
+      "name": "CONFLUENCE_REQUIREMENT",
+      "statement": "The agent must not issue a trade signal based on a Fibonacci level alone. At least one additional confluence factor — horizontal S/R, round number, volume node, or trendline — must be present at the same price zone.",
+      "rationale": "Fibonacci levels alone are probabilistic. Confluence increases the probability of reaction."
+    },
+    "rule_4_invalidation_level": {
+      "name": "INVALIDATION_LEVEL",
+      "statement": "For uptrend retracement entries, the invalidation level (stop loss) must be placed below the 0.786 retracement level or below the original swing low, whichever is closer. A close beyond the 0.786 level invalidates the Fibonacci structure.",
+      "rationale": "Price closing beyond the 0.786 signals that the original impulse is failing and the trend may be reversing."
+    },
+    "rule_5_extension_target_sequencing": {
+      "name": "EXTENSION_TARGET_SEQUENCING",
+      "statement": "The agent must sequence profit targets in this order: 1.272 (partial close), 1.618 (primary target), with the stop moved to breakeven after the 1.272 is reached. The 1.414 target is only used when a structural S/R zone exists near that level.",
+      "rationale": "Systematic target sequencing locks in profits and removes emotion from the exit process."
+    }
+  }
+}

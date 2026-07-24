@@ -1,0 +1,267 @@
+{
+  "topic": "Wyckoff Events and Market Phases",
+  "version": "1.0",
+  "last_updated": "2026-07-24",
+  "framework": "Wyckoff Method",
+  "origin": "Richard D. Wyckoff, early 1900s",
+  "accumulation_events": {
+    "phase": "Accumulation",
+    "description": "Series of events that mark the transition from downtrend to uptrend as smart money absorbs supply",
+    "events": {
+      "PS": {
+        "name": "Preliminary Support",
+        "abbreviation": "PS",
+        "description": "First sign that buying is beginning to slow the prior downtrend. Not the final low but indicates demand is entering.",
+        "volume_characteristic": "volume increases; spread widens on down bar but buyers beginning to appear",
+        "price_action": "price declines into area; closes off lows; signs of buying interest",
+        "significance": "low",
+        "location_in_phase": "early — first indication only"
+      },
+      "SC": {
+        "name": "Selling Climax",
+        "abbreviation": "SC",
+        "description": "Panic selling at the end of the downtrend. High volume bar with wide spread closing in lower half. Marks exhaustion of sellers.",
+        "volume_characteristic": "extremely high volume; highest in the move; climactic",
+        "price_action": "wide range down bar; close in lower portion; often a spike low",
+        "significance": "high",
+        "location_in_phase": "critical — defines potential bottom of accumulation range",
+        "trade_note": "do not buy the SC bar itself; wait for the Automatic Rally and then the Secondary Test"
+      },
+      "AR": {
+        "name": "Automatic Rally",
+        "abbreviation": "AR",
+        "description": "Sharp rally after the Selling Climax as short sellers cover and fresh buyers enter into the vacuum left by climactic selling.",
+        "volume_characteristic": "volume decreases relative to SC; still above average",
+        "price_action": "sharp bounce from SC low; defines the top of the accumulation trading range",
+        "significance": "high",
+        "location_in_phase": "defines the upper boundary of the accumulation range",
+        "trade_note": "AR high becomes the resistance line of the trading range"
+      },
+      "ST": {
+        "name": "Secondary Test",
+        "abbreviation": "ST",
+        "description": "Price returns to the area of the Selling Climax to test the supply/demand balance at that level. Lower volume and narrower spread confirm supply is diminishing.",
+        "volume_characteristic": "volume significantly less than SC; should be noticeably lower",
+        "price_action": "price revisits SC area; may slightly undercut SC low; closes in upper half",
+        "significance": "high",
+        "location_in_phase": "confirms SC was a genuine climax; validates accumulation potential",
+        "trade_note": "ST on lower volume confirms SC was valid; multiple STs are possible"
+      },
+      "spring": {
+        "name": "Spring",
+        "abbreviation": "Spring",
+        "description": "False breakdown below the support of the accumulation trading range (below SC/ST lows). Shakes out weak longs and triggers stop orders before the markup. Smart money buys the spring.",
+        "volume_characteristic": "low to moderate on the break; volume should NOT confirm the breakdown",
+        "price_action": "price dips below support briefly; quickly reverses and closes back within range",
+        "significance": "very high",
+        "location_in_phase": "late accumulation — precedes markup",
+        "spring_types": {
+          "type_1": "Major spring — price drops well below support on high volume; rare but very bullish if quickly reversed",
+          "type_2": "Minor spring — price barely breaks support on low volume; most common",
+          "type_3": "No spring — price never breaks support; accumulation ends with an upside breakout directly"
+        },
+        "trade_setup": {
+          "entry": "long on close back above prior support or on first Higher Low after the spring",
+          "stop": "below spring low",
+          "target": "AR high minimum; beyond for full markup targets"
+        }
+      },
+      "test_of_spring": {
+        "name": "Test of Spring",
+        "abbreviation": "Test / ST of Spring",
+        "description": "Price returns to the area of the spring low to confirm that supply has been absorbed. Low volume test confirms the spring was successful.",
+        "volume_characteristic": "very low volume on the test; dry-up of supply",
+        "price_action": "price approaches spring low area; does not break below; reverses",
+        "significance": "high",
+        "trade_note": "Low volume test of spring low is one of the highest probability long entries in Wyckoff"
+      },
+      "SOS": {
+        "name": "Sign of Strength",
+        "abbreviation": "SOS",
+        "description": "A rally that breaks above the AR high (top of trading range) on expanding volume. Confirms that demand has overcome supply and markup is beginning.",
+        "volume_characteristic": "volume expands significantly; highest volume seen in accumulation range",
+        "price_action": "price closes above AR high; wide spread up bar; closes near high of bar",
+        "significance": "very high",
+        "location_in_phase": "transition from accumulation to markup",
+        "trade_note": "SOS is the breakout signal; best entry is on the LPS pullback after SOS"
+      },
+      "LPS": {
+        "name": "Last Point of Support",
+        "abbreviation": "LPS",
+        "description": "The pullback after the Sign of Strength (SOS). Price returns to test the former resistance (AR high) which now acts as support. Low volume pullback confirms buyers are in control.",
+        "volume_characteristic": "volume dries up on pullback; spread narrows",
+        "price_action": "price pulls back to former resistance; holds above it; reversal candle or HL forms",
+        "significance": "very high",
+        "location_in_phase": "confirms accumulation complete; start of markup",
+        "trade_setup": {
+          "entry": "long at LPS level on sign of reversal",
+          "stop": "below LPS low",
+          "target": "measured move from accumulation range depth projected from breakout"
+        }
+      }
+    }
+  },
+  "distribution_events": {
+    "phase": "Distribution",
+    "description": "Series of events that mark the transition from uptrend to downtrend as smart money distributes holdings to the public",
+    "events": {
+      "PSY": {
+        "name": "Preliminary Supply",
+        "abbreviation": "PSY",
+        "description": "First sign that selling is beginning to slow the prior uptrend. Large operators begin selling into strength. Not the final top but indicates supply is entering.",
+        "volume_characteristic": "volume increases on the up bar; spread widens but selling pressure building",
+        "price_action": "price rallies into area; closes off highs; signs of selling pressure",
+        "significance": "low",
+        "location_in_phase": "early — first indication only"
+      },
+      "BC": {
+        "name": "Buying Climax",
+        "abbreviation": "BC",
+        "description": "Climactic buying at the end of the uptrend. High volume bar with wide spread closing in upper half. Marks exhaustion of buyers. Smart money sells aggressively into public buying.",
+        "volume_characteristic": "extremely high volume; highest in the move; climactic",
+        "price_action": "wide range up bar; close in upper portion; often a spike high",
+        "significance": "high",
+        "location_in_phase": "critical — defines potential top of distribution range",
+        "trade_note": "do not short the BC bar itself; wait for the Automatic Reaction and then the Secondary Test"
+      },
+      "AR_dist": {
+        "name": "Automatic Reaction",
+        "abbreviation": "AR",
+        "description": "Sharp decline after the Buying Climax as buyers step back and sellers overwhelm. Defines the lower boundary of the distribution range.",
+        "volume_characteristic": "volume decreases relative to BC; still above average",
+        "price_action": "sharp decline from BC high; defines the bottom of the distribution trading range",
+        "significance": "high",
+        "location_in_phase": "defines the lower boundary of the distribution range",
+        "trade_note": "AR low becomes the support line of the trading range"
+      },
+      "ST_dist": {
+        "name": "Secondary Test",
+        "abbreviation": "ST",
+        "description": "Price returns to the area of the Buying Climax to test the supply/demand balance. Lower volume and narrower spread confirm demand is fading.",
+        "volume_characteristic": "volume significantly less than BC; should be noticeably lower",
+        "price_action": "price revisits BC area; may slightly exceed BC high; closes in lower half",
+        "significance": "high",
+        "location_in_phase": "confirms BC was a genuine climax; validates distribution potential"
+      },
+      "UTAD": {
+        "name": "Upthrust After Distribution",
+        "abbreviation": "UTAD",
+        "description": "False breakout above the resistance of the distribution trading range. Traps breakout buyers and provides smart money with final opportunity to sell/short at high prices before markdown.",
+        "volume_characteristic": "low to moderate on the break; volume should NOT confirm the breakout",
+        "price_action": "price spikes above resistance briefly; quickly reverses and closes back within range",
+        "significance": "very high",
+        "location_in_phase": "late distribution — precedes markdown",
+        "trade_setup": {
+          "entry": "short on close back below prior resistance or on first Lower High after UTAD",
+          "stop": "above UTAD high",
+          "target": "AR low minimum; below for full markdown targets"
+        }
+      },
+      "SOW": {
+        "name": "Sign of Weakness",
+        "abbreviation": "SOW",
+        "description": "A decline that breaks below the AR low (bottom of trading range) on expanding volume. Confirms that supply has overcome demand and markdown is beginning.",
+        "volume_characteristic": "volume expands significantly on the decline",
+        "price_action": "price closes below AR low; wide spread down bar; closes near low of bar",
+        "significance": "very high",
+        "location_in_phase": "transition from distribution to markdown",
+        "trade_note": "SOW is the breakdown signal; best entry is on the LPSY rally after SOW"
+      },
+      "LPSY": {
+        "name": "Last Point of Supply",
+        "abbreviation": "LPSY",
+        "description": "The rally after the Sign of Weakness (SOW). Price returns to test the former support (AR low) which now acts as resistance. Low volume rally confirms sellers are in control.",
+        "volume_characteristic": "volume dries up on rally; spread narrows",
+        "price_action": "price rallies to former support; rejected; reversal candle or LH forms",
+        "significance": "very high",
+        "location_in_phase": "confirms distribution complete; start of markdown",
+        "trade_setup": {
+          "entry": "short at LPSY level on sign of rejection",
+          "stop": "above LPSY high",
+          "target": "measured move from distribution range depth projected from breakdown"
+        }
+      }
+    }
+  },
+  "volume_characteristics_summary": {
+    "accumulation_volume_profile": {
+      "SC": "extremely high (climactic)",
+      "AR": "above average (declining from SC)",
+      "ST": "below average (confirming SC)",
+      "spring": "low to moderate (non-confirming of breakdown)",
+      "test_of_spring": "very low (dry-up)",
+      "SOS": "high and expanding",
+      "LPS": "low (dry-up on pullback)"
+    },
+    "distribution_volume_profile": {
+      "BC": "extremely high (climactic)",
+      "AR_dist": "above average (declining from BC)",
+      "ST_dist": "below average (confirming BC)",
+      "UTAD": "low to moderate (non-confirming of breakout)",
+      "SOW": "high and expanding",
+      "LPSY": "low (dry-up on rally)"
+    },
+    "general_rules": [
+      "Effort (volume) should match result (price move); divergence signals weakness",
+      "High volume with little price progress indicates absorption by the opposing force",
+      "Low volume pullbacks in the direction of smart money confirm they are not selling/buying against the position",
+      "Volume dry-up at key levels (test of spring, LPS, LPSY) are the highest probability trade locations"
+    ]
+  },
+  "agent_rules": [
+    {
+      "rule_id": "WYK-001",
+      "condition": "climactic high volume bar with wide spread appears after a prolonged trend",
+      "action": "identify as potential SC (downtrend) or BC (uptrend); mark the low/high; do not trade the bar itself; wait for AR formation",
+      "priority": 1
+    },
+    {
+      "rule_id": "WYK-002",
+      "condition": "AR forms after SC or BC",
+      "action": "mark AR high/low as the range boundary; wait for ST to validate climax",
+      "priority": 1
+    },
+    {
+      "rule_id": "WYK-003",
+      "condition": "ST occurs on volume lower than SC/BC",
+      "action": "confirm climax validity; prepare for spring (accumulation) or UTAD (distribution) setup",
+      "priority": 2
+    },
+    {
+      "rule_id": "WYK-004",
+      "condition": "price breaks below accumulation range support on low volume and reverses quickly",
+      "action": "classify as spring; enter long on reclaim of support; stop below spring low",
+      "priority": 1
+    },
+    {
+      "rule_id": "WYK-005",
+      "condition": "price breaks above distribution range resistance on low volume and reverses quickly",
+      "action": "classify as UTAD; enter short on return below resistance; stop above UTAD high",
+      "priority": 1
+    },
+    {
+      "rule_id": "WYK-006",
+      "condition": "SOS breakout above accumulation range with volume expansion",
+      "action": "confirm accumulation complete; wait for LPS pullback for long entry; stop below LPS",
+      "priority": 1
+    },
+    {
+      "rule_id": "WYK-007",
+      "condition": "SOW breakdown below distribution range with volume expansion",
+      "action": "confirm distribution complete; wait for LPSY rally for short entry; stop above LPSY",
+      "priority": 1
+    },
+    {
+      "rule_id": "WYK-008",
+      "condition": "high volume with little price progress at range extremes",
+      "action": "classify as absorption; smart money absorbing supply (at support) or demand (at resistance); prepare for reversal in range",
+      "priority": 2
+    },
+    {
+      "rule_id": "WYK-009",
+      "condition": "low volume test of spring low or LPS area",
+      "action": "highest probability long entry in accumulation; enter long; tight stop below test low",
+      "priority": 1
+    }
+  ]
+}

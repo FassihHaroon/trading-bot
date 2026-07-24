@@ -1,0 +1,109 @@
+{
+  "id": "ema",
+  "name": "Exponential Moving Average (EMA)",
+  "category": "trend",
+  "description": "EMA is a moving average that applies greater weight to recent prices, making it more responsive to new information than a Simple Moving Average. Common periods: EMA 9 (very short-term, noise-sensitive), EMA 21 (short-term trend), EMA 50 (intermediate trend), EMA 200 (long-term trend, institutional reference). EMAs serve as dynamic support and resistance, trend filters, and crossover signals. The MA fan formation (EMAs ordered and spread apart) indicates a strong trend. EMA slope indicates trend strength.",
+  "parameters": {
+    "short_term": 9,
+    "near_term": 21,
+    "intermediate_term": 50,
+    "long_term": 200,
+    "weighting_multiplier": "2 / (period + 1)",
+    "formula": "EMA = (Close - Previous EMA) * Multiplier + Previous EMA"
+  },
+  "signals": [
+    {
+      "condition": "Price above EMA 200 and EMA 200 is sloping upward",
+      "interpretation": "Long-term bullish trend — institutional bias is bullish. Prefer long setups; avoid shorts except intraday scalps."
+    },
+    {
+      "condition": "Price below EMA 200 and EMA 200 is sloping downward",
+      "interpretation": "Long-term bearish trend — institutional bias is bearish. Prefer short setups; avoid longs except intraday scalps."
+    },
+    {
+      "condition": "EMA 9 crosses above EMA 21",
+      "interpretation": "Short-term bullish momentum shift — useful for intraday and swing trade entry timing when aligned with higher timeframe trend. Not a standalone entry signal."
+    },
+    {
+      "condition": "EMA 9 crosses below EMA 21",
+      "interpretation": "Short-term bearish momentum shift — useful for intraday and swing trade entry timing when aligned with higher timeframe trend. Not a standalone entry signal."
+    },
+    {
+      "condition": "EMA 50 crosses above EMA 200 (Golden Cross)",
+      "interpretation": "Long-term bullish crossover — signals a shift in the dominant trend to bullish. Use as a bias change signal, not an immediate entry. Price often pulls back to test the EMAs after the cross."
+    },
+    {
+      "condition": "EMA 50 crosses below EMA 200 (Death Cross)",
+      "interpretation": "Long-term bearish crossover — signals a shift in the dominant trend to bearish. Use as a bias change signal only. Death crosses are lagging and often occur near the end of the initial decline."
+    },
+    {
+      "condition": "MA Fan Formation: EMA 9 > EMA 21 > EMA 50 > EMA 200 and all sloping upward",
+      "interpretation": "Strong bullish trend — all timeframes aligned. Pullbacks to EMA 21 or EMA 50 are high-probability long entries."
+    },
+    {
+      "condition": "MA Fan Formation: EMA 9 < EMA 21 < EMA 50 < EMA 200 and all sloping downward",
+      "interpretation": "Strong bearish trend — all timeframes aligned. Rallies to EMA 21 or EMA 50 are high-probability short entries."
+    },
+    {
+      "condition": "Price pulls back to touch EMA 21 in an established uptrend and bounces",
+      "interpretation": "Dynamic support holding — high-probability long entry in a trending market with good risk/reward."
+    },
+    {
+      "condition": "Price pulls back to touch EMA 50 in an established uptrend and bounces",
+      "interpretation": "Intermediate dynamic support holding — stronger conviction setup as EMA 50 represents a more significant level."
+    },
+    {
+      "condition": "EMAs are flat and intertwined (no clear order)",
+      "interpretation": "Ranging market — EMA crossover signals are unreliable. Switch to mean reversion strategies or wait for trend to establish."
+    },
+    {
+      "condition": "EMA slope steep (greater than 45 degrees visually or high angle of ascent)",
+      "interpretation": "High trend velocity — trend is strong. Momentum is high. Avoid counter-trend trades."
+    }
+  ],
+  "rules": [
+    {
+      "id": "ema-rule-1",
+      "rule": "Use EMA crossovers (especially Golden/Death Cross) as bias signals only, never as entry signals. Require price confirmation — a pullback and bounce at the EMA level, or a breakout-retest — before entering.",
+      "rationale": "EMA crossovers are lagging by definition. They often occur after a large portion of the move has already happened. Entering on the cross itself is typically a poor entry with unfavorable risk/reward."
+    },
+    {
+      "id": "ema-rule-2",
+      "rule": "Use EMA as dynamic support/resistance. In uptrends, buy pullbacks to EMA 21 or EMA 50 with a structure-based stop below the EMA. In downtrends, sell rallies to EMA 21 or EMA 50.",
+      "rationale": "EMAs attract price like magnets. Buying or selling at the EMA in trend provides a precise entry with a clear invalidation level (close through the EMA), resulting in good risk/reward."
+    },
+    {
+      "id": "ema-rule-3",
+      "rule": "Use the MA fan formation to gauge trend strength and alignment. A complete bull fan (9 > 21 > 50 > 200, all upward sloping) is the strongest trend confirmation. Only consider shorts when the fan begins to collapse.",
+      "rationale": "The fan formation shows all timeframe EMAs are aligned. The most profitable trades occur when multiple timeframes agree on direction."
+    },
+    {
+      "id": "ema-rule-4",
+      "rule": "Assess EMA slope, not just position. A flat EMA 50 means no intermediate trend even if price is above it. A steeply rising EMA 50 confirms a strong intermediate uptrend.",
+      "rationale": "Slope reflects the rate of change of the trend. A flat EMA indicates the trend has paused or is transitioning. Slope also helps identify momentum exhaustion when it begins to flatten."
+    },
+    {
+      "id": "ema-rule-5",
+      "rule": "Use EMA 200 as the primary long-term trend filter. Only take long trades (on any timeframe) when price is above EMA 200 on the daily or weekly. Only take shorts when price is below EMA 200.",
+      "rationale": "EMA 200 is the most widely watched institutional level. It represents the long-term trend and is self-fulfilling due to its widespread use. Trading in its direction aligns with institutional bias."
+    },
+    {
+      "id": "ema-rule-6",
+      "rule": "In ranging or choppy markets where EMAs are flat and entangled, do not use EMA crossovers or EMA touches as signals. Wait for the EMAs to separate and show slope before re-engaging trend strategies.",
+      "rationale": "Flat, entangled EMAs indicate absence of trend. Crossovers in this condition are noise and will produce numerous whipsaws."
+    }
+  ],
+  "related_concepts": [
+    "trend_following",
+    "dynamic_support_resistance",
+    "golden_cross",
+    "death_cross",
+    "ma_fan_formation",
+    "trend_filter",
+    "momentum",
+    "pullback_entry",
+    "multi_timeframe_analysis",
+    "institutional_levels"
+  ],
+  "agent_use": "Use EMAs to determine trend bias and identify dynamic support/resistance for entry. Always start by checking EMA 200 position and slope for long-term bias. Check EMA fan formation (9/21/50/200 order and slope) for trend strength. Use EMA 21 and EMA 50 as pullback entry zones in trends. Flag Golden/Death Cross as bias shifts, not entries. Report EMA alignment, slope, and whether price is at a key EMA level when analyzing any setup."
+}

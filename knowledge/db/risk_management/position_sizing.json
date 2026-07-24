@@ -1,0 +1,94 @@
+{
+  "topic": "Position Sizing",
+  "version": "1.0",
+  "core_formula": {
+    "formula": "position_size = (equity × risk_pct) / (entry_price × stop_distance_pct)",
+    "variables": {
+      "equity": "Total current account equity in base currency. Use actual current equity, not initial capital or peak equity.",
+      "risk_pct": "Maximum percentage of equity to risk on this trade, expressed as decimal (e.g., 0.01 for 1%). Determined by risk management rules — not by signal confidence.",
+      "entry_price": "The planned entry price for the trade.",
+      "stop_distance_pct": "The distance from entry to stop loss expressed as a decimal percentage of entry price. Calculated from the technical stop location, not chosen to fit a desired position size."
+    },
+    "example": {
+      "equity": 10000,
+      "risk_pct": 0.01,
+      "entry_price": 50000,
+      "stop_loss_price": 48500,
+      "stop_distance_pct": 0.03,
+      "calculation": "(10000 × 0.01) / (50000 × 0.03) = 100 / 1500 = 0.0667 BTC",
+      "dollar_risk": 100,
+      "verification": "0.0667 BTC × 50000 = $3333 position. If stopped out at 48500 (3% below entry): loss = 0.0667 × 1500 = $100.05 ≈ $100 (1% of equity). Correct."
+    },
+    "formula_variants": {
+      "crypto_spot": "position_size_in_coin = (equity × risk_pct) / (entry_price × stop_distance_pct)",
+      "futures_with_leverage": "contracts = (equity × risk_pct) / (contract_value × stop_distance_pct × leverage_factor)",
+      "dollar_denominated": "position_value_usd = equity × risk_pct / stop_distance_pct"
+    }
+  },
+  "technical_stop_requirement": {
+    "definition": "The stop loss must be placed at a technically significant level — a price where, if reached, the original trade thesis is invalidated. The stop distance is a result of this analysis, not an input chosen to control position size.",
+    "valid_technical_stops": [
+      "Below the low of Wave 2 in an Elliott Wave trade (invalidates Wave 2 retracement thesis)",
+      "Below a high-quality S/R zone where entry was taken (zone failure invalidates the trade)",
+      "Below a swing low that defines the trend structure",
+      "Below the 0.786 Fibonacci retracement of the swing that defines the trade setup",
+      "Outside a consolidation range on a breakout trade (failed breakout invalidation)"
+    ],
+    "invalid_stop_methods": [
+      "Placing stop X% below entry without technical reference — arbitrary risk, not trade-based",
+      "Placing stop to achieve a desired position size — reverses the formula, violates risk logic",
+      "Using the same fixed stop distance for all trades regardless of market structure",
+      "Placing stop below a round number 'because it feels safer' without structural justification"
+    ],
+    "wide_stop_protocol": "If the technical stop produces a stop_distance_pct above 5%, the position size will be very small. This is correct — it means the trade structure does not support an efficient entry. The agent must not widen or tighten the stop to achieve a 'better' position size. If the resulting position size is below the minimum viable trade size, the trade should not be taken.",
+    "agent_rule": "The agent calculates the technical stop first, then the position size. Never reverse this process."
+  },
+  "no_confidence_based_scaling": {
+    "statement": "Position size must not be scaled up or down based on the confidence score or perceived signal quality of a trade. The confidence score determines whether to enter a trade at all (minimum threshold required) — once the threshold is met, standard risk percentage is applied.",
+    "rationale": "Confidence-based scaling creates two problems: (1) it implies outcome prediction — higher confidence implies higher expected win probability, which contradicts the probabilistic mindset; (2) it concentrates risk on trades that feel better, which are often the most crowded and least favorable in terms of future returns. The edge is the edge. It is applied uniformly.",
+    "exception": "The ONLY permitted modification to standard risk is a REDUCTION — never an increase — when: (a) circuit breaker conditions are approaching but not yet triggered, (b) a new, unvalidated strategy is being live-tested (use 0.25% risk until 20 trades are completed), or (c) market conditions are assessed as unusually uncertain (e.g., imminent high-impact news).",
+    "prohibited_behavior": "Doubling position size on a 'perfect' setup. Halving position size on a valid setup due to recent losses (unless circuit breaker is active). Using 2% risk instead of 1% because 'this one is really good'."
+  },
+  "pre_defined_risk_before_entry": {
+    "statement": "The complete risk calculation — entry price, stop loss level, position size, and maximum dollar risk — must be fully calculated and confirmed BEFORE any entry order is placed. The agent must never enter a trade with an undefined stop or an uncalculated position size.",
+    "pre_entry_checklist": [
+      "Entry price identified and justified by edge criteria",
+      "Stop loss level identified at technical invalidation point",
+      "Stop distance percentage calculated",
+      "Position size calculated using the formula",
+      "Dollar risk confirmed to be within the per-trade risk limit",
+      "Profit targets T1, T2, and T3 identified at Fibonacci or structural levels",
+      "Risk/reward ratio confirmed to be above minimum threshold (minimum 1.5:1, preferred 2:1+)",
+      "Position size confirmed to be above minimum viable size for the exchange"
+    ],
+    "minimum_rr_threshold": "The agent must not issue a trade signal with a risk/reward ratio below 1.5:1. Below this threshold, the trade cannot maintain positive expectancy at any realistic win rate.",
+    "agent_behavior": "The agent outputs the complete pre-entry checklist as part of every trade signal, with all values filled in. Any unfilled value or ratio below threshold results in the signal being rejected."
+  },
+  "agent_rules": {
+    "rule_1_formula_always_applied": {
+      "name": "FORMULA_ALWAYS_APPLIED",
+      "statement": "The agent must calculate position size using the defined formula for every trade signal without exception. Manual or intuitive position sizing is never permitted. The formula must be shown explicitly in the signal output with all variable values.",
+      "rationale": "Formula-based sizing ensures consistency and prevents emotional manipulation of risk exposure."
+    },
+    "rule_2_technical_stop_first": {
+      "name": "TECHNICAL_STOP_FIRST",
+      "statement": "The technical stop loss level must be identified and justified before any position size calculation begins. The workflow is: (1) identify technical stop, (2) calculate stop distance, (3) calculate position size. This sequence must never be reversed.",
+      "rationale": "Reversing the sequence — sizing first, then fitting the stop — leads to stops placed at arbitrary levels that get hit by normal market noise."
+    },
+    "rule_3_no_size_scaling_by_confidence": {
+      "name": "NO_SIZE_SCALING_BY_CONFIDENCE",
+      "statement": "Position size is determined solely by equity, risk percentage, and stop distance. Signal confidence score above the minimum threshold does not increase position size. Signal confidence score below the maximum threshold does not decrease position size (unless circuit breaker rules apply).",
+      "rationale": "Consistent sizing is required for the expectancy formula to function. Variable sizing based on confidence introduces prediction-dependent behavior that undermines the probabilistic framework."
+    },
+    "rule_4_pre_entry_lock": {
+      "name": "PRE_ENTRY_LOCK",
+      "statement": "Once the pre-entry checklist is completed and an entry is initiated, no parameters may be changed — entry price, stop, target, or size — unless the trade thesis is formally invalidated by price action and a new analysis is conducted from scratch.",
+      "rationale": "Mid-execution parameter changes are the most common form of rule violation and the primary mechanism of loss amplification."
+    },
+    "rule_5_minimum_rr_gate": {
+      "name": "MINIMUM_RR_GATE",
+      "statement": "No trade signal with a risk/reward ratio below 1.5:1 may be issued. The agent must calculate R:R as part of the pre-entry checklist and reject any setup where T1 (first target) does not provide at least 1.5x the dollar risk being taken.",
+      "rationale": "A win rate of 50% with an R:R of 1.5:1 produces an expectancy of +0.25R per trade. Below 1.5:1, win rates above 60% are required for positive expectancy — rates rarely achieved consistently in live trading."
+    }
+  }
+}

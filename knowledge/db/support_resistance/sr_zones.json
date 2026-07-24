@@ -1,0 +1,135 @@
+{
+  "topic": "Support and Resistance Zones",
+  "version": "1.0",
+  "zone_formation_mechanisms": {
+    "swing_highs_and_lows": {
+      "description": "Price levels where the market reversed direction, leaving behind significant swing points. These are the most visible and widely watched zones.",
+      "identification": "A swing high is a candle with at least 2 lower highs on each side. A swing low is a candle with at least 2 higher lows on each side.",
+      "significance": "Higher timeframe swing points carry more weight than lower timeframe ones."
+    },
+    "consolidation_zones": {
+      "description": "Areas where price traded sideways for an extended period. The market agreed on value here, making these levels magnets for future price action.",
+      "identification": "Look for regions where price oscillated within a range for 5+ candles before a breakout.",
+      "significance": "Wider consolidations with more touches indicate stronger agreement on value and stronger future reactions."
+    },
+    "round_numbers": {
+      "description": "Psychologically significant price levels ending in 00 or 000. Retail and institutional orders cluster here due to human cognitive anchoring.",
+      "examples": ["10000", "50000", "100", "1000"],
+      "significance": "The rounder the number, the larger the psychological impact. Act as magnets and barriers."
+    },
+    "volume_nodes": {
+      "description": "Price levels with exceptional historical trading volume identified through Volume Profile analysis. High-volume nodes (HVN) act as support/resistance; low-volume nodes (LVN) allow fast price movement.",
+      "tools": "Volume Profile, Market Profile, Point of Control (POC)",
+      "significance": "HVN: price tends to consolidate. LVN: price tends to accelerate through."
+    },
+    "previous_structure": {
+      "description": "Prior highs and lows from higher timeframes that have not been revisited. These create memory in the market.",
+      "significance": "The longer the zone has been untested, the more powerful the reaction upon return."
+    }
+  },
+  "quality_scoring_matrix": {
+    "description": "Score each zone from 0 to 4 based on the criteria below. Higher score = higher-quality zone.",
+    "criteria": {
+      "timeframe_origin": {
+        "score_0": "Sub-1h chart origin",
+        "score_1": "1h chart origin",
+        "score_2": "4h chart origin",
+        "score_3": "Daily chart origin",
+        "score_4": "Weekly or Monthly chart origin"
+      },
+      "number_of_touches": {
+        "score_0": "1 touch (untested)",
+        "score_1": "2 touches",
+        "score_2": "3 touches",
+        "score_3": "4-5 touches",
+        "score_4": "6+ touches with consistent reaction"
+      },
+      "sharpness_of_reaction": {
+        "score_0": "No clear reaction",
+        "score_1": "Minor hesitation",
+        "score_2": "Visible pullback",
+        "score_3": "Strong rejection candle",
+        "score_4": "Explosive reversal with high volume"
+      },
+      "confluence_factors": {
+        "score_0": "Zone alone, no confluence",
+        "score_1": "1 confluence factor",
+        "score_2": "2 confluence factors",
+        "score_3": "3 confluence factors",
+        "score_4": "4+ confluence factors (Fibonacci + round number + volume node + trendline)"
+      }
+    },
+    "interpretation": {
+      "0_4": "Weak zone — avoid trading",
+      "5_8": "Moderate zone — trade only with strong additional confirmation",
+      "9_12": "High-quality zone — primary trade location",
+      "13_16": "Exceptional zone — maximum position sizing justified"
+    }
+  },
+  "role_reversal": {
+    "name": "Polarity Principle",
+    "description": "When a support level is broken convincingly, it transforms into resistance. When a resistance level is broken convincingly, it transforms into support. The market tests the broken level from the other side before continuing.",
+    "conditions_for_valid_role_reversal": [
+      "Break must be decisive — at least a full candle body close beyond the zone",
+      "Volume should expand on the breakout candle",
+      "A retest of the broken zone from the new side confirms polarity flip",
+      "The zone holds during the retest (rejection candle from the new side)"
+    ],
+    "failed_role_reversal": "If price reverses back through the broken level, treat it as a false breakout and reassess direction."
+  },
+  "zone_width": {
+    "crypto_standard": "±0.75% of the zone midpoint",
+    "rationale": "Crypto markets are volatile. A zone is not a line but a region. Using ±0.75% accounts for wicks, slippage, and exchange spread differences.",
+    "application": "If a zone is identified at 50000, the zone spans from 49625 to 50375.",
+    "tighter_markets": "For forex or equities, reduce to ±0.25% to ±0.50% depending on instrument volatility.",
+    "never_use_exact_prices": "Always define zones as bands, not single price points."
+  },
+  "psychological_levels": {
+    "description": "Price levels that attract disproportionate order flow due to human psychology and institutional order placement practices.",
+    "types": {
+      "century_numbers": "Ends in 00 — e.g., 3400, 28000",
+      "millennium_numbers": "Ends in 000 — e.g., 30000, 50000",
+      "option_strikes": "Major options expiry levels concentrate open interest",
+      "all_time_highs_lows": "Unique psychological barrier — no historical reference above/below",
+      "52_week_highs_lows": "Institutional benchmark levels watched by funds"
+    },
+    "behavior": "Price often stalls at psychological levels even when no visible chart structure exists there. Combine with volume profile for confirmation."
+  },
+  "agent_rules": {
+    "rule_1_no_entry_in_the_middle": {
+      "name": "NO_ENTRY_IN_THE_MIDDLE",
+      "statement": "The agent must never initiate a trade when price is between a support and resistance zone. Entries are only permitted at defined zone boundaries — at support or at resistance, never in the open space between them.",
+      "rationale": "Mid-range entries have undefined risk and poor reward-to-risk profiles."
+    },
+    "rule_2_zone_freshness_priority": {
+      "name": "ZONE_FRESHNESS_PRIORITY",
+      "statement": "A zone that has been tested and held recently is weaker than a zone that has not been visited in a long time. The agent must assign lower confidence to recently-tested zones and higher confidence to untested or long-undisturbed zones.",
+      "rationale": "Each test of a zone absorbs pending orders. Fewer orders remain for future reactions."
+    },
+    "rule_3_higher_timeframe_dominance": {
+      "name": "HIGHER_TIMEFRAME_DOMINANCE",
+      "statement": "When a lower timeframe zone conflicts with a higher timeframe zone, the higher timeframe zone takes precedence. The agent must not take counter-trend trades at lower timeframe zones that sit inside higher timeframe zones pointing the opposite direction.",
+      "rationale": "Higher timeframe participants have larger order sizes and move markets more significantly."
+    },
+    "rule_4_minimum_quality_score": {
+      "name": "MINIMUM_QUALITY_SCORE",
+      "statement": "The agent must not generate a trade signal at any zone with a quality score below 5 out of 16. Zones scoring 5-8 require an additional confirmation signal (e.g., bullish/bearish engulfing candle) before a signal is issued.",
+      "rationale": "Low-quality zones produce low-probability trades that erode expectancy over time."
+    },
+    "rule_5_polarity_confirmation_required": {
+      "name": "POLARITY_CONFIRMATION_REQUIRED",
+      "statement": "When trading a role-reversed zone, the agent must not enter on the breakout candle itself. It must wait for a retest of the broken level from the new side and confirmation that the level is holding in its new role before issuing a signal.",
+      "rationale": "False breakouts are common. Waiting for retest confirmation filters out low-probability breakout trades."
+    },
+    "rule_6_zone_width_enforcement": {
+      "name": "ZONE_WIDTH_ENFORCEMENT",
+      "statement": "All zones must be stored and evaluated as ±0.75% bands, not single price lines. The agent must flag any analysis that references an exact price as a support or resistance without a defined width.",
+      "rationale": "Precision illusion (treating a zone as a single price) causes premature entry and stop-loss placement errors."
+    },
+    "rule_7_psychological_level_markup": {
+      "name": "PSYCHOLOGICAL_LEVEL_MARKUP",
+      "statement": "When a technical zone coincides with a round number (century or millennium), the agent must add +1 to the zone quality score and note the confluence explicitly in the reasoning trace.",
+      "rationale": "Institutional order flow clusters at round numbers, increasing zone reliability."
+    }
+  }
+}

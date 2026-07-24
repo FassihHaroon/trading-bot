@@ -1,0 +1,49 @@
+{
+  "id": "inverse_head_and_shoulders",
+  "name": "Inverse Head and Shoulders",
+  "category": "reversal",
+  "bias": "bullish",
+  "description": "A three-trough formation where the middle trough (head) is the lowest, flanked by two higher troughs (shoulders) of approximately equal depth. It signals the exhaustion of a downtrend and a likely reversal to the upside.",
+  "formation_rules": [
+    "Price must be in a confirmed downtrend prior to pattern formation",
+    "Left shoulder forms as price drops to a low, then bounces",
+    "Head forms as price drops to a lower low than the left shoulder, then bounces back to a similar peak level",
+    "Right shoulder forms as price drops to a low roughly equal to the left shoulder, then bounces",
+    "A neckline is drawn connecting the two peaks between the shoulders and head",
+    "The right shoulder low must be higher than the head and approximately equal to or higher than the left shoulder",
+    "The two peaks (neckline points) should be at a similar price level, within 3% of each other"
+  ],
+  "volume_rules": "Volume is typically highest on the left shoulder decline, lower on the head decline, and lowest on the right shoulder decline. Volume should expand noticeably on the rally phases. A volume expansion of at least 1.5x average on the neckline breakout candle is required for confirmation.",
+  "measured_target_method": "Measure the vertical distance from the bottom of the head to the neckline. Project that distance upward from the neckline breakout point to get the minimum price target.",
+  "confirmation_conditions": [
+    "Price closes above the neckline on a daily or weekly candle",
+    "Breakout candle volume is at least 1.5x the 20-period average volume",
+    "A retest of the neckline from above followed by a bounce confirms the breakout",
+    "RSI or MACD showing bullish divergence at the head or right shoulder strengthens the signal"
+  ],
+  "invalidation_conditions": [
+    "Price reclaims and closes below the neckline after the breakout",
+    "The right shoulder forms a low that is deeper than the head, invalidating the structure",
+    "Volume surges significantly on a sell-off back below the neckline",
+    "Price closes below the right shoulder low before a neckline break occurs"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "ihs_rule_01",
+      "rule": "Breakout is confirmed only when the closing price of a candle is strictly above the neckline; wicks above the neckline without a close do not constitute confirmation."
+    },
+    {
+      "id": "ihs_rule_02",
+      "rule": "Volume on the breakout candle must be >= 1.5x the 20-period simple moving average of volume; if not met, treat the break as unconfirmed and wait for the next candle."
+    },
+    {
+      "id": "ihs_rule_03",
+      "rule": "Pattern is invalidated when price produces a daily close below the neckline after a confirmed breakout; cancel all bullish targets and reassess bias."
+    },
+    {
+      "id": "ihs_rule_04",
+      "rule": "Measured target = neckline breakout price + (neckline price at head's time - head low price); flag the target as reached when price touches or crosses it intraday."
+    }
+  ]
+}

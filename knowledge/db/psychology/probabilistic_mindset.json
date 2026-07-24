@@ -1,0 +1,124 @@
+{
+  "topic": "Probabilistic Mindset — Mark Douglas Framework",
+  "version": "1.0",
+  "source": "Mark Douglas — Trading in the Zone",
+  "edge_definition": {
+    "definition": "An edge is a set of market conditions that, over a large sample of occurrences, results in a positive expectancy. An edge does not guarantee profit on any individual trade. It guarantees profit over a statistically significant number of trades when executed consistently.",
+    "key_components": [
+      "A defined entry condition that can be identified objectively",
+      "A defined exit condition for both winning and losing outcomes",
+      "A positive expectancy when measured across 100+ occurrences",
+      "Consistency — the same rules applied every time without discretionary override"
+    ],
+    "what_edge_is_not": [
+      "A prediction of the outcome of the next trade",
+      "A guarantee of profit on any given trade",
+      "A feeling or intuition that a trade will work",
+      "A unique insight unavailable to other market participants"
+    ]
+  },
+  "expectancy_formula": {
+    "formula": "Expectancy = (Win Rate × Average Win) - (Loss Rate × Average Loss)",
+    "variables": {
+      "win_rate": "Percentage of trades that result in a profit (expressed as decimal, e.g., 0.45 for 45%)",
+      "average_win": "Average profit per winning trade in R-multiples or currency",
+      "loss_rate": "1 - Win Rate (percentage of trades that result in a loss)",
+      "average_loss": "Average loss per losing trade in R-multiples or currency (always expressed as positive number)"
+    },
+    "example": {
+      "win_rate": 0.40,
+      "average_win": 3.0,
+      "loss_rate": 0.60,
+      "average_loss": 1.0,
+      "calculation": "(0.40 × 3.0) - (0.60 × 1.0) = 1.20 - 0.60 = 0.60R per trade",
+      "interpretation": "This system makes 0.60R per trade on average. Over 100 trades, expected gain is 60R regardless of sequence."
+    },
+    "positive_expectancy_threshold": "Expectancy must be greater than 0 over a sample of 100+ trades for an edge to exist.",
+    "agent_requirement": "The agent must calculate and report expectancy for any strategy it evaluates. It must not recommend a strategy with negative or unproven expectancy."
+  },
+  "sample_size_requirement": {
+    "minimum_trades": 100,
+    "preferred_trades": 300,
+    "rationale": "A sample size below 100 trades is statistically insufficient to distinguish a genuine edge from random variance. Markets are non-stationary — conditions change. A sample of 300+ trades across different market conditions (trending, ranging, volatile, quiet) is required to validate an edge with high confidence.",
+    "law_of_large_numbers": "The edge (positive expectancy) only manifests reliably over large sample sizes. Individual trades are random. The distribution of outcomes is predictable. This is the fundamental insight of probabilistic trading.",
+    "agent_rule": "The agent must explicitly state when a backtest or performance evaluation is based on fewer than 100 trades and must label conclusions as 'preliminary' or 'insufficient sample'."
+  },
+  "probability_vs_certainty_language": {
+    "description": "The agent must use probability-based language exclusively. Certainty-based language implies outcome prediction, which is impossible and creates a false psychological framework.",
+    "prohibited_phrases": [
+      "This trade will work",
+      "Price is going to rally",
+      "The market must go up from here",
+      "This is a guaranteed setup",
+      "Price cannot go lower",
+      "This is a sure thing"
+    ],
+    "required_phrases": [
+      "This setup has a historically high probability of success",
+      "Based on edge criteria, this is a favorable risk/reward setup",
+      "The probability favors a bounce from this level",
+      "Given the confluence, this setup aligns with our edge parameters",
+      "The next outcome is uncertain — edge plays out over many occurrences",
+      "Risk is defined at [X]. Opportunity is [Y]. Probability assessment: [Z]%"
+    ],
+    "rationale": "Certainty language triggers outcome-dependent thinking, which leads to emotional reactions when trades lose, breaking consistency and eroding the edge."
+  },
+  "confidence_score_interpretation": {
+    "description": "The agent uses a confidence score (0-100) to communicate the strength of a setup relative to defined edge criteria. This score reflects quality of conditions, not certainty of outcome.",
+    "scale": {
+      "0_20": {
+        "label": "NO SIGNAL",
+        "action": "Do not enter. Edge criteria not met.",
+        "agent_behavior": "Explicitly state: 'Setup does not meet minimum edge criteria. No signal generated.'"
+      },
+      "21_40": {
+        "label": "WEAK SIGNAL",
+        "action": "Avoid entry. Edge criteria partially met but below threshold.",
+        "agent_behavior": "Note conditions present and what is missing. Monitor for improvement."
+      },
+      "41_60": {
+        "label": "MODERATE SIGNAL",
+        "action": "Consider entry only with additional confirmation. Reduce position size.",
+        "agent_behavior": "List all criteria met and missing. Recommend waiting for one more confirmation factor."
+      },
+      "61_80": {
+        "label": "STRONG SIGNAL",
+        "action": "Enter with standard position sizing. All primary edge criteria met.",
+        "agent_behavior": "Full signal issued with entry, stop, and targets defined. Standard risk applied."
+      },
+      "81_100": {
+        "label": "EXCEPTIONAL SIGNAL",
+        "action": "Enter with standard position sizing. Multiple confluence factors present. Maximum quality setup.",
+        "agent_behavior": "Full signal with notation of exceptional confluence. Do NOT increase position size beyond standard — risk management rules override signal quality."
+      }
+    },
+    "critical_note": "A confidence score of 90 does not mean 90% probability of a winning trade. It means 90% of the defined edge criteria are present. Outcome remains probabilistic."
+  },
+  "agent_rules": {
+    "rule_1_expectancy_over_individual_trades": {
+      "name": "EXPECTANCY_OVER_INDIVIDUAL_TRADES",
+      "statement": "The agent must never evaluate performance based on a single trade outcome. All performance assessments must reference expectancy over the sample set. A losing trade executed within edge parameters is a good trade. A winning trade that violated edge parameters is a bad trade.",
+      "rationale": "Outcome-based evaluation destroys edge consistency by reinforcing rule-breaking when it happens to be profitable."
+    },
+    "rule_2_no_outcome_prediction": {
+      "name": "NO_OUTCOME_PREDICTION",
+      "statement": "The agent must never predict the outcome of a specific trade with certainty. All communication about setups must use probabilistic language. The agent must append to every signal: 'This trade outcome is uncertain. The edge plays out over many occurrences.'",
+      "rationale": "Certainty-based framing creates unrealistic expectations and undermines psychological stability."
+    },
+    "rule_3_minimum_sample_validation": {
+      "name": "MINIMUM_SAMPLE_VALIDATION",
+      "statement": "The agent must not declare an edge exists until at least 100 trade occurrences have been evaluated. Preliminary signals on unvalidated strategies must include the disclaimer: 'Edge not yet statistically validated — minimum 100-trade sample required.'",
+      "rationale": "Premature edge declaration leads to over-confidence and position sizing errors."
+    },
+    "rule_4_consistent_execution_requirement": {
+      "name": "CONSISTENT_EXECUTION_REQUIREMENT",
+      "statement": "The agent must apply identical edge criteria to every trade without exception. No qualitative adjustments based on recent trade outcomes, market news, or emotional state. The edge only works if every instance is treated identically.",
+      "rationale": "Selective application invalidates the statistical properties of the edge."
+    },
+    "rule_5_confidence_score_communication": {
+      "name": "CONFIDENCE_SCORE_COMMUNICATION",
+      "statement": "Every signal issued by the agent must include a confidence score with a breakdown of which criteria are met and which are missing. The score must be accompanied by the statement: 'Confidence score reflects setup quality against edge criteria, not trade outcome probability.'",
+      "rationale": "Transparent scoring prevents misinterpretation of agent confidence as trade outcome certainty."
+    }
+  }
+}

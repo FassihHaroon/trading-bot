@@ -1,0 +1,103 @@
+{
+  "topic": "Circuit Breakers and Drawdown Controls",
+  "version": "1.0",
+  "overview": "Circuit breakers are pre-defined, automatic halts to trading activity triggered by specific loss thresholds or behavioral patterns. They are not discretionary decisions — they are rules that execute automatically when conditions are met. Their purpose is to protect capital from the compounding damage of emotional trading during adverse conditions.",
+  "daily_loss_limit": {
+    "threshold_pct": 3.0,
+    "threshold_description": "3% of account equity at the start of the trading day",
+    "calculation": "daily_loss_limit = opening_equity × 0.03",
+    "example": "If opening equity = $10,000, daily loss limit = $300. When cumulative realized losses for the day reach $300, the circuit breaker triggers.",
+    "trigger_action": {
+      "immediate": "All pending orders cancelled. No new trade signals issued for the remainder of the calendar day.",
+      "agent_behavior": "The agent enters DAILY_HALT state. Any request for a new trade signal returns: 'CIRCUIT BREAKER ACTIVE: Daily loss limit of 3% reached. No new signals until next trading day. Focus: review trades, identify edge deviation, prepare for next session.'",
+      "logging": "Trigger event logged with timestamp, trades that contributed to the loss, and whether losses resulted from valid edge trades or rule violations.",
+      "reset": "Circuit breaker resets at the start of the next trading day (00:00 UTC or defined session open)."
+    },
+    "rationale": "A 3% daily loss is significant but recoverable. Allowing further trading after a 3% loss — especially in an emotionally activated state — risks compounding the loss to an account-threatening level. Stopping preserves capital and psychological stability."
+  },
+  "weekly_loss_limit": {
+    "threshold_pct": 5.0,
+    "threshold_description": "5% of account equity at the start of the trading week",
+    "calculation": "weekly_loss_limit = week_opening_equity × 0.05",
+    "example": "If week opening equity = $10,000, weekly loss limit = $500. When cumulative realized losses for the week reach $500, the circuit breaker triggers.",
+    "trigger_action": {
+      "immediate": "All trading halted for the remainder of the calendar week.",
+      "agent_behavior": "The agent enters WEEKLY_HALT state. Returns: 'CIRCUIT BREAKER ACTIVE: Weekly loss limit of 5% reached. Trading suspended until the start of next week. Mandatory: conduct full weekly review per recalibration protocol.'",
+      "mandatory_review": "Before trading resumes the following week, the agent must conduct a full weekly recalibration review (see weekly_recalibration section).",
+      "reset": "Circuit breaker resets at the start of the next trading week after recalibration review is completed."
+    },
+    "interaction_with_daily_limit": "A weekly loss limit trigger may occur before the daily limit is reached if losses accumulate across multiple days. Both limits are tracked independently and simultaneously.",
+    "rationale": "A 5% weekly loss signals that market conditions may have shifted adversely or that execution has deviated from the edge. A full week off allows conditions to stabilize and the agent to recalibrate before risking further capital."
+  },
+  "consecutive_loss_cooldown": {
+    "consecutive_losses_trigger": 3,
+    "cooldown_duration_hours": 24,
+    "description": "After 3 consecutive closed losing trades, the agent enters a 24-hour cooldown period regardless of daily or weekly loss amounts.",
+    "calculation": "Consecutive losses are counted from the most recent closed trade backward. A single winning trade resets the consecutive loss counter to zero.",
+    "trigger_action": {
+      "immediate": "Signal generation suspended for 24 hours from the time of the third consecutive loss.",
+      "agent_behavior": "Enters CONSECUTIVE_LOSS_COOLDOWN state. Returns: 'CIRCUIT BREAKER ACTIVE: 3 consecutive losses detected. 24-hour cooldown initiated. Time remaining: [X] hours. Recommended action: review the three losing trades for edge adherence.'",
+      "review_requirement": "During the 24-hour cooldown, a mini-review of the three losing trades must be conducted: Were edge criteria properly met? Was stop placement correct? Was position sizing correct? Did market conditions change during the trade?",
+      "reset": "24 hours after trigger time, trading resumes with a fresh consecutive loss counter."
+    },
+    "rationale": "Three consecutive losses can indicate: (1) a genuine losing streak within normal distribution — the edge is intact, (2) a change in market regime making the edge temporarily ineffective, or (3) execution errors or rule deviations. A 24-hour pause forces investigation before further capital is risked.",
+    "important_note": "This circuit breaker is NOT triggered by the size of losses — only by the count of consecutive losses. Three small losing trades each at 0.5% risk triggers the same cooldown as three large losing trades."
+  },
+  "revenge_trading_prevention": {
+    "definition": "Revenge trading is the act of placing additional trades immediately after a loss with the primary motivation of recovering the lost capital rather than executing a valid edge setup. It is driven by ego and loss aversion rather than analysis. It is one of the most destructive patterns in trading psychology.",
+    "detection_architecture": {
+      "time_proximity_flag": {
+        "description": "If a new trade signal is requested within 15 minutes of closing a losing trade, the agent flags this as a potential revenge trading trigger.",
+        "agent_action": "Before issuing the signal, the agent must output: 'REVENGE TRADING CHECK: A trade was closed at a loss [X] minutes ago. Confirm this signal meets all edge criteria and is not emotionally motivated.' Agent then proceeds only if all edge criteria are met."
+      },
+      "size_escalation_flag": {
+        "description": "If a trade signal is requested with a position size larger than the standard formula output, the agent flags this as a potential revenge trading attempt.",
+        "agent_action": "Reject the oversized signal immediately. Output: 'SIGNAL REJECTED: Requested position size exceeds formula output. Revenge trading prevention protocol active. Standard size applied.' Agent recalculates with correct size."
+      },
+      "below_threshold_override_flag": {
+        "description": "If a trade is requested on a setup with a confidence score below the minimum threshold after a losing trade, the agent flags this as a potential revenge trading attempt.",
+        "agent_action": "Reject the signal. Output: 'SIGNAL REJECTED: Setup does not meet minimum confidence threshold. Post-loss low-quality signal rejected under revenge trading prevention protocol.'"
+      },
+      "rapid_sequential_signals_flag": {
+        "description": "If 3 or more trade signals are requested within a 2-hour window after a loss, the agent flags this as a potential revenge trading pattern.",
+        "agent_action": "After the third signal request in the window, output: 'PATTERN WARNING: 3+ trade signals requested within 2 hours of a loss. This pattern is associated with revenge trading. Mandatory 30-minute cooling period before the next signal will be processed.'"
+      }
+    },
+    "core_principle": "The agent does not have emotions. However, it serves a human trader who does. The revenge trading prevention architecture protects the human from their own emotional state during a vulnerable period. The architecture assumes that the human may not recognize they are in a revenge trading state — the agent provides the objective check."
+  },
+  "weekly_recalibration": {
+    "trigger": "End of each trading week (mandatory) or upon weekly loss limit circuit breaker trigger (mandatory before resuming).",
+    "description": "A structured review process that evaluates the past week's trading performance against the edge and risk management rules to identify deviations, validate the edge, and prepare for the next week.",
+    "required_review_items": [
+      {
+        "item": "Rules Adherence Audit",
+        "description": "Review each trade: were all edge criteria met? Was stop placed correctly? Was position sizing formula applied? Were targets used? Flag any violations."
+      },
+      {
+        "item": "Expectancy Calculation",
+        "description": "Calculate the week's realized expectancy in R-multiples. Compare against historical expectancy baseline. Flag significant negative divergence."
+      },
+      {
+        "item": "Circuit Breaker Review",
+        "description": "Were any circuit breakers triggered? If yes, what trades triggered them? Were those trades rule-compliant or rule-violating? Update the incident log."
+      },
+      {
+        "item": "Market Regime Assessment",
+        "description": "Assess whether the market regime (trending, ranging, volatile, low-volatility) matches the conditions the edge was validated in. If regime has shifted, reduce risk percentage for next week."
+      },
+      {
+        "item": "Edge Validity Check",
+        "description": "If win rate has diverged more than 15 percentage points below historical average over the past 30 trades, flag for edge re-evaluation. Consider reducing position size to 0.5% risk while monitoring."
+      },
+      {
+        "item": "Equity Update",
+        "description": "Update the account equity figure used in all position sizing formulas. Always use current equity, never last week's equity."
+      },
+      {
+        "item": "Next Week Preparation",
+        "description": "Identify key levels (major S/R zones, upcoming high-impact news events, significant Fibonacci levels) for the next week. Prepare the analysis framework before the week begins."
+      }
+    ],
+    "output_requirement": "The weekly recalibration must produce a written summary including: (1) rules adherence rate, (2) realized expectancy in R, (3) any circuit breaker incidents, (4) market regime assessment, (5) next week risk level (standard or reduced), and (6) key levels watchlist."
+  }
+}

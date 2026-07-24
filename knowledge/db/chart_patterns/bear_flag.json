@@ -1,0 +1,49 @@
+{
+  "id": "bear_flag",
+  "name": "Bear Flag",
+  "category": "continuation",
+  "bias": "bearish",
+  "description": "A short-term continuation pattern that forms after a sharp, strong downward move (the flagpole) followed by a brief, orderly consolidation that drifts slightly upward or sideways in a parallel channel (the flag). It signals a pause before the downtrend resumes.",
+  "formation_rules": [
+    "A strong, near-vertical price decline (flagpole) must precede the pattern, ideally losing at least 10-15% in a short period",
+    "The flagpole should form on above-average volume",
+    "The consolidation phase (flag) forms as price drifts upward or sideways in a tight, orderly channel",
+    "The flag's upper and lower boundaries should be roughly parallel",
+    "The flag should retrace no more than 50% of the flagpole move",
+    "The consolidation should last between 5 and 20 candles on the applicable timeframe",
+    "The flag channel should angle slightly upward or be flat; a steep upward angle weakens the pattern"
+  ],
+  "volume_rules": "Volume must be high during the flagpole formation. Volume should decline noticeably and consistently during the flag consolidation, indicating a weak counter-trend bounce. Volume must expand at least 1.5x average on the breakdown candle below the flag's lower boundary.",
+  "measured_target_method": "Measure the length of the flagpole (from the top of the pole to the bottom). Subtract that distance from the breakdown point of the flag's lower boundary to get the price target.",
+  "confirmation_conditions": [
+    "Price closes below the lower boundary of the flag channel",
+    "Breakdown candle volume is at least 1.5x the 20-period average volume",
+    "The breakdown occurs before the flag channel has consumed more than 50% of the flagpole in time",
+    "A brief bounce to the broken flag boundary that fails as resistance confirms continuation"
+  ],
+  "invalidation_conditions": [
+    "Price breaks above the upper boundary of the flag channel on a closing basis",
+    "The flag retraces more than 50% of the flagpole move",
+    "Volume increases significantly during the flag consolidation, suggesting accumulation",
+    "Price closes back inside the flag channel after a breakdown"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "brf_rule_01",
+      "rule": "Breakdown is confirmed when the closing price falls below the lower boundary of the flag channel; the boundary is defined by the trendline connecting the swing lows within the consolidation."
+    },
+    {
+      "id": "brf_rule_02",
+      "rule": "Volume on the breakdown candle must be >= 1.5x the 20-period SMA of volume; if not met, treat as a low-conviction breakdown and reduce position size by 50%."
+    },
+    {
+      "id": "brf_rule_03",
+      "rule": "Pattern is invalidated when the closing price rises above the upper boundary of the flag channel; exit any short positions initiated on the breakdown immediately."
+    },
+    {
+      "id": "brf_rule_04",
+      "rule": "Reject the pattern if the flag's retrace depth exceeds 50% of the flagpole height measured in price; a deeper retrace suggests the move is corrective rather than a pause in the downtrend."
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "id": "breakout",
+  "name": "Breakout Strategy",
+  "market_conditions": [
+    "price consolidating near a well-defined support or resistance zone",
+    "at least two or more touches of the zone establishing its validity",
+    "declining volume during consolidation indicating coiling",
+    "market not in high-noise low-structure environment",
+    "broader trend aligned with the direction of breakout for higher probability"
+  ],
+  "phase_requirements": [
+    "accumulation phase before bullish breakout",
+    "distribution phase before bearish breakdown",
+    "consolidation or tight range formation at key zone"
+  ],
+  "entry_conditions": [
+    "price closes outside the support/resistance zone on the entry timeframe",
+    "breakout candle volume is greater than 1.5 times the 20-period average volume",
+    "breakout candle body is large relative to recent candles indicating momentum",
+    "zone has been tested at least twice before the breakout",
+    "for momentum entry: enter immediately after the breakout close",
+    "for re-test entry: wait for price to pull back to the broken zone and show confirmation"
+  ],
+  "confirmation_requirements": [
+    "candle closes fully outside the zone, not just a wick breach",
+    "volume on breakout candle exceeds 1.5 times the average volume",
+    "next candle continues in the breakout direction or consolidates above/below zone",
+    "for re-test entry: zone acts as new support for bullish breakout or new resistance for bearish breakdown",
+    "RSI moving above 50 for bullish breakout or below 50 for bearish breakdown",
+    "OBV trending in breakout direction"
+  ],
+  "stop_loss_logic": "For momentum entry: stop loss inside the zone, just below the upper boundary for longs or above the lower boundary for shorts, with 0.5 ATR buffer. For re-test entry: stop below the zone's lower boundary for longs or above the upper boundary for shorts.",
+  "take_profit_logic": "Measure the height of the consolidation range and project it from the breakout point. First target at 1x the range height (measured move). Second target at 1.5x or 2x range height. Trail stop after first target is reached.",
+  "invalidation_conditions": [
+    "breakout candle closes back inside the zone (false breakout)",
+    "volume is below average on the breakout candle",
+    "price immediately reverses after breakout without re-testing zone",
+    "re-test of broken zone fails and price closes back inside the zone",
+    "multiple failed breakout attempts at the same zone",
+    "broader market trend opposing the breakout direction"
+  ],
+  "related_indicators": [
+    "volume",
+    "OBV",
+    "ATR",
+    "RSI",
+    "Bollinger_Bands",
+    "VWAP",
+    "EMA_20",
+    "EMA_50"
+  ],
+  "related_patterns": [
+    "rectangle_consolidation",
+    "ascending_triangle",
+    "descending_triangle",
+    "symmetrical_triangle",
+    "flag_breakout",
+    "pennant_breakout",
+    "box_breakout"
+  ],
+  "required_features": {
+    "zone_touches": ">=2",
+    "breakout_volume": ">1.5x average volume",
+    "candle_close": "fully outside zone, not wick-only",
+    "zone_quality": "well-defined with clear boundaries",
+    "consolidation_duration": "at least 5 candles",
+    "volume_during_consolidation": "declining or below average"
+  },
+  "timeframe_requirements": {
+    "macro": "1D to identify the key zone and broader trend",
+    "entry": "4H or 1H for breakout execution and volume confirmation"
+  },
+  "risk_notes": "False breakouts are the primary risk; always require a candle close outside the zone. Volume confirmation is non-negotiable. Re-test entries have lower risk but may miss the move if re-test does not occur. Avoid breakouts in choppy markets or against major trend. Earnings or news events can cause false breakouts with abnormal volume — be cautious around scheduled events.",
+  "typical_rr": "1:2 to 1:3 on measured move",
+  "agent_rules": [
+    {
+      "id": "bo_001",
+      "rule": "Never enter a breakout on a wick breach alone — require a full candle close outside the zone."
+    },
+    {
+      "id": "bo_002",
+      "rule": "Volume on the breakout candle must be at least 1.5 times the 20-period average volume; if not, wait for re-test entry."
+    },
+    {
+      "id": "bo_003",
+      "rule": "If the breakout candle closes back inside the zone on the next candle, the trade is invalidated — exit immediately."
+    },
+    {
+      "id": "bo_004",
+      "rule": "Measure the range height before entry and set TP1 at the measured move projection."
+    },
+    {
+      "id": "bo_005",
+      "rule": "For re-test entries, only enter if the broken zone now holds as support/resistance — confirmed by a reversal candle."
+    },
+    {
+      "id": "bo_006",
+      "rule": "Do not enter a breakout if the zone has already failed 3 or more times — the market is rejecting the move."
+    }
+  ]
+}

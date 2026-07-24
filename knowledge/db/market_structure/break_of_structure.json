@@ -1,0 +1,165 @@
+{
+  "topic": "Break of Structure (BOS) and Change of Character (CHOCH)",
+  "version": "1.0",
+  "last_updated": "2026-07-24",
+  "framework": "Smart Money Concepts / Market Structure",
+  "definitions": {
+    "break_of_structure": {
+      "abbreviation": "BOS",
+      "definition": "A price move that breaks through a significant swing high or swing low in the direction of the prevailing trend, confirming trend continuation.",
+      "key_distinction": "BOS occurs IN the direction of the existing trend; it is a trend-continuation event, not a reversal signal.",
+      "valid_break_criteria": [
+        "Candle must close beyond the swing point (not just wick)",
+        "The swing point being broken must be a confirmed swing (prior confirmed swing high or low)",
+        "Break should ideally occur with above-average volume"
+      ]
+    },
+    "change_of_character": {
+      "abbreviation": "CHOCH",
+      "definition": "The FIRST break of structure that occurs AGAINST the prevailing trend direction. Signals a potential shift in market character from trend to reversal.",
+      "key_distinction": "CHOCH is the first structural break against the trend; it is an early reversal warning, not a confirmed reversal. Requires additional confirmation.",
+      "valid_choch_criteria": [
+        "Must be the first structure break in the opposing direction after a trend run",
+        "Price should have made at least one fresh swing extreme before the CHOCH forms",
+        "Higher probability when CHOCH forms at a significant HTF level (order block, FVG, liquidity pool)"
+      ]
+    }
+  },
+  "bullish_bos": {
+    "context": "downtrend or sideways range",
+    "definition": "Price closes above a Lower High (LH) in an established downtrend, indicating buyers are overcoming seller control at a structural level.",
+    "structure_before": "sequence of Lower Highs (LH) and Lower Lows (LL)",
+    "trigger": "close above the most recent confirmed Lower High",
+    "significance": "Breaks the pattern of lower highs; suggests demand is now strong enough to push through supply at a prior swing high",
+    "confirmation_factors": [
+      "Close is above the LH on the timeframe being analyzed (not just a wick)",
+      "Volume expands on the break",
+      "Break holds (price does not immediately fall back below the LH)",
+      "Higher timeframe structure is also turning bullish"
+    ],
+    "post_bos_expectation": "Pullback to the broken LH (now potential support); if holds, marks the first Higher Low (HL) — uptrend structure begins",
+    "invalidation": "Price falls back below the origin of the BOS candle or the prior LL"
+  },
+  "bearish_bos": {
+    "context": "uptrend or sideways range",
+    "definition": "Price closes below a Higher Low (HL) in an established uptrend, indicating sellers are overcoming buyer control at a structural level.",
+    "structure_before": "sequence of Higher Highs (HH) and Higher Lows (HL)",
+    "trigger": "close below the most recent confirmed Higher Low",
+    "significance": "Breaks the pattern of higher lows; suggests supply is now strong enough to push through demand at a prior swing low",
+    "confirmation_factors": [
+      "Close is below the HL on the timeframe being analyzed (not just a wick)",
+      "Volume expands on the break",
+      "Break holds (price does not immediately recover above the HL)",
+      "Higher timeframe structure is also turning bearish"
+    ],
+    "post_bos_expectation": "Rally to the broken HL (now potential resistance); if rejected, marks the first Lower High (LH) — downtrend structure begins",
+    "invalidation": "Price recovers above the origin of the BOS candle or the prior HH"
+  },
+  "choch_bullish": {
+    "context": "established downtrend",
+    "definition": "First break above a Lower High after a series of LH + LL formations; marks the first counter-trend structural move.",
+    "sequence": [
+      "Downtrend: LH1 -> LL1 -> LH2 -> LL2",
+      "Price rallies and closes ABOVE LH2",
+      "This close above LH2 is the CHOCH"
+    ],
+    "significance_for_trend_shift": "CHOCH signals the downtrend may be ending; smart money may be accumulating; structural bias shifts from bearish to neutral/cautiously bullish",
+    "required_follow_through": [
+      "Pullback after CHOCH that holds above prior LL (forms first HL)",
+      "Subsequent rally that forms a Higher High above CHOCH level",
+      "Volume confirmation on the new HH"
+    ],
+    "risk": "False CHOCH — price breaks above LH temporarily then resumes downtrend (lower low still forms); treat CHOCH as alert, not confirmed reversal"
+  },
+  "choch_bearish": {
+    "context": "established uptrend",
+    "definition": "First break below a Higher Low after a series of HH + HL formations; marks the first counter-trend structural move.",
+    "sequence": [
+      "Uptrend: HL1 -> HH1 -> HL2 -> HH2",
+      "Price declines and closes BELOW HL2",
+      "This close below HL2 is the CHOCH"
+    ],
+    "significance_for_trend_shift": "CHOCH signals the uptrend may be ending; smart money may be distributing; structural bias shifts from bullish to neutral/cautiously bearish",
+    "required_follow_through": [
+      "Rally after CHOCH that holds below prior HH (forms first LH)",
+      "Subsequent decline that forms a Lower Low below CHOCH level",
+      "Volume confirmation on the new LL"
+    ],
+    "risk": "False CHOCH — price breaks below HL temporarily then resumes uptrend (higher high still forms); treat CHOCH as alert, not confirmed reversal"
+  },
+  "significance_for_trend_shift": {
+    "bos_trend_continuation": "BOS in trend direction confirms trend is healthy and likely to continue; reinforces existing bias",
+    "choch_trend_reversal_warning": "CHOCH is the earliest structural warning of a trend shift; probability increases when CHOCH forms at HTF levels",
+    "full_reversal_confirmation_sequence": [
+      "1. CHOCH against trend (first structural break opposite to trend)",
+      "2. Pullback that holds (does not return to prior extreme)",
+      "3. Second structural break confirming new trend direction (first BOS in new trend direction)",
+      "4. Volume confirms each step"
+    ],
+    "timeframe_hierarchy": "Always check CHOCH/BOS on at least one higher timeframe; a CHOCH on LTF within an HTF BOS continuation zone is a pullback entry, not a reversal"
+  },
+  "bos_vs_choch_comparison": {
+    "bos": {
+      "direction": "same as prevailing trend",
+      "meaning": "trend continuation",
+      "trade_action": "enter or add in trend direction",
+      "confidence": "high when volume confirms"
+    },
+    "choch": {
+      "direction": "opposite to prevailing trend",
+      "meaning": "potential trend reversal warning",
+      "trade_action": "reduce position in trend direction; watch for reversal setup but wait for confirmation",
+      "confidence": "low alone; high when combined with HTF level + volume + follow-through"
+    }
+  },
+  "agent_rules": [
+    {
+      "rule_id": "BOS-001",
+      "condition": "price closes above a confirmed Lower High in a downtrend",
+      "action": "mark bullish BOS; upgrade bias to NEUTRAL; wait for pullback test of broken LH to confirm as support before entering long",
+      "priority": 1
+    },
+    {
+      "rule_id": "BOS-002",
+      "condition": "price closes below a confirmed Higher Low in an uptrend",
+      "action": "mark bearish BOS; downgrade bias to NEUTRAL; wait for rally test of broken HL to confirm as resistance before entering short",
+      "priority": 1
+    },
+    {
+      "rule_id": "BOS-003",
+      "condition": "first structural break against prevailing trend (CHOCH) identified",
+      "action": "flag CHOCH; do not immediately reverse position; require follow-through confirmation (HL hold in bullish CHOCH, LH hold in bearish CHOCH) before acting",
+      "priority": 1
+    },
+    {
+      "rule_id": "BOS-004",
+      "condition": "BOS occurs in trend direction",
+      "action": "confirm trend continuation; look for pullback entries in trend direction; do not fade the BOS",
+      "priority": 1
+    },
+    {
+      "rule_id": "BOS-005",
+      "condition": "BOS on lower timeframe conflicts with higher timeframe structure",
+      "action": "defer to higher timeframe structure; treat LTF BOS as a counter-trend move within HTF trend; no trade or fade setup only",
+      "priority": 1
+    },
+    {
+      "rule_id": "BOS-006",
+      "condition": "BOS occurs without volume expansion",
+      "action": "treat BOS as low-confidence; reduce position size; require additional confirmation before full entry",
+      "priority": 2
+    },
+    {
+      "rule_id": "BOS-007",
+      "condition": "CHOCH followed by first HL (bullish) or first LH (bearish)",
+      "action": "upgrade reversal confidence to MODERATE; look for entry on the first pullback in new trend direction",
+      "priority": 2
+    },
+    {
+      "rule_id": "BOS-008",
+      "condition": "two consecutive BOS events in new trend direction after CHOCH",
+      "action": "classify trend as officially reversed; apply full trend-following rules in new trend direction",
+      "priority": 1
+    }
+  ]
+}

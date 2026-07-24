@@ -1,0 +1,232 @@
+{
+  "topic": "Dow Theory",
+  "version": "1.0",
+  "last_updated": "2026-07-24",
+  "origin": "Charles H. Dow, late 1800s; codified by William Hamilton and Robert Rhea",
+  "tenets": [
+    {
+      "tenet_id": "DOW-T1",
+      "number": 1,
+      "name": "The Averages Discount Everything",
+      "statement": "Market prices fully reflect all available information, including known events and expectations. The market is a discounting mechanism.",
+      "implication": "Do not fight market price action based on your own information; assume price already knows what you know.",
+      "exceptions": ["Acts of God", "sudden unforeseeable events"],
+      "machine_readable": {
+        "principle": "price_discounts_all",
+        "tradeable": false,
+        "context_role": "foundational_assumption"
+      }
+    },
+    {
+      "tenet_id": "DOW-T2",
+      "number": 2,
+      "name": "The Market Has Three Trends",
+      "statement": "Markets move in three simultaneous trends: primary (tide), secondary (wave), and minor (ripple).",
+      "trends": {
+        "primary": {
+          "aka": "tide",
+          "duration_min_days": 365,
+          "description": "The dominant multi-year trend that defines the overall bull or bear market",
+          "trading_relevance": "highest"
+        },
+        "secondary": {
+          "aka": "wave",
+          "duration_min_days": 21,
+          "duration_max_days": 90,
+          "retracement_pct_min": 33,
+          "retracement_pct_max": 66,
+          "description": "Counter-move against the primary trend; corrections in a bull market, rallies in a bear market",
+          "trading_relevance": "medium"
+        },
+        "minor": {
+          "aka": "ripple",
+          "duration_max_days": 21,
+          "description": "Day-to-day fluctuations within the secondary trend; noise relative to primary trend",
+          "trading_relevance": "low"
+        }
+      },
+      "machine_readable": {
+        "principle": "three_concurrent_trends",
+        "tradeable": true,
+        "context_role": "trend_classification"
+      }
+    },
+    {
+      "tenet_id": "DOW-T3",
+      "number": 3,
+      "name": "Primary Trends Have Three Phases",
+      "statement": "Bull and bear markets each unfold in three distinct phases driven by the behavior of different market participants.",
+      "bull_market_phases": [
+        {
+          "phase_number": 1,
+          "name": "Accumulation",
+          "participants": "informed investors (smart money)",
+          "characteristics": "Prices are depressed; valuations low; pessimism widespread; smart money buys quietly"
+        },
+        {
+          "phase_number": 2,
+          "name": "Public Participation",
+          "participants": "trend-following institutions and traders",
+          "characteristics": "Economic conditions improve; earnings rise; price uptrend accelerates; most trend-followers enter"
+        },
+        {
+          "phase_number": 3,
+          "name": "Excess and Distribution",
+          "participants": "general public (uninformed retail)",
+          "characteristics": "Euphoria; high valuations; speculation; smart money distributes to the public"
+        }
+      ],
+      "bear_market_phases": [
+        {
+          "phase_number": 1,
+          "name": "Distribution",
+          "participants": "informed investors (smart money)",
+          "characteristics": "Prices are elevated; smart money sells quietly; optimism still widespread"
+        },
+        {
+          "phase_number": 2,
+          "name": "Public Participation",
+          "participants": "trend-following institutions and traders",
+          "characteristics": "Deteriorating fundamentals; downtrend accelerates; panic begins; most trend-followers exit longs"
+        },
+        {
+          "phase_number": 3,
+          "name": "Panic and Despair",
+          "participants": "general public (forced sellers)",
+          "characteristics": "Capitulation; indiscriminate selling; all hope abandoned; selling climax"
+        }
+      ],
+      "machine_readable": {
+        "principle": "three_phase_primary_trend",
+        "tradeable": true,
+        "context_role": "market_phase_classification"
+      }
+    },
+    {
+      "tenet_id": "DOW-T4",
+      "number": 4,
+      "name": "The Averages Must Confirm Each Other",
+      "statement": "A valid bull or bear market signal requires confirmation between the Industrial and Transportation averages. A signal from one index alone is insufficient.",
+      "original_indices": ["Dow Jones Industrial Average", "Dow Jones Transportation Average"],
+      "modern_application": "Confirm signals across correlated assets, sectors, or related instruments; e.g., equity and credit, or SPX and NDX",
+      "non_confirmation_implication": "Treat the signal as suspect; wait for both indices to confirm before acting with full position",
+      "machine_readable": {
+        "principle": "inter_index_confirmation",
+        "tradeable": true,
+        "context_role": "signal_validation",
+        "confirmation_required": true
+      }
+    },
+    {
+      "tenet_id": "DOW-T5",
+      "number": 5,
+      "name": "Volume Must Confirm the Trend",
+      "statement": "Volume should expand in the direction of the primary trend and contract on counter-trend moves.",
+      "rules": [
+        {
+          "condition": "price rising and volume rising",
+          "interpretation": "trend is healthy; demand driving price",
+          "bias": "bullish_confirmation"
+        },
+        {
+          "condition": "price rising and volume falling",
+          "interpretation": "trend is weakening; lack of conviction",
+          "bias": "bullish_warning"
+        },
+        {
+          "condition": "price falling and volume rising",
+          "interpretation": "trend is healthy (downtrend); supply driving price",
+          "bias": "bearish_confirmation"
+        },
+        {
+          "condition": "price falling and volume falling",
+          "interpretation": "downtrend weakening; potential exhaustion of sellers",
+          "bias": "bearish_warning"
+        }
+      ],
+      "machine_readable": {
+        "principle": "volume_trend_confirmation",
+        "tradeable": true,
+        "context_role": "signal_validation"
+      }
+    },
+    {
+      "tenet_id": "DOW-T6",
+      "number": 6,
+      "name": "A Trend Is Assumed to Continue Until a Definite Reversal Occurs",
+      "statement": "Once established, a trend is presumed to remain in force until clear evidence of reversal appears. The burden of proof lies with the reversal signal.",
+      "implication": "Do not call reversals prematurely; require definitive structural evidence before switching bias",
+      "reversal_evidence_required": [
+        "Break of primary trend swing high/low",
+        "Change of Character (CHOCH) on relevant timeframe",
+        "Volume confirmation of the reversal move",
+        "Secondary index confirmation (per Tenet 4)"
+      ],
+      "common_mistake": "Exiting trend positions on secondary (counter-trend) corrections instead of primary reversals",
+      "machine_readable": {
+        "principle": "trend_continuation_presumption",
+        "tradeable": true,
+        "context_role": "position_management",
+        "default_bias": "continue_existing_trend"
+      }
+    }
+  ],
+  "agent_rules": [
+    {
+      "rule_id": "DT-001",
+      "tenet_ref": "DOW-T1",
+      "condition": "agent has external information suggesting price should be higher/lower",
+      "action": "defer to current price action; do not trade against price on the basis of information alone",
+      "priority": 1
+    },
+    {
+      "rule_id": "DT-002",
+      "tenet_ref": "DOW-T2",
+      "condition": "classifying trend",
+      "action": "identify primary, secondary, and minor trends separately; base trade direction on primary trend; use secondary trends for entry timing",
+      "priority": 1
+    },
+    {
+      "rule_id": "DT-003",
+      "tenet_ref": "DOW-T3",
+      "condition": "primary trend established",
+      "action": "identify current phase (accumulation/participation/excess or distribution/participation/panic); adjust position sizing and aggression accordingly",
+      "priority": 2
+    },
+    {
+      "rule_id": "DT-004",
+      "tenet_ref": "DOW-T4",
+      "condition": "trade signal generated on one instrument",
+      "action": "check correlated instrument for confirmation; if non-confirmation exists, reduce position size by 50% or wait for confirmation",
+      "priority": 2
+    },
+    {
+      "rule_id": "DT-005",
+      "tenet_ref": "DOW-T5",
+      "condition": "price in uptrend but volume declining on rallies",
+      "action": "flag trend as weakening; tighten trailing stops; do not add to long positions",
+      "priority": 2
+    },
+    {
+      "rule_id": "DT-006",
+      "tenet_ref": "DOW-T5",
+      "condition": "price in uptrend and volume expanding on rallies",
+      "action": "confirm trend health; maintain long bias; entries on pullbacks valid",
+      "priority": 2
+    },
+    {
+      "rule_id": "DT-007",
+      "tenet_ref": "DOW-T6",
+      "condition": "price pulls back within an established trend",
+      "action": "treat as secondary correction; maintain primary trend bias; do not reverse position unless definitive reversal signals confirmed",
+      "priority": 1
+    },
+    {
+      "rule_id": "DT-008",
+      "tenet_ref": "DOW-T6",
+      "condition": "potential reversal signal identified",
+      "action": "require at minimum: structural break of trend + volume confirmation + secondary index confirmation before reclassifying trend",
+      "priority": 1
+    }
+  ]
+}

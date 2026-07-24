@@ -1,0 +1,113 @@
+{
+  "id": "macd",
+  "name": "Moving Average Convergence Divergence (MACD)",
+  "category": "trend_momentum",
+  "description": "MACD measures the relationship between two EMAs to identify trend direction, momentum, and potential reversals. It consists of the MACD line (12 EMA minus 26 EMA), a signal line (9 EMA of MACD), and a histogram (MACD minus signal). It functions as both a trend-following and momentum indicator. Most effective in trending markets; generates false signals in choppy, ranging conditions.",
+  "parameters": {
+    "fast_ema": 12,
+    "slow_ema": 26,
+    "signal_ema": 9,
+    "source": "close",
+    "histogram": "macd_line minus signal_line"
+  },
+  "signals": [
+    {
+      "condition": "MACD line crosses above zero line",
+      "interpretation": "Bullish trend signal: 12 EMA has crossed above 26 EMA; indicates the broader trend has shifted bullish — use as trend bias confirmation, not entry"
+    },
+    {
+      "condition": "MACD line crosses below zero line",
+      "interpretation": "Bearish trend signal: 12 EMA has crossed below 26 EMA; indicates the broader trend has shifted bearish — use as trend bias confirmation, not entry"
+    },
+    {
+      "condition": "MACD line crosses above signal line",
+      "interpretation": "Bullish entry timing signal; momentum is shifting upward; more reliable when the cross occurs below the zero line (oversold territory)"
+    },
+    {
+      "condition": "MACD line crosses below signal line",
+      "interpretation": "Bearish entry timing signal; momentum is shifting downward; more reliable when the cross occurs above the zero line (overbought territory)"
+    },
+    {
+      "condition": "MACD line above zero and above signal line",
+      "interpretation": "Bullish momentum; trend is up and accelerating; favor long bias"
+    },
+    {
+      "condition": "MACD line below zero and below signal line",
+      "interpretation": "Bearish momentum; trend is down and accelerating; favor short bias"
+    },
+    {
+      "condition": "Histogram making lower highs while price makes higher highs (bearish histogram divergence)",
+      "interpretation": "Leading warning of weakening bullish momentum; potential trend reversal or significant pullback approaching"
+    },
+    {
+      "condition": "Histogram making higher lows while price makes lower lows (bullish histogram divergence)",
+      "interpretation": "Leading warning of weakening bearish momentum; potential trend reversal or significant bounce approaching"
+    },
+    {
+      "condition": "MACD line diverges from price: price higher high, MACD lower high",
+      "interpretation": "Classic bearish divergence; momentum is not confirming price move; reversal risk elevated"
+    },
+    {
+      "condition": "MACD line diverges from price: price lower low, MACD higher low",
+      "interpretation": "Classic bullish divergence; selling momentum is exhausting; reversal risk elevated"
+    },
+    {
+      "condition": "Histogram bars are shrinking after a sustained move",
+      "interpretation": "Momentum is decelerating; trend may be losing steam; watch for signal line cross"
+    },
+    {
+      "condition": "Histogram bars expanding in trend direction",
+      "interpretation": "Momentum is accelerating; trend is strong; avoid fading the move"
+    }
+  ],
+  "rules": [
+    {
+      "id": "macd_r1",
+      "rule": "Use zero-line crosses for trend direction bias only, not as entry triggers. Wait for a pullback and a signal-line cross in the trend direction after a zero-line cross.",
+      "rationale": "Zero-line crosses lag significantly. Entering at the cross typically results in poor risk-to-reward as the initial move is often already extended."
+    },
+    {
+      "id": "macd_r2",
+      "rule": "Use signal-line crosses for entry timing, not as standalone entries. The cross must align with the trend direction established by the zero-line and price structure.",
+      "rationale": "Counter-trend signal-line crosses in ranging markets generate excessive whipsaws. Trend alignment filters out the majority of false signals."
+    },
+    {
+      "id": "macd_r3",
+      "rule": "Treat histogram divergence as a leading warning, not an immediate entry. Divergence can persist for multiple bars. Wait for the signal-line cross or price structure break to confirm.",
+      "rationale": "Histogram divergence identifies momentum shifts early but price can continue in the original direction for some time before reversing."
+    },
+    {
+      "id": "macd_r4",
+      "rule": "Avoid MACD signals in clearly ranging, sideways markets. MACD generates excessive false crossovers when price is oscillating without directional trend.",
+      "rationale": "MACD is derived from EMAs, which are trend-following by nature. In ranges, the EMAs converge and diverge repeatedly without directional conviction."
+    },
+    {
+      "id": "macd_r5",
+      "rule": "The most reliable signal-line crosses are those that occur after a deep pullback toward or below the zero line in an uptrend, or after a bounce toward or above the zero line in a downtrend.",
+      "rationale": "These crosses represent momentum resuming from a corrective move, aligning with the higher-timeframe trend for maximum probability."
+    },
+    {
+      "id": "macd_r6",
+      "rule": "Monitor the MACD on the higher timeframe to establish trend bias, then drop to the lower timeframe for signal-line cross entries.",
+      "rationale": "Multi-timeframe MACD alignment (higher TF zero-line position + lower TF signal cross) produces significantly more reliable entries."
+    },
+    {
+      "id": "macd_r7",
+      "rule": "Do not rely on MACD alone for volatile, news-driven instruments. Sudden price spikes can distort MACD readings and produce meaningless crosses.",
+      "rationale": "EMA-based indicators are sensitive to sharp price spikes that create artificial divergences and crosses not representative of sustainable momentum."
+    }
+  ],
+  "related_concepts": [
+    "moving_average",
+    "momentum",
+    "trend_following",
+    "divergence",
+    "signal_line_cross",
+    "zero_line",
+    "histogram",
+    "ema",
+    "trend_regime",
+    "multi_timeframe_analysis"
+  ],
+  "agent_use": "Use MACD to determine trend bias and momentum phase. First check zero-line position: above zero = bullish bias, below zero = bearish bias. Then check MACD vs signal line position to confirm momentum direction. Monitor histogram for divergence as early reversal warning. Use signal-line crosses only in the direction of zero-line bias and price structure. Flag histogram divergence as a caution tag on any active trend signal. In ranging conditions, suppress MACD-based entry signals and note 'MACD unreliable in current range'. Report MACD line value, signal line value, histogram direction, zero-line bias, and any active divergence in analysis output."
+}

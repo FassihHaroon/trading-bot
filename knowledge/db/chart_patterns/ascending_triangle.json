@@ -1,0 +1,49 @@
+{
+  "id": "ascending_triangle",
+  "name": "Ascending Triangle",
+  "category": "continuation",
+  "bias": "bullish",
+  "description": "A triangle pattern with a flat horizontal resistance line at the top and a rising support trendline at the bottom. Higher lows indicate accumulating buying pressure, and the pattern typically resolves with a breakout above the horizontal resistance.",
+  "formation_rules": [
+    "Price must be in an uptrend or consolidating after an uptrend",
+    "At least two swing highs must touch or approach the same horizontal resistance level within 1-2%",
+    "At least two swing lows must be progressively higher, forming a rising trendline",
+    "The pattern requires a minimum of 3 weeks to form on a daily chart",
+    "The horizontal resistance line and rising support line must converge toward an apex",
+    "Price should oscillate between the two boundaries at least 4 times total",
+    "The pattern width (time span) should be at least 4 candlesticks on the applicable timeframe"
+  ],
+  "volume_rules": "Volume typically contracts as the pattern develops, reflecting indecision. Volume should expand meaningfully, at least 1.5x average, on the breakout candle above the horizontal resistance. Declining volume during formation and a volume spike on breakout is the ideal signature.",
+  "measured_target_method": "Measure the maximum height of the triangle at its widest point (the vertical distance from the flat resistance to the lowest point of the rising trendline). Project that distance upward from the breakout point.",
+  "confirmation_conditions": [
+    "Price closes above the horizontal resistance line on a daily candle",
+    "Breakout candle volume is at least 1.5x the 20-period average volume",
+    "A pullback to the broken resistance level that holds as support confirms the breakout",
+    "Price should break out before reaching 75% of the distance to the apex"
+  ],
+  "invalidation_conditions": [
+    "Price breaks below the rising support trendline with a daily close",
+    "Price reaches the apex without breaking either boundary, signaling indecision",
+    "Volume expands significantly on a move down through the rising support line",
+    "Price closes back below the horizontal resistance after a confirmed breakout"
+  ],
+  "reliability_score": 4,
+  "agent_rules": [
+    {
+      "id": "at_rule_01",
+      "rule": "Breakout is valid only on a daily close strictly above the horizontal resistance; compute the resistance level as the average of the two highest comparable swing highs."
+    },
+    {
+      "id": "at_rule_02",
+      "rule": "Volume on the breakout candle must be >= 1.5x the 20-period SMA of volume; log the breakout as low-conviction if this threshold is not met."
+    },
+    {
+      "id": "at_rule_03",
+      "rule": "Pattern is invalidated on a daily close below the rising support trendline; recalculate the trendline using the two most recent higher lows."
+    },
+    {
+      "id": "at_rule_04",
+      "rule": "Do not initiate a long entry if price has already traveled more than 75% of the distance from the pattern start to the apex without breaking out; the pattern's energy is considered exhausted."
+    }
+  ]
+}

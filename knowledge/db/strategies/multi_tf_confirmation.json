@@ -1,0 +1,106 @@
+{
+  "id": "multi_tf_confirmation",
+  "name": "Multi-Timeframe Confirmation",
+  "market_conditions": [
+    "all three primary timeframes (1D, 4H, 1H) showing alignment in same direction",
+    "no conflicting signals across timeframes",
+    "clear trend or directional bias visible on the daily timeframe",
+    "intraday timeframe (15M) providing a clean trigger entry",
+    "market not in high-uncertainty environment such as major news events"
+  ],
+  "phase_requirements": [
+    "markup phase aligned across 1D, 4H, and 1H for longs",
+    "markdown phase aligned across 1D, 4H, and 1H for shorts",
+    "15M in a pullback or setup phase within the aligned direction"
+  ],
+  "entry_conditions": [
+    "1D timeframe: price above key moving averages (50 EMA and 200 EMA) for longs; below for shorts",
+    "1D timeframe: trend structure of higher highs and higher lows intact for longs; lower highs and lower lows for shorts",
+    "4H timeframe: EMA alignment bullish (EMA20 > EMA50) for longs or bearish for shorts",
+    "4H timeframe: price pulling back to a key level within the bullish/bearish structure",
+    "1H timeframe: showing reversal candle or entry signal aligned with higher timeframe bias",
+    "15M timeframe: trigger candle or pattern providing precise entry point",
+    "all four timeframes must show no conflicting directional signals"
+  ],
+  "confirmation_requirements": [
+    "1D: bullish or bearish structure confirmed with no recent structure break",
+    "4H: EMA alignment in direction of trade confirmed",
+    "1H: reversal candle or momentum candle in direction of trade confirmed",
+    "15M: entry trigger candle confirmed — a breakout, reversal candle, or EMA cross",
+    "volume on the 15M trigger candle above the 10-period average",
+    "RSI on 1H above 50 for longs or below 50 for shorts",
+    "no divergence on the 4H or 1H timeframe that would contradict the trade direction"
+  ],
+  "stop_loss_logic": "Base stop loss on the 1H timeframe structure — below the most recent higher low for longs or above the most recent lower high for shorts. The stop must respect the 4H structure as well. Use ATR from the 1H timeframe for buffer calculation. Minimum stop distance equals 1 ATR on the 1H.",
+  "take_profit_logic": "Primary target based on the 4H timeframe key resistance for longs or key support for shorts. Secondary target based on the 1D timeframe prior swing high for longs or swing low for shorts. Scale out 50% at the 4H target and trail the remaining 50% on the 1H EMA20 until the daily target or structure break.",
+  "invalidation_conditions": [
+    "any one of the three primary timeframes (1D, 4H, 1H) shows a conflicting directional signal",
+    "daily structure breaks — a higher low is violated for longs or a lower high is violated for shorts",
+    "4H EMA alignment reverses or becomes neutral",
+    "15M trigger fails to follow through within 3 candles",
+    "RSI divergence appears on the 4H timeframe against the trade direction",
+    "broader market index diverges from the individual instrument direction on daily timeframe"
+  ],
+  "related_indicators": [
+    "EMA_20",
+    "EMA_50",
+    "EMA_200",
+    "RSI",
+    "MACD",
+    "volume",
+    "ATR",
+    "ADX",
+    "support_resistance_zones"
+  ],
+  "related_patterns": [
+    "higher_high_higher_low_on_daily",
+    "ema_alignment_4h",
+    "reversal_candle_1h",
+    "trigger_pattern_15m",
+    "multi_timeframe_confluence"
+  ],
+  "required_features": {
+    "daily_trend": "confirmed bullish or bearish structure",
+    "4h_ema_alignment": "EMA20 > EMA50 for longs or EMA20 < EMA50 for shorts",
+    "1h_signal": "reversal or continuation candle aligned with higher TF",
+    "15m_trigger": "entry pattern with volume confirmation",
+    "timeframe_conflicts": "none — all TFs aligned",
+    "rsi_1h": ">50 for longs or <50 for shorts"
+  },
+  "timeframe_requirements": {
+    "macro": "1D for primary trend and structure; 4H for intermediate bias and key levels",
+    "entry": "1H for confirmation signal; 15M for precise entry trigger"
+  },
+  "risk_notes": "This strategy has the highest probability of success due to multi-timeframe alignment but requires patience — valid setups are less frequent. Do not force the setup by ignoring one timeframe's signal. All four timeframes must be checked systematically before every entry. The strength of this strategy comes from confluence — never compromise on alignment. Risk can be slightly higher per trade (up to 2%) due to the high-probability nature when fully aligned.",
+  "typical_rr": "1:2 to 1:5 due to high-confidence entries and larger move targets on higher timeframe alignment",
+  "agent_rules": [
+    {
+      "id": "mtf_001",
+      "rule": "All three primary timeframes (1D, 4H, 1H) must be aligned in the same direction — one conflicting timeframe disqualifies the setup entirely."
+    },
+    {
+      "id": "mtf_002",
+      "rule": "Begin the analysis top-down: 1D first, then 4H, then 1H, then 15M. Never start from 15M and work up."
+    },
+    {
+      "id": "mtf_003",
+      "rule": "If the daily timeframe structure breaks after entry, exit the trade regardless of 4H or 1H signals."
+    },
+    {
+      "id": "mtf_004",
+      "rule": "The 15M trigger is the entry tool only — never use 15M alone to determine trade direction or bias."
+    },
+    {
+      "id": "mtf_005",
+      "rule": "Document which specific signal is present on each timeframe before entering — if any timeframe lacks a clear signal, wait."
+    },
+    {
+      "id": "mtf_006",
+      "rule": "Scale out 50% at the 4H target level — do not hold full position size into daily targets without moving stop to breakeven first."
+    },
+    {
+      "id": "mtf_007",
+      "rule": "Re-evaluate timeframe alignment on each new daily candle close — overnight events can invalidate the daily bias."
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": "reversal",
+  "name": "Trend Reversal",
+  "market_conditions": [
+    "price in an extended trend showing signs of exhaustion",
+    "price at a major key level such as a multi-year high/low, major Fibonacci level, or round number",
+    "volume climax or capitulation event present",
+    "at least 3 confluence factors pointing to reversal",
+    "higher timeframe trend has been running for an extended period"
+  ],
+  "phase_requirements": [
+    "late-stage markup phase transitioning to distribution for bearish reversal",
+    "late-stage markdown phase transitioning to accumulation for bullish reversal",
+    "exhaustion phase with climactic volume"
+  ],
+  "entry_conditions": [
+    "price reaches a major key level after extended trend move",
+    "oscillator divergence: RSI or MACD making lower highs while price makes higher highs (bearish), or higher lows while price makes lower lows (bullish)",
+    "reversal candlestick pattern: engulfing, evening star, morning star, or head and shoulders completion",
+    "volume climax on the final push with subsequent volume dry-up",
+    "minimum 3 confluence factors present simultaneously before entry"
+  ],
+  "confirmation_requirements": [
+    "RSI divergence confirmed on at least two timeframes",
+    "MACD histogram divergence or bearish/bullish cross at the key level",
+    "volume climax followed by at least 2-3 candles of declining volume",
+    "reversal candlestick pattern completed with a close in reversal direction",
+    "break of short-term trend structure: a prior swing low broken for bearish reversal, or swing high broken for bullish",
+    "at least 3 independent confluence factors: divergence counts as 1, volume climax as 1, key level as 1, pattern as 1"
+  ],
+  "stop_loss_logic": "Place stop beyond the extreme of the reversal point — above the high for bearish reversals, below the low for bullish reversals. Use ATR-based buffer (1-1.5 ATR beyond the extreme) to avoid stop-hunting. Stops on reversal trades should be wider than average given the uncertainty.",
+  "take_profit_logic": "Target the most recent prior swing point in the opposite direction. For bearish reversal: target the most recent swing low or Fibonacci retracement levels (0.382, 0.5, 0.618) of the prior trend. Take scaled profits at each level. Hold a portion for larger target at 50% Fibonacci retracement of the entire trend.",
+  "invalidation_conditions": [
+    "price makes a new high (for bearish reversal) or new low (for bullish reversal) after entry",
+    "divergence resolves to the upside without price reversing",
+    "volume does not dry up after the climax candle, indicating continuation",
+    "price breaks back above the key resistance for bearish reversal without hesitation",
+    "fewer than 3 confluence factors present — single signals are insufficient",
+    "broader market trend accelerating in original direction"
+  ],
+  "related_indicators": [
+    "RSI",
+    "MACD",
+    "volume",
+    "OBV",
+    "ATR",
+    "Stochastic",
+    "Fibonacci_retracement",
+    "Bollinger_Bands"
+  ],
+  "related_patterns": [
+    "head_and_shoulders",
+    "inverse_head_and_shoulders",
+    "double_top",
+    "double_bottom",
+    "evening_star",
+    "morning_star",
+    "bearish_engulfing",
+    "bullish_engulfing",
+    "three_black_crows",
+    "three_white_soldiers"
+  ],
+  "required_features": {
+    "confluence_count": ">=3 independent factors",
+    "oscillator_divergence": "confirmed on entry timeframe",
+    "volume_climax": "present at the reversal point",
+    "key_level": "major structural or Fibonacci level",
+    "trend_duration": "extended move prior to reversal signal",
+    "reversal_pattern": "recognized candlestick or chart pattern"
+  },
+  "timeframe_requirements": {
+    "macro": "1W or 1D to assess trend maturity and identify major key levels",
+    "entry": "4H or 1H for divergence confirmation and entry candle pattern"
+  },
+  "risk_notes": "Reversal trades are low-probability setups that carry the highest risk of trading against momentum. Never attempt a reversal trade with fewer than 3 confluence factors. Even with strong confluence, only risk 0.5-1% per trade. Reversal entries require patience — wait for the complete confluence stack before entering. Partial position sizing is recommended with the ability to add on confirmation. Many reversal attempts fail before the actual reversal occurs.",
+  "typical_rr": "1:3 to 1:6 on successful reversals due to catching the beginning of a new trend",
+  "agent_rules": [
+    {
+      "id": "rev_001",
+      "rule": "Enforce a hard minimum of 3 confluence factors before any reversal entry — never enter on 1 or 2 signals alone."
+    },
+    {
+      "id": "rev_002",
+      "rule": "RSI or MACD divergence must be visible on the primary entry timeframe — do not fabricate divergence from minor swings."
+    },
+    {
+      "id": "rev_003",
+      "rule": "Reduce position size to 50% of standard risk on reversal trades — they have higher failure rates."
+    },
+    {
+      "id": "rev_004",
+      "rule": "If price makes a new extreme after entry (new high for short reversal), exit immediately — do not average down."
+    },
+    {
+      "id": "rev_005",
+      "rule": "Wait for the short-term trend structure to break (a swing point violated) before committing full size."
+    },
+    {
+      "id": "rev_006",
+      "rule": "Volume climax must be followed by at least two candles of declining volume — a single volume spike without follow-through is insufficient."
+    }
+  ]
+}

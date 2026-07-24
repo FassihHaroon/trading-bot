@@ -1,0 +1,29 @@
+{
+  "id": "tweezer_top",
+  "name": "Tweezer Top",
+  "candle_count": 2,
+  "bias": "bearish",
+  "description": "A two-candle bearish reversal pattern where two consecutive candles have matching or near-identical highs. The first candle is bullish and the second is bearish, both reaching the same price high. This equal high indicates that price was rejected at the same level twice, signaling strong resistance and a likely reversal.",
+  "body_rules": {
+    "candle_1": "bullish (green/white) body of any size",
+    "candle_2": "bearish (red/black) body of any size",
+    "body_relationship": "bodies do not need to be the same size; the key rule is matching highs, not matching bodies"
+  },
+  "wick_rules": {
+    "high_match": "the highs of both candles must be at or very near the same price level; this is the core rule of the pattern",
+    "upper_wicks": "either or both candles may have upper wicks; the tops of the wicks (or bodies if no wick) must align",
+    "lower_wicks": "not relevant to pattern definition"
+  },
+  "context_requirement": "must form at a defined resistance level, prior swing high, or supply zone after an uptrend; tweezer tops forming in the middle of a range or at random price levels are low quality signals",
+  "volume_requirement": "ideally candle 2 has equal or greater volume than candle 1, indicating that the second rejection at the high was met with equal or increasing selling pressure",
+  "reliability": "medium",
+  "agent_rules": [
+    "The pattern is only valid if the two highs are at or very close to a pre-identified resistance level",
+    "Enter short after candle 2 closes or on a break below the low of candle 2",
+    "Stop loss above the shared high of both candles plus a small buffer",
+    "The pattern is stronger when candle 2 has a long upper wick touching the shared high",
+    "Tweezer top formed by a shooting star as candle 2 is a particularly strong bearish signal",
+    "Higher timeframe tweezer tops carry more weight than lower timeframe ones",
+    "Avoid trading tweezer tops at resistance that has already been tested many times — resistance may break instead"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "topic": "Trading Discipline — Consistency and Rules-Based Execution",
+  "version": "1.0",
+  "consistency_principle": {
+    "definition": "Consistency in trading means applying the same set of rules, criteria, and processes to every trade, in every market condition, without exception or discretionary modification. It is the bridge between a statistical edge (which exists in the aggregate) and realized profitability (which requires the edge to be applied consistently enough for the aggregate to manifest).",
+    "why_consistency_is_the_primary_variable": "Most traders who fail do not fail because they have a bad edge. They fail because they apply their edge inconsistently — taking some setups and not others, modifying stops mid-trade, skipping rules when 'gut feel' disagrees. Inconsistent application destroys the statistical validity of the edge. A 60% win rate strategy applied to only 70% of its signals is no longer a 60% win rate strategy. The agent's primary operational responsibility is consistency.",
+    "consistency_components": [
+      "Identical signal criteria applied to every market scan",
+      "Identical position sizing formula applied to every trade",
+      "Identical stop loss placement methodology applied to every trade",
+      "Identical profit target methodology applied to every trade",
+      "Identical post-trade review process applied to every closed trade"
+    ],
+    "consistency_measurement": "The agent must maintain an execution consistency score — the percentage of trades where all rules were followed without exception. Target: 100%. Any deviation is flagged and logged."
+  },
+  "rules_based_execution": {
+    "definition": "Rules-based execution means that every action the agent takes is determined by pre-defined rules, not by real-time reasoning about whether the rules apply to 'this specific situation'. Rules are written when the mind is calm and rational. They are applied when the market is live and emotions (fear, greed, FOMO) are active. The rules are trusted over the in-the-moment reasoning.",
+    "rule_hierarchy": {
+      "level_1_inviolable_rules": "Rules that can never be broken under any circumstances — risk limits, stop loss execution, position size caps. Violation triggers immediate system halt.",
+      "level_2_edge_criteria": "Rules defining what constitutes a valid trade signal. These can only be modified through the formal backtesting and rule update process — never in real-time.",
+      "level_3_operational_rules": "Procedural rules governing how the agent scans, analyzes, and reports. These govern process consistency."
+    },
+    "rule_update_process": {
+      "description": "Rules may only be changed through a deliberate offline review process — never during an active trading session or in response to a current trade outcome.",
+      "steps": [
+        "Identify the rule that needs modification based on systematic evidence from trade log review",
+        "Backtest the proposed modification on historical data (minimum 100 trade sample)",
+        "Document the rationale and expected impact on expectancy",
+        "Implement in the next session — never mid-session",
+        "Track performance of the modified rule over the next 50 trades"
+      ]
+    }
+  },
+  "no_runtime_overrides": {
+    "definition": "A runtime override occurs when the agent modifies, ignores, or reinterprets its rules in response to current market conditions or trade emotions during an active analysis or trade. Runtime overrides are the primary mechanism through which discipline breaks down.",
+    "prohibited_runtime_overrides": [
+      {
+        "override": "Widening the stop loss after entry because 'price is just testing the level'",
+        "consequence": "Destroys pre-defined risk. Invalidates position sizing calculation. Converts a defined-risk trade into an undefined-risk trade."
+      },
+      {
+        "override": "Moving profit targets further away because 'price looks like it wants to keep going'",
+        "consequence": "Converts a systematic exit into a discretionary prediction. Reduces win rate without proportional reward increase."
+      },
+      {
+        "override": "Skipping a valid signal because 'it doesn't feel right' after recent losses",
+        "consequence": "Prevents the edge from recovering from a losing streak. The skipped trade may have been the first winner in a series."
+      },
+      {
+        "override": "Taking a trade that doesn't meet full criteria because 'FOMO — price is moving now'",
+        "consequence": "Enters on a below-edge setup, contaminating the statistical sample and likely producing a losing trade."
+      },
+      {
+        "override": "Reducing position size on a valid signal because of recent losses",
+        "consequence": "Valid — this is a circuit breaker, not a runtime override. Allowed only through pre-defined circuit breaker rules, not discretionary fear."
+      }
+    ],
+    "agent_enforcement": "The agent must not modify any rule parameter during an active analysis session. All parameters are loaded from the knowledge base at session start and remain fixed. Any proposed modification is logged and deferred to the next session review."
+  },
+  "reasoning_trace_requirement": {
+    "definition": "Every signal, assessment, or recommendation the agent produces must include a complete reasoning trace — a step-by-step record of which rules were applied, which criteria were met, which were not met, and how the conclusion was reached. This trace is the accountability mechanism for rules-based execution.",
+    "required_trace_components": [
+      "Market context: timeframe, trend direction, current price relative to key levels",
+      "Edge criteria checklist: each criterion listed with met/not-met status",
+      "Confidence score calculation: score for each criterion and total",
+      "Entry rationale: why this specific entry point was selected",
+      "Stop loss rationale: which technical level defines the stop and why",
+      "Target rationale: which Fibonacci or structural level defines each target",
+      "Risk calculation: position size formula applied with actual numbers",
+      "Invalidation statement: what would make this analysis wrong"
+    ],
+    "purpose": "The reasoning trace serves three purposes: (1) ensures the agent does not skip steps, (2) allows post-trade review to identify where reasoning may have been flawed, (3) maintains full transparency and auditability of every decision.",
+    "no_black_box_signals": "The agent must never issue a signal without a complete reasoning trace. A signal without justification cannot be audited, reviewed, or improved. It is a black box, which is incompatible with rules-based execution."
+  },
+  "process_vs_outcome_orientation": {
+    "definition": "Process orientation means evaluating the quality of a trade by how well the defined process was followed, independent of the trade outcome. Outcome orientation means evaluating the quality of a trade by whether it made or lost money. Process orientation is the only psychologically sustainable and statistically valid approach.",
+    "good_trade_definition": "A good trade is one where all edge criteria were met, position sizing was calculated correctly, entry was at the defined location, stop was placed at the technical level, targets were pre-defined, and the trade was executed without runtime overrides. A good trade can be a losing trade.",
+    "bad_trade_definition": "A bad trade is one where any of the above criteria were violated — even if it happens to be profitable. A bad trade that wins is more dangerous than a bad trade that loses, because it reinforces rule-breaking behavior.",
+    "performance_review_framework": {
+      "primary_metric": "Rules adherence rate (target: 100%)",
+      "secondary_metric": "Expectancy over the measurement period (50+ trades)",
+      "tertiary_metric": "Win rate and average R (for edge validation, not daily performance judgment)",
+      "prohibited_metric": "Daily or weekly P&L as primary performance indicator — this is an outcome measure that encourages outcome-based thinking"
+    },
+    "agent_self_evaluation": "After each trade, the agent logs: (1) Were all rules followed? (2) If not, which rule was violated and why? (3) What is the running rules adherence rate? The agent does not log 'did this trade make money?' as a performance question — that is a statistical outcome, not a performance evaluation."
+  }
+}

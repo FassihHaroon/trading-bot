@@ -1,0 +1,28 @@
+{
+  "id": "spinning_top",
+  "name": "Spinning Top",
+  "candle_count": 1,
+  "bias": "neutral",
+  "description": "A single candle with a small real body and relatively long upper and lower wicks of roughly equal length. Indicates indecision in the market where neither buyers nor sellers gained a significant advantage during the session. Similar to a doji but with a more visible real body.",
+  "body_rules": {
+    "body_size": "small but visible; larger than a doji body but still small relative to total range",
+    "body_color": "either bullish or bearish; color is not relevant to the pattern",
+    "body_to_range_ratio": "body typically accounts for 10-30% of the total candle range"
+  },
+  "wick_rules": {
+    "upper_wick": "long; at least equal to or longer than the real body",
+    "lower_wick": "long; at least equal to or longer than the real body",
+    "symmetry": "upper and lower wicks should be of similar length; asymmetric wicks shift it toward hammer or shooting star territory"
+  },
+  "context_requirement": "most meaningful at the top of an uptrend (potential reversal) or bottom of a downtrend (potential reversal); in consolidation it confirms ongoing indecision without adding new information",
+  "volume_requirement": "volume is secondary; very high volume spinning top at a key level adds weight to the indecision signal — neither side could win decisively despite heavy participation",
+  "reliability": "low",
+  "agent_rules": [
+    "Never trade a spinning top in isolation; always require a following directional candle for confirmation",
+    "At resistance after an uptrend: treat as a potential bearish reversal signal; wait for bearish confirmation candle",
+    "At support after a downtrend: treat as a potential bullish reversal signal; wait for bullish confirmation candle",
+    "A cluster of spinning tops indicates a consolidation zone; wait for a breakout candle",
+    "High volume spinning top at a key level is more significant than a low volume one",
+    "Spinning top is less significant than a doji at the same location due to its visible body"
+  ]
+}
