@@ -3,6 +3,7 @@
  * Props:
  *   signal: the API response object from POST /api/analyze
  *   compact: boolean — show condensed version (used in scanner rows)
+ *   onPaperTradeOpened: optional callback(trade) called after a paper trade is created
  */
 import { useState } from 'react'
 
@@ -155,7 +156,83 @@ function StrategyDetails({ details }) {
   )
 }
 
-export default function SignalCard({ signal, compact = false }) {
+function PaperTradeButton({ signal, onPaperTradeOpened }) {
+  const [loading, setLoading]   = useState(false)
+  const [status, setStatus]     = useState(null) // 'ok' | 'err' | null
+  const [message, setMessage]   = useState('')
+
+  const openTrade = async () => {
+    setLoading(true)
+    setStatus(null)
+    try {
+      const res = await fetch(`${API}/api/paper-trade/open`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol:          signal.symbol,
+          direction:       signal.direction,
+          entry_price:     signal.entry_price,
+          stop_price:      signal.stop_price,
+          targets:         signal.targets || [],
+          position_size:   signal.position_size || 0,
+          risk_amount:     signal.risk_amount || 0,
+          confidence:      signal.confidence || 0,
+          regime:          signal.regime,
+          strategies_used: signal.strategies_used || [],
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`)
+      setStatus('ok')
+      setMessage(`Paper trade opened @ $${data.trade?.entry_price?.toFixed(4) ?? '?'}`)
+      if (onPaperTradeOpened) onPaperTradeOpened(data.trade)
+      // Clear success message after 4s
+      setTimeout(() => setStatus(null), 4000)
+    } catch (err) {
+      setStatus('err')
+      setMessage(err.message || 'Failed to open paper trade')
+      setTimeout(() => setStatus(null), 5000)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const dirColor = signal.direction === 'long' ? 'var(--long)' : 'var(--short)'
+
+  return (
+    <div>
+      <button
+        className="btn btn-sm"
+        style={{
+          background: signal.direction === 'long' ? 'var(--long-dim)' : 'var(--short-dim)',
+          color: dirColor,
+          border: `1px solid ${dirColor}40`,
+          width: '100%',
+          justifyContent: 'center',
+        }}
+        onClick={openTrade}
+        disabled={loading}
+      >
+        {loading
+          ? <><span className="spinner" style={{ width: 12, height: 12 }} /> Opening…</>
+          : `📄 Open Paper Trade (${signal.direction?.toUpperCase()})`
+        }
+      </button>
+      {status === 'ok' && (
+        <div className="success-box fade-in" style={{ marginTop: 8, fontSize: 12, padding: '8px 12px' }}>
+          ✓ {message} — check the Paper Trading tab
+        </div>
+      )}
+      {status === 'err' && (
+        <div className="error-box fade-in" style={{ marginTop: 8, fontSize: 12, padding: '8px 12px' }}>
+          ⚠ {message}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function SignalCard({ signal, compact = false, onPaperTradeOpened }) {
   const [expanded, setExpanded] = useState(false)
 
   if (!signal) return null
@@ -247,6 +324,11 @@ export default function SignalCard({ signal, compact = false }) {
             </button>
             {expanded && <div style={{ marginTop: 10 }}><StrategyDetails details={signal.strategy_details} /></div>}
           </div>
+        )}
+
+        {/* Open Paper Trade — only for actionable signals */}
+        {signal.is_actionable && (signal.direction === 'long' || signal.direction === 'short') && (
+          <PaperTradeButton signal={signal} onPaperTradeOpened={onPaperTradeOpened} />
         )}
 
         {/* Footer timestamp */}

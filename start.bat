@@ -12,6 +12,10 @@ echo.
 echo  Press Ctrl+C in each window to stop.
 echo.
 
+:: Kill anything already on port 8000 or 5173 so restart always works
+for /f "tokens=5" %%p in ('netstat -ano ^| findstr :8000 2^>nul') do taskkill /PID %%p /F >nul 2>&1
+for /f "tokens=5" %%p in ('netstat -ano ^| findstr :5173 2^>nul') do taskkill /PID %%p /F >nul 2>&1
+
 :: Start the API server in a new window
 start "Hashim Bot API" cmd /k "cd /d %~dp0 && python start_api.py"
 

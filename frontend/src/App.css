@@ -971,6 +971,20 @@ html, body, #root {
 }
 
 /* =============================================
+   PAPER TRADING SPECIFIC
+   ============================================= */
+.btn-green {
+  background: var(--long-dim);
+  color: var(--long);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.btn-green:hover:not(:disabled) {
+  background: rgba(0, 230, 118, 0.2);
+  box-shadow: var(--shadow-glow-green);
+}
+
+/* =============================================
    RESPONSIVE
    ============================================= */
 @media (max-width: 768px) {

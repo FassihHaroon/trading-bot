@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import CoinAnalyzer from './components/CoinAnalyzer.jsx'
 import MarketScanner from './components/MarketScanner.jsx'
 import SignalHistory from './components/SignalHistory.jsx'
+import PaperTrading from './components/PaperTrading.jsx'
 
 const TABS = [
-  { id: 'analyzer', label: 'Coin Analyzer', icon: '🔍' },
+  { id: 'analyzer', label: 'Coin Analyzer',  icon: '🔍' },
   { id: 'scanner',  label: 'Market Scanner', icon: '📡' },
   { id: 'history',  label: 'Signal History', icon: '📋' },
+  { id: 'paper',    label: 'Paper Trading',  icon: '📄' },
 ]
 
 function HeaderClock() {
@@ -57,9 +59,12 @@ export default function App() {
 
       {/* ── Page Content ── */}
       <main className="main-content">
-        {activeTab === 'analyzer' && <CoinAnalyzer />}
+        {activeTab === 'analyzer' && (
+          <CoinAnalyzer onPaperTradeOpened={() => setActiveTab('paper')} />
+        )}
         {activeTab === 'scanner'  && <MarketScanner />}
         {activeTab === 'history'  && <SignalHistory />}
+        {activeTab === 'paper'    && <PaperTrading />}
       </main>
     </div>
   )

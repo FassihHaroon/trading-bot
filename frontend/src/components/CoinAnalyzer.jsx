@@ -13,7 +13,7 @@ const DEFAULT_SYMBOLS = [
   'LINKUSDT', 'UNIUSDT', 'ATOMUSDT', 'LTCUSDT', 'NEARUSDT',
 ]
 
-export default function CoinAnalyzer() {
+export default function CoinAnalyzer({ onPaperTradeOpened }) {
   const [symbol, setSymbol]       = useState('BTCUSDT')
   const [input, setInput]         = useState('BTCUSDT')
   const [signal, setSignal]       = useState(null)
@@ -157,7 +157,7 @@ export default function CoinAnalyzer() {
 
       {/* ── Signal Card ── */}
       {signal && !loading && (
-        <SignalCard signal={signal} />
+        <SignalCard signal={signal} onPaperTradeOpened={onPaperTradeOpened} />
       )}
 
       {/* ── Placeholder ── */}

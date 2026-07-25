@@ -1,10 +1,12 @@
 """
 FastAPI backend for the trading bot dashboard.
-Pure analysis only — no trades are opened or closed ever.
+Pure analysis only — no real trades are opened or closed ever.
+Paper trading is simulated locally with fake money.
 """
 
 from __future__ import annotations
 
+import asyncio
 import copy
 import json
 import logging
@@ -31,6 +33,7 @@ from data.schemas import Direction
 from engine.decision_engine import DecisionEngine
 from risk.risk_manager import RiskManager
 from ai.explainer import TradeExplainer
+from api.paper_store import get_store, get_live_price
 
 # ── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(level=logging.INFO)
@@ -56,8 +59,8 @@ _executor = ThreadPoolExecutor(max_workers=4)
 # ── FastAPI app ───────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Trading Bot Dashboard API",
-    description="Read-only analysis API for the trading bot dashboard.",
-    version="1.0.0",
+    description="Analysis + paper trading API for the trading bot dashboard.",
+    version="1.1.0",
 )
 
 app.add_middleware(
@@ -67,6 +70,30 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Background price checker ─────────────────────────────────────────────────
+
+async def _price_check_loop():
+    """Every 30s refresh open paper position prices and auto-close SL/TP hits."""
+    while True:
+        await asyncio.sleep(30)
+        try:
+            loop = asyncio.get_event_loop()
+            closed = await loop.run_in_executor(_executor, get_store().update_prices)
+            if closed:
+                logger.info(
+                    "Auto-closed %d paper trade(s): %s",
+                    len(closed), [t["id"] for t in closed]
+                )
+        except Exception as exc:
+            logger.warning("Price checker error: %s", exc)
+
+
+@app.on_event("startup")
+async def startup():
+    asyncio.create_task(_price_check_loop())
+    logger.info("Background paper-trade price checker started (30s interval).")
+
 
 # ── Singletons (lazy-initialised) ────────────────────────────────────────────
 _main_config: Optional[AgentConfig] = None
@@ -97,6 +124,19 @@ def _get_scanner_config() -> AgentConfig:
 
 class AnalyzeRequest(BaseModel):
     symbol: str
+
+
+class OpenPaperTradeRequest(BaseModel):
+    symbol: str
+    direction: str
+    entry_price: Optional[float] = None
+    stop_price: Optional[float] = None
+    targets: List[float] = []
+    position_size: float = 0.0
+    risk_amount: float = 0.0
+    confidence: float = 0.0
+    regime: Optional[str] = None
+    strategies_used: List[str] = []
 
 
 class StrategyDetail(BaseModel):
@@ -322,9 +362,93 @@ def recent_signals(limit: int = Query(default=100, ge=1, le=500)) -> Dict[str, A
             try:
                 signals.append(json.loads(ln))
             except json.JSONDecodeError:
-                # Preserve raw line if not valid JSON
                 signals.append({"raw": ln})
         return {"count": len(signals), "signals": signals}
     except Exception as exc:
         logger.exception("Failed to read journal")
         raise HTTPException(status_code=500, detail=f"Could not read journal: {exc}") from exc
+
+
+# ── Paper Trading Endpoints ───────────────────────────────────────────────────
+
+@app.get("/api/price/{symbol}")
+def get_price(symbol: str) -> Dict[str, Any]:
+    """Return the current Binance spot price for a symbol (no auth)."""
+    symbol = symbol.strip().upper()
+    price = get_live_price(symbol)
+    if price is None:
+        raise HTTPException(status_code=502, detail=f"Could not fetch price for {symbol}")
+    return {
+        "symbol": symbol,
+        "price": price,
+        "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
+
+
+@app.post("/api/paper-trade/open")
+def paper_open(req: OpenPaperTradeRequest) -> Dict[str, Any]:
+    """
+    Open a simulated paper trade from a bot signal.
+    NO real money, NO real orders. Pure simulation.
+    """
+    direction = req.direction.lower()
+    if direction not in ("long", "short"):
+        raise HTTPException(status_code=400, detail="direction must be 'long' or 'short'")
+
+    # If no entry price supplied, fetch the live price right now
+    entry_price = req.entry_price
+    if not entry_price:
+        entry_price = get_live_price(req.symbol.upper())
+        if entry_price is None:
+            raise HTTPException(status_code=502, detail=f"Cannot fetch live price for {req.symbol}")
+
+    signal_dict = {
+        "symbol":          req.symbol.upper(),
+        "direction":       direction,
+        "entry_price":     entry_price,
+        "current_price":   entry_price,
+        "stop_price":      req.stop_price,
+        "targets":         req.targets,
+        "position_size":   req.position_size,
+        "risk_amount":     req.risk_amount,
+        "confidence":      req.confidence,
+        "regime":          req.regime or "unknown",
+        "strategies_used": req.strategies_used,
+    }
+
+    try:
+        trade = get_store().open_trade(signal_dict)
+        return {"ok": True, "trade": trade}
+    except Exception as exc:
+        logger.exception("Failed to open paper trade")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/api/paper-trade/positions")
+def paper_positions() -> Dict[str, Any]:
+    """Return all currently open paper positions."""
+    positions = get_store().open_positions
+    return {"count": len(positions), "positions": positions}
+
+
+@app.delete("/api/paper-trade/close/{trade_id}")
+def paper_close(trade_id: str) -> Dict[str, Any]:
+    """Manually close an open paper trade at the current market price."""
+    trade = get_store().manual_close(trade_id)
+    if trade is None:
+        raise HTTPException(status_code=404, detail=f"Open trade '{trade_id}' not found")
+    return {"ok": True, "trade": trade}
+
+
+@app.get("/api/paper-trade/history")
+def paper_history(limit: int = Query(default=100, ge=1, le=500)) -> Dict[str, Any]:
+    """Return closed paper trades (most recent first)."""
+    closed = get_store().closed_trades
+    closed_sorted = list(reversed(closed))[:limit]
+    return {"count": len(closed_sorted), "trades": closed_sorted}
+
+
+@app.get("/api/paper-trade/summary")
+def paper_summary_endpoint() -> Dict[str, Any]:
+    """Return aggregate performance stats for all closed paper trades."""
+    return get_store().summary()
