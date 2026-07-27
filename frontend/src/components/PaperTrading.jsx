@@ -87,10 +87,11 @@ function PendingOrdersTable({ orders, onCancel, cancelling }) {
         </thead>
         <tbody>
           {orders.map(t => {
-            const dist = t.entry_distance  // positive = current above entry
-            const needsToMove = t.direction === 'long'
-              ? `Price needs to DROP ${Math.abs(dist).toFixed(2)}% to fill`
-              : `Price needs to RISE ${Math.abs(dist).toFixed(2)}% to fill`
+            const dist = t.entry_distance  // positive = current above entry, negative = below
+            // fill_direction: 'up' means waiting for price to RISE to entry, 'down' means DROP to entry
+            const needsToMove = t.fill_direction === 'up'
+              ? `Price needs to RISE ${Math.abs(dist).toFixed(2)}% to fill`
+              : `Price needs to DROP ${Math.abs(dist).toFixed(2)}% to fill`
 
             return (
               <tr key={t.id}>

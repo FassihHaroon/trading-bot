@@ -39,12 +39,21 @@ def get_live_price(symbol: str) -> Optional[float]:
         return None
 
 
-def _entry_triggered(direction: str, current_price: float, entry_price: float) -> bool:
-    """Return True if a limit order at entry_price should fill at current_price."""
-    if direction == "long":
-        return current_price <= entry_price   # price fell to our buy limit
+def _fill_direction(entry_price: float, live_price: float) -> str:
+    """
+    Which way must price move to reach the entry?
+      'up'   → entry is above current market → wait for price to RISE  (breakout long / sell-limit short)
+      'down' → entry is below current market → wait for price to FALL  (pullback long / breakdown short)
+    """
+    return "up" if entry_price > live_price else "down"
+
+
+def _entry_triggered(fill_dir: str, entry_price: float, current_price: float) -> bool:
+    """Return True when price has crossed the entry level in the required direction."""
+    if fill_dir == "up":
+        return current_price >= entry_price   # price rose to entry
     else:
-        return current_price >= entry_price   # price rose to our sell limit
+        return current_price <= entry_price   # price fell to entry
 
 
 class PaperTradeStore:
@@ -75,17 +84,20 @@ class PaperTradeStore:
         entry = signal.get("entry_price") or signal.get("current_price", 0.0)
         live  = get_live_price(signal["symbol"]) or entry
 
-        already_filled = _entry_triggered(signal["direction"], live, entry)
-        status     = "open"    if already_filled else "pending"
-        filled_at  = _now_iso() if already_filled else None
-        outcome    = "open"    if already_filled else "pending"
+        fill_dir       = _fill_direction(entry, live)
+        already_filled = _entry_triggered(fill_dir, entry, live)
+        status         = "open"    if already_filled else "pending"
+        filled_at      = _now_iso() if already_filled else None
+        outcome        = "open"    if already_filled else "pending"
 
         trade = {
             "id":              trade_id,
             "symbol":          signal["symbol"],
             "direction":       signal["direction"],
             "status":          status,         # "pending" | "open"
+            "fill_direction":  fill_dir,       # "up" or "down"
             "entry_price":     entry,
+            "placed_live_price": live,         # market price at order placement
             "current_price":   live,
             "stop_price":      signal.get("stop_price"),
             "targets":         signal.get("targets", []),
@@ -220,15 +232,22 @@ class PaperTradeStore:
                     if t["id"] == tid:
                         t["current_price"] = price
                         if t["status"] == "pending" and t["entry_price"]:
+                            # positive = price is above entry, negative = price is below entry
                             t["entry_distance"] = round(
                                 (price - t["entry_price"]) / t["entry_price"] * 100, 4
+                            )
+                            t["fill_direction"] = t.get("fill_direction") or _fill_direction(
+                                t["entry_price"], t.get("placed_live_price", price)
                             )
                         break
                 self._save()
 
             # ── 1. Check PENDING → OPEN fill ──────────────────────────────
             if trade["status"] == "pending":
-                if _entry_triggered(trade["direction"], price, trade["entry_price"]):
+                fill_dir = trade.get("fill_direction") or _fill_direction(
+                    trade["entry_price"], trade.get("placed_live_price", price)
+                )
+                if _entry_triggered(fill_dir, trade["entry_price"], price):
                     with self._lock:
                         for t in self._data["open"]:
                             if t["id"] == tid:
@@ -352,12 +371,20 @@ class PaperTradeStore:
                 # Migrate trades created before the pending-order logic was added
                 for t in data.get("open", []):
                     if "status" not in t:
-                        t["status"]         = "open"
-                        t["filled_at"]      = t.get("opened_at")
-                        t["placed_at"]      = t.get("opened_at")
-                        t["entry_distance"] = 0.0
+                        # Old trade: was immediately opened by old code, treat as filled
+                        t["status"]            = "open"
+                        t["filled_at"]         = t.get("opened_at")
+                        t["placed_at"]         = t.get("opened_at")
+                        t["placed_live_price"] = t.get("entry_price")
+                        t["entry_distance"]    = 0.0
+                        # fill_direction not relevant for already-open trades, set a safe default
+                        t["fill_direction"]    = "down"
                     if "placed_at" not in t:
                         t["placed_at"] = t.get("opened_at")
+                    if "fill_direction" not in t:
+                        t["fill_direction"] = _fill_direction(
+                            t.get("entry_price", 0), t.get("placed_live_price", 0)
+                        )
                 return data
             except Exception:
                 pass
