@@ -1,7 +1,12 @@
 /**
- * PaperTrading — simulated paper trade tracker.
- * NO real money, NO real orders. Tracks bot signals as fake trades.
- * Open positions auto-update every 30s. SL/TP auto-close via backend.
+ * PaperTrading — simulated limit-order tracker.
+ *
+ * Trade lifecycle:
+ *   PENDING  — order placed, waiting for price to reach entry
+ *   OPEN     — entry triggered, tracking live P&L
+ *   CLOSED   — SL / TP hit or manually closed
+ *
+ * NO real money, NO real orders.
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
 
@@ -24,19 +29,16 @@ function pnlClass(v) {
 }
 
 function DirectionBadge({ direction }) {
-  if (direction === 'long') {
-    return <span className="badge badge-long">▲ LONG</span>
-  }
-  if (direction === 'short') {
-    return <span className="badge badge-short">▼ SHORT</span>
-  }
+  if (direction === 'long')  return <span className="badge badge-long">▲ LONG</span>
+  if (direction === 'short') return <span className="badge badge-short">▼ SHORT</span>
   return null
 }
 
 function OutcomeBadge({ outcome }) {
-  if (outcome === 'win')       return <span className="badge badge-long">WIN</span>
-  if (outcome === 'loss')      return <span className="badge badge-short">LOSS</span>
-  if (outcome === 'breakeven') return <span className="badge badge-no-trade">B/E</span>
+  if (outcome === 'win')        return <span className="badge badge-long">WIN</span>
+  if (outcome === 'loss')       return <span className="badge badge-short">LOSS</span>
+  if (outcome === 'breakeven')  return <span className="badge badge-no-trade">B/E</span>
+  if (outcome === 'cancelled')  return <span className="badge badge-no-trade">CANCELLED</span>
   return <span className="badge badge-no-trade">{outcome ?? '—'}</span>
 }
 
@@ -45,54 +47,22 @@ function ExitReasonLabel({ reason }) {
     stop_loss:      '⛔ Stop Loss',
     take_profit_1:  '✅ Take Profit',
     manual_close:   '🖐 Manual Close',
+    cancelled:      '✕ Cancelled',
   }
   return <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{labels[reason] ?? reason ?? '—'}</span>
 }
 
-function PnlCell({ unrealized_pnl, unrealized_pct }) {
-  const cls = pnlClass(unrealized_pnl)
-  return (
-    <div className={`font-mono ${cls}`} style={{ fontSize: 13, fontWeight: 700 }}>
-      {unrealized_pnl != null ? (unrealized_pnl >= 0 ? '+' : '') + fmt(unrealized_pnl, 2) : '—'}
-      {unrealized_pct != null && (
-        <span style={{ fontSize: 10, marginLeft: 4, opacity: 0.75 }}>
-          ({unrealized_pct >= 0 ? '+' : ''}{fmt(unrealized_pct, 2)}%)
-        </span>
-      )}
-    </div>
-  )
-}
+// ── Pending Orders Table ──────────────────────────────────────────────────────
 
-function DistanceBar({ entry, current, stop, tp1, direction }) {
-  if (!entry || !stop || !tp1) return null
-  const range = Math.abs(tp1 - stop)
-  if (range === 0) return null
-  const pos = direction === 'long'
-    ? Math.min(1, Math.max(0, (current - stop) / range))
-    : Math.min(1, Math.max(0, (stop - current) / range))
-  const pct = Math.round(pos * 100)
-  const barColor = pct >= 60 ? 'var(--long)' : pct >= 30 ? 'var(--warning)' : 'var(--short)'
-  return (
-    <div title={`${pct}% toward TP`} style={{ width: 70 }}>
-      <div style={{ height: 4, background: 'var(--bg-elevated)', borderRadius: 2, overflow: 'hidden' }}>
-        <div style={{ width: `${pct}%`, height: '100%', background: barColor, borderRadius: 2 }} />
-      </div>
-      <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{pct}%→TP</span>
-    </div>
-  )
-}
-
-// ── Open Positions Table ──────────────────────────────────────────────────────
-
-function OpenPositionsTable({ positions, onClose, closing }) {
-  if (positions.length === 0) {
+function PendingOrdersTable({ orders, onCancel, cancelling }) {
+  if (orders.length === 0) {
     return (
-      <div className="empty-state">
-        <div className="empty-state-icon">📭</div>
-        <div className="empty-state-title">No open paper trades</div>
+      <div className="empty-state" style={{ padding: '28px 24px' }}>
+        <div className="empty-state-icon" style={{ fontSize: 24, opacity: 0.4 }}>⏳</div>
+        <div className="empty-state-title" style={{ fontSize: 13 }}>No pending orders</div>
         <div className="empty-state-desc">
-          Analyze a coin in the Coin Analyzer tab, then click
-          "Open Paper Trade" on an actionable signal.
+          Pending orders appear here after you click "Open Paper Trade" and are waiting
+          for price to reach the bot's entry level.
         </div>
       </div>
     )
@@ -105,14 +75,132 @@ function OpenPositionsTable({ positions, onClose, closing }) {
           <tr>
             <th>Symbol</th>
             <th>Dir</th>
-            <th>Entry</th>
-            <th>Current</th>
+            <th>Entry (Limit)</th>
+            <th>Current Price</th>
+            <th>Distance to Entry</th>
+            <th>Stop Loss</th>
+            <th>Take Profit</th>
+            <th>Conf</th>
+            <th>Placed At</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map(t => {
+            const dist = t.entry_distance  // positive = current above entry
+            const needsToMove = t.direction === 'long'
+              ? `Price needs to DROP ${Math.abs(dist).toFixed(2)}% to fill`
+              : `Price needs to RISE ${Math.abs(dist).toFixed(2)}% to fill`
+
+            return (
+              <tr key={t.id}>
+                <td>
+                  <span className="font-mono" style={{ fontWeight: 700, fontSize: 13 }}>{t.symbol}</span>
+                </td>
+                <td><DirectionBadge direction={t.direction} /></td>
+                <td>
+                  <span className="font-mono" style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)' }}>
+                    {fmtPrice(t.entry_price)}
+                  </span>
+                </td>
+                <td>
+                  <span className="font-mono" style={{ fontSize: 12 }}>{fmtPrice(t.current_price)}</span>
+                </td>
+                <td>
+                  <div>
+                    <span
+                      className="font-mono"
+                      style={{
+                        fontSize: 12,
+                        color: Math.abs(dist) < 0.5 ? 'var(--warning)' : 'var(--text-muted)',
+                        fontWeight: Math.abs(dist) < 0.5 ? 700 : 400,
+                      }}
+                    >
+                      {dist != null ? (dist >= 0 ? '+' : '') + dist.toFixed(2) + '%' : '—'}
+                    </span>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
+                      {dist != null ? needsToMove : ''}
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span className="font-mono text-red" style={{ fontSize: 12 }}>{fmtPrice(t.stop_price)}</span>
+                </td>
+                <td>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {t.targets && t.targets.length > 0
+                      ? t.targets.slice(0, 2).map((tp, i) => (
+                          <span key={i}
+                            className={`font-mono ${t.direction === 'long' ? 'text-green' : 'text-red'}`}
+                            style={{ fontSize: 11 }}>
+                            TP{i + 1}: {fmtPrice(tp)}
+                          </span>
+                        ))
+                      : <span className="text-muted" style={{ fontSize: 12 }}>—</span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    {t.confidence ? Math.round(t.confidence * 100) + '%' : '—'}
+                  </span>
+                </td>
+                <td>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    {t.placed_at ? new Date(t.placed_at).toLocaleTimeString() : '—'}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => onCancel(t.id)}
+                    disabled={cancelling === t.id}
+                    title="Cancel this pending order"
+                  >
+                    {cancelling === t.id
+                      ? <span className="spinner" style={{ width: 12, height: 12 }} />
+                      : '✕ Cancel'
+                    }
+                  </button>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ── Open Positions Table ──────────────────────────────────────────────────────
+
+function OpenPositionsTable({ positions, onClose, closing }) {
+  if (positions.length === 0) {
+    return (
+      <div className="empty-state" style={{ padding: '28px 24px' }}>
+        <div className="empty-state-icon" style={{ fontSize: 24, opacity: 0.4 }}>📭</div>
+        <div className="empty-state-title" style={{ fontSize: 13 }}>No active positions</div>
+        <div className="empty-state-desc">
+          Positions appear here once a pending order's entry price is triggered.
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Dir</th>
+            <th>Entry (Filled)</th>
+            <th>Current Price</th>
             <th>Stop Loss</th>
             <th>Take Profit</th>
             <th>Unrealized P&amp;L</th>
-            <th>Progress</th>
             <th>Conf</th>
-            <th>Opened</th>
+            <th>Filled At</th>
             <th></th>
           </tr>
         </thead>
@@ -124,10 +212,12 @@ function OpenPositionsTable({ positions, onClose, closing }) {
               </td>
               <td><DirectionBadge direction={t.direction} /></td>
               <td>
-                <span className="font-mono" style={{ fontSize: 12 }}>{fmtPrice(t.entry_price)}</span>
+                <span className="font-mono" style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>
+                  {fmtPrice(t.entry_price)}
+                </span>
               </td>
               <td>
-                <span className="font-mono" style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>
+                <span className="font-mono" style={{ fontSize: 13, fontWeight: 700 }}>
                   {fmtPrice(t.current_price)}
                 </span>
               </td>
@@ -138,7 +228,8 @@ function OpenPositionsTable({ positions, onClose, closing }) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {t.targets && t.targets.length > 0
                     ? t.targets.slice(0, 3).map((tp, i) => (
-                        <span key={i} className={`font-mono ${t.direction === 'long' ? 'text-green' : 'text-red'}`}
+                        <span key={i}
+                          className={`font-mono ${t.direction === 'long' ? 'text-green' : 'text-red'}`}
                           style={{ fontSize: 11 }}>
                           TP{i + 1}: {fmtPrice(tp)}
                         </span>
@@ -148,16 +239,21 @@ function OpenPositionsTable({ positions, onClose, closing }) {
                 </div>
               </td>
               <td>
-                <PnlCell unrealized_pnl={t.unrealized_pnl} unrealized_pct={t.unrealized_pct} />
-              </td>
-              <td>
-                <DistanceBar
-                  entry={t.entry_price}
-                  current={t.current_price}
-                  stop={t.stop_price}
-                  tp1={t.targets?.[0]}
-                  direction={t.direction}
-                />
+                <div>
+                  <span
+                    className={`font-mono ${pnlClass(t.unrealized_pnl)}`}
+                    style={{ fontWeight: 700, fontSize: 13 }}
+                  >
+                    {t.unrealized_pnl != null
+                      ? (t.unrealized_pnl >= 0 ? '+' : '') + fmt(t.unrealized_pnl, 2)
+                      : '—'}
+                  </span>
+                  {t.unrealized_pct != null && (
+                    <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 4 }}>
+                      ({t.unrealized_pct >= 0 ? '+' : ''}{fmt(t.unrealized_pct, 2)}%)
+                    </span>
+                  )}
+                </div>
               </td>
               <td>
                 <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>
@@ -166,7 +262,7 @@ function OpenPositionsTable({ positions, onClose, closing }) {
               </td>
               <td>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                  {t.opened_at ? new Date(t.opened_at).toLocaleTimeString() : '—'}
+                  {t.filled_at ? new Date(t.filled_at).toLocaleTimeString() : '—'}
                 </span>
               </td>
               <td>
@@ -193,15 +289,16 @@ function OpenPositionsTable({ positions, onClose, closing }) {
 
 function HistoryTable({ trades }) {
   const [expandedId, setExpandedId] = useState(null)
+  const realTrades = trades.filter(t => t.outcome !== 'cancelled')
+  const cancelled  = trades.filter(t => t.outcome === 'cancelled')
 
   if (trades.length === 0) {
     return (
-      <div className="empty-state" style={{ padding: '32px 24px' }}>
-        <div className="empty-state-icon">📂</div>
-        <div className="empty-state-title">No closed trades yet</div>
+      <div className="empty-state" style={{ padding: '28px 24px' }}>
+        <div className="empty-state-icon" style={{ fontSize: 24, opacity: 0.4 }}>📂</div>
+        <div className="empty-state-title" style={{ fontSize: 13 }}>No closed trades yet</div>
         <div className="empty-state-desc">
-          Closed paper trades appear here and are written to the journal
-          so the bot can learn from them.
+          Closed trades are written to the journal so the bot can learn from them.
         </div>
       </div>
     )
@@ -230,7 +327,7 @@ function HistoryTable({ trades }) {
               <tr
                 key={t.id}
                 onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', opacity: t.outcome === 'cancelled' ? 0.5 : 1 }}
               >
                 <td>
                   <span className="font-mono" style={{ fontWeight: 700, fontSize: 13 }}>{t.symbol}</span>
@@ -251,7 +348,9 @@ function HistoryTable({ trades }) {
                 </td>
                 <td>
                   <span className={`font-mono ${pnlClass(t.realized_r)}`} style={{ fontSize: 13 }}>
-                    {t.realized_r != null ? (t.realized_r >= 0 ? '+' : '') + t.realized_r.toFixed(2) + 'R' : '—'}
+                    {t.realized_r != null
+                      ? (t.realized_r >= 0 ? '+' : '') + t.realized_r.toFixed(2) + 'R'
+                      : '—'}
                   </span>
                 </td>
                 <td><OutcomeBadge outcome={t.outcome} /></td>
@@ -275,12 +374,12 @@ function HistoryTable({ trades }) {
                       gap: 10, paddingTop: 12,
                     }}>
                       {[
-                        { label: 'Confidence', value: t.confidence ? Math.round(t.confidence * 100) + '%' : '—' },
-                        { label: 'Regime',     value: t.regime?.replace(/_/g, ' ') ?? '—' },
-                        { label: 'Stop Price', value: fmtPrice(t.stop_price) },
-                        { label: 'Risk Amount', value: t.risk_amount ? '$' + fmt(t.risk_amount) : '—' },
+                        { label: 'Confidence',    value: t.confidence ? Math.round(t.confidence * 100) + '%' : '—' },
+                        { label: 'Regime',        value: t.regime?.replace(/_/g, ' ') ?? '—' },
+                        { label: 'Stop Price',    value: fmtPrice(t.stop_price) },
+                        { label: 'Risk Amount',   value: t.risk_amount ? '$' + fmt(t.risk_amount) : '—' },
                         { label: 'Position Size', value: t.position_size ? (t.position_size * 100).toFixed(2) + '%' : '—' },
-                        { label: 'Strategies', value: (t.strategies_used || []).join(', ') || '—' },
+                        { label: 'Strategies',    value: (t.strategies_used || []).join(', ') || '—' },
                       ].map(item => (
                         <div key={item.label} className="detail-item">
                           <div className="detail-item-label">{item.label}</div>
@@ -297,20 +396,29 @@ function HistoryTable({ trades }) {
           ))}
         </tbody>
       </table>
+      {cancelled.length > 0 && (
+        <div style={{ padding: '8px 16px', fontSize: 11, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
+          {cancelled.length} cancelled order(s) shown above (greyed out) — not counted in win rate.
+        </div>
+      )}
     </div>
   )
 }
 
 // ── Summary Stats ─────────────────────────────────────────────────────────────
 
-function SummaryStats({ summary, openCount }) {
-  const wr = summary.win_rate != null ? Math.round(summary.win_rate * 100) : null
-  const wrColor = wr != null ? (wr >= 60 ? 'green' : wr >= 40 ? 'blue' : 'red') : ''
+function SummaryStats({ summary }) {
+  const wr    = summary.win_rate != null ? Math.round(summary.win_rate * 100) : null
+  const wrCls = wr != null ? (wr >= 60 ? 'green' : wr >= 40 ? 'blue' : 'red') : ''
   return (
     <div className="stat-grid">
       <div className="stat-tile">
-        <span className="stat-label">Open Positions</span>
-        <span className="stat-value blue">{openCount}</span>
+        <span className="stat-label">⏳ Pending Orders</span>
+        <span className="stat-value" style={{ color: 'var(--warning)' }}>{summary.pending_count ?? 0}</span>
+      </div>
+      <div className="stat-tile">
+        <span className="stat-label">Active Positions</span>
+        <span className="stat-value blue">{summary.open_count ?? 0}</span>
       </div>
       <div className="stat-tile">
         <span className="stat-label">Total Closed</span>
@@ -326,7 +434,7 @@ function SummaryStats({ summary, openCount }) {
       </div>
       <div className="stat-tile">
         <span className="stat-label">Win Rate</span>
-        <span className={`stat-value ${wrColor}`}>{wr != null ? wr + '%' : '—'}</span>
+        <span className={`stat-value ${wrCls}`}>{wr != null ? wr + '%' : '—'}</span>
       </div>
       <div className="stat-tile">
         <span className="stat-label">Total P&amp;L</span>
@@ -349,13 +457,13 @@ function SummaryStats({ summary, openCount }) {
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function PaperTrading() {
-  const [positions, setPositions]   = useState([])
+  const [allOpen, setAllOpen]       = useState([])
   const [history, setHistory]       = useState([])
   const [summary, setSummary]       = useState({})
   const [loading, setLoading]       = useState(false)
-  const [closing, setClosing]       = useState(null)
+  const [acting, setActing]         = useState(null)  // trade_id being cancelled/closed
   const [lastRefresh, setLastRefresh] = useState(null)
-  const [activeTab, setActiveTab]   = useState('open') // 'open' | 'history'
+  const [activeTab, setActiveTab]   = useState('pending')
   const timerRef = useRef(null)
 
   const fetchAll = useCallback(async (quiet = false) => {
@@ -371,45 +479,50 @@ export default function PaperTrading() {
         histRes.json(),
         sumRes.json(),
       ])
-      setPositions(posData.positions ?? [])
+      setAllOpen(posData.positions ?? [])
       setHistory(histData.trades ?? [])
       setSummary(sumData)
       setLastRefresh(new Date())
-    } catch (_) {
-      // silently handle — the user sees stale data instead of error
-    } finally {
-      setLoading(false)
-    }
+    } catch (_) {}
+    finally { setLoading(false) }
   }, [])
 
-  // Initial load + 30s auto-refresh to pick up backend SL/TP auto-closes
   useEffect(() => {
     fetchAll()
     timerRef.current = setInterval(() => fetchAll(true), 30000)
     return () => clearInterval(timerRef.current)
   }, [fetchAll])
 
-  const handleClose = async (tradeId) => {
-    setClosing(tradeId)
+  const handleAction = async (tradeId) => {
+    setActing(tradeId)
     try {
       const res = await fetch(`${API}/api/paper-trade/close/${tradeId}`, { method: 'DELETE' })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
-        alert(`Close failed: ${body.detail ?? 'Unknown error'}`)
+        alert(`Failed: ${body.detail ?? 'Unknown error'}`)
         return
       }
       await fetchAll(true)
     } catch (err) {
-      alert(`Close error: ${err.message}`)
+      alert(`Error: ${err.message}`)
     } finally {
-      setClosing(null)
+      setActing(null)
     }
   }
+
+  const pending   = allOpen.filter(t => t.status === 'pending')
+  const active    = allOpen.filter(t => t.status === 'open')
+
+  const tabs = [
+    { id: 'pending',  label: `Pending Orders (${pending.length})` },
+    { id: 'open',     label: `Active Positions (${active.length})` },
+    { id: 'history',  label: `Closed Trades (${history.length})` },
+  ]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-      {/* ── Header card ── */}
+      {/* ── Header ── */}
       <div className="card">
         <div className="card-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -419,14 +532,10 @@ export default function PaperTrading() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {lastRefresh && (
               <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                Refreshed {lastRefresh.toLocaleTimeString()}
+                {lastRefresh.toLocaleTimeString()}
               </span>
             )}
-            <button
-              className="btn btn-secondary btn-sm"
-              onClick={() => fetchAll()}
-              disabled={loading}
-            >
+            <button className="btn btn-secondary btn-sm" onClick={() => fetchAll()} disabled={loading}>
               {loading
                 ? <><span className="spinner" style={{ width: 12, height: 12 }} /> Loading…</>
                 : '↻ Refresh'
@@ -435,33 +544,29 @@ export default function PaperTrading() {
           </div>
         </div>
 
-        {/* Explainer */}
+        {/* How it works */}
         <div style={{
-          padding: '12px 20px',
+          padding: '10px 20px',
           background: 'var(--accent-dim)',
           borderBottom: '1px solid var(--border)',
           fontSize: 12,
           color: 'var(--text-dim)',
           lineHeight: 1.6,
         }}>
-          <strong style={{ color: 'var(--accent)' }}>How it works:</strong> When the bot gives a LONG or SHORT signal,
-          click <em>"Open Paper Trade"</em> on the signal card. The position is tracked here with live prices.
-          Stop-loss and take-profit auto-close in the background every 30 seconds.
-          Closed trades are written to the journal so the bot can learn from them.
+          <strong style={{ color: 'var(--accent)' }}>Limit order logic:</strong>{' '}
+          Orders are <strong>PENDING</strong> until price reaches the bot's entry level.
+          A LONG fills when price drops to entry; a SHORT fills when price rises to entry.
+          SL / TP auto-close every 30 seconds. Closed trades train the self-learner.
         </div>
 
-        {/* Summary stats */}
         <div className="card-body">
-          <SummaryStats summary={summary} openCount={positions.length} />
+          <SummaryStats summary={summary} />
         </div>
       </div>
 
       {/* ── Sub-tabs ── */}
       <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--border)' }}>
-        {[
-          { id: 'open',    label: `Open Positions (${positions.length})` },
-          { id: 'history', label: `Closed Trades (${history.length})` },
-        ].map(t => (
+        {tabs.map(t => (
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
@@ -483,24 +588,41 @@ export default function PaperTrading() {
         ))}
       </div>
 
-      {/* ── Open Positions ── */}
-      {activeTab === 'open' && (
+      {/* ── Pending Orders ── */}
+      {activeTab === 'pending' && (
         <div className="card fade-in">
           <div className="card-header">
-            <span className="card-title">Live Open Positions</span>
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              Prices + SL/TP auto-check every 30s
+            <span className="card-title">⏳ Pending Limit Orders</span>
+            <span style={{ fontSize: 11, color: 'var(--warning)' }}>
+              Waiting for price to reach entry — not yet in a trade
             </span>
           </div>
-          <OpenPositionsTable
-            positions={positions}
-            onClose={handleClose}
-            closing={closing}
+          <PendingOrdersTable
+            orders={pending}
+            onCancel={handleAction}
+            cancelling={acting}
           />
         </div>
       )}
 
-      {/* ── Closed Trades History ── */}
+      {/* ── Active Positions ── */}
+      {activeTab === 'open' && (
+        <div className="card fade-in">
+          <div className="card-header">
+            <span className="card-title">Active Positions</span>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+              Entry triggered — live P&amp;L tracking, SL/TP auto-check every 30s
+            </span>
+          </div>
+          <OpenPositionsTable
+            positions={active}
+            onClose={handleAction}
+            closing={acting}
+          />
+        </div>
+      )}
+
+      {/* ── History ── */}
       {activeTab === 'history' && (
         <div className="card fade-in">
           <div className="card-header">

@@ -1,6 +1,9 @@
 """
-Paper Trade Store — persists open/closed paper positions to disk.
-All money is fake. Used to track bot signal performance and feed the self-learner.
+Paper Trade Store — simulated limit order book.
+Trades are PENDING until price reaches the entry level.
+  LONG  limit: fills when price <= entry_price  (buy the dip)
+  SHORT limit: fills when price >= entry_price  (sell the rip)
+All money is fake. Closed trades feed the self-learner.
 """
 from __future__ import annotations
 
@@ -18,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 _PAPER_FILE = Path("logs/paper_trades.json")
 _BINANCE_PRICE_URL = "https://api.binance.com/api/v3/ticker/price"
-_COMMISSION = 0.0004   # 0.04% per side (Binance taker)
+_COMMISSION = 0.0004  # 0.04 % per side (Binance taker)
 
 
 def _now_iso() -> str:
@@ -26,7 +29,7 @@ def _now_iso() -> str:
 
 
 def get_live_price(symbol: str) -> Optional[float]:
-    """Fetch current mark price from Binance spot (no auth required)."""
+    """Fetch current spot price from Binance (no auth required)."""
     try:
         r = requests.get(_BINANCE_PRICE_URL, params={"symbol": symbol}, timeout=5)
         r.raise_for_status()
@@ -36,8 +39,22 @@ def get_live_price(symbol: str) -> Optional[float]:
         return None
 
 
+def _entry_triggered(direction: str, current_price: float, entry_price: float) -> bool:
+    """Return True if a limit order at entry_price should fill at current_price."""
+    if direction == "long":
+        return current_price <= entry_price   # price fell to our buy limit
+    else:
+        return current_price >= entry_price   # price rose to our sell limit
+
+
 class PaperTradeStore:
-    """Thread-safe store for paper trades. Persists to logs/paper_trades.json."""
+    """
+    Thread-safe store for paper positions.
+
+    Trade lifecycle:
+      pending  → (price reaches entry) → open → (SL / TP / manual) → closed
+      pending  → (user cancels)        → closed  (outcome='cancelled')
+    """
 
     def __init__(self, path: Path = _PAPER_FILE):
         self._path = path
@@ -48,52 +65,91 @@ class PaperTradeStore:
     # ── Public API ────────────────────────────────────────────────────────────
 
     def open_trade(self, signal: dict) -> dict:
-        """Create a new paper position from a signal dict."""
+        """
+        Place a paper limit order.
+        Fetches the live price to decide if it's already filled:
+          - If price already at/past entry → status='open' (immediate fill)
+          - Otherwise → status='pending'  (waiting for entry)
+        """
         trade_id = f"PT_{signal['symbol']}_{int(time.time() * 1000)}"
         entry = signal.get("entry_price") or signal.get("current_price", 0.0)
+        live  = get_live_price(signal["symbol"]) or entry
+
+        already_filled = _entry_triggered(signal["direction"], live, entry)
+        status     = "open"    if already_filled else "pending"
+        filled_at  = _now_iso() if already_filled else None
+        outcome    = "open"    if already_filled else "pending"
 
         trade = {
-            "id":             trade_id,
-            "symbol":         signal["symbol"],
-            "direction":      signal["direction"],
-            "entry_price":    entry,
-            "current_price":  entry,
-            "stop_price":     signal.get("stop_price"),
-            "targets":        signal.get("targets", []),
-            "position_size":  signal.get("position_size", 0.0),
-            "risk_amount":    signal.get("risk_amount", 0.0),
-            "confidence":     signal.get("confidence", 0.0),
-            "regime":         signal.get("regime", "unknown"),
+            "id":              trade_id,
+            "symbol":          signal["symbol"],
+            "direction":       signal["direction"],
+            "status":          status,         # "pending" | "open"
+            "entry_price":     entry,
+            "current_price":   live,
+            "stop_price":      signal.get("stop_price"),
+            "targets":         signal.get("targets", []),
+            "position_size":   signal.get("position_size", 0.0),
+            "risk_amount":     signal.get("risk_amount", 0.0),
+            "confidence":      signal.get("confidence", 0.0),
+            "regime":          signal.get("regime", "unknown"),
             "strategies_used": signal.get("strategies_used", []),
-            "opened_at":      _now_iso(),
-            "closed_at":      None,
-            "outcome":        "open",
-            "realized_pnl":   None,
-            "realized_r":     None,
-            "exit_price":     None,
-            "exit_reason":    None,
-            "unrealized_pnl": 0.0,
-            "unrealized_pct": 0.0,
+            "placed_at":       _now_iso(),
+            "filled_at":       filled_at,
+            "closed_at":       None,
+            "outcome":         outcome,
+            "realized_pnl":    None,
+            "realized_r":      None,
+            "exit_price":      None,
+            "exit_reason":     None,
+            "unrealized_pnl":  0.0,
+            "unrealized_pct":  0.0,
+            "entry_distance":  round((live - entry) / entry * 100, 4) if entry else 0.0,
         }
+
         with self._lock:
             self._data["open"].append(trade)
             self._save()
-        logger.info("Paper trade opened: %s %s @ %.4f", trade["direction"], trade["symbol"], entry)
+
+        if already_filled:
+            logger.info("Paper trade FILLED immediately: %s %s @ %.4f",
+                        trade["direction"], trade["symbol"], live)
+        else:
+            dist = abs(live - entry) / entry * 100
+            logger.info(
+                "Paper trade PENDING: %s %s — entry=%.4f current=%.4f (%.2f%% away)",
+                trade["direction"], trade["symbol"], entry, live, dist,
+            )
         return trade
 
-    def close_trade(self, trade_id: str, exit_price: float, reason: str) -> Optional[dict]:
-        """Close an open position, compute P&L, move to closed list."""
+    def cancel_trade(self, trade_id: str) -> Optional[dict]:
+        """Cancel a pending order (not yet filled). No P&L recorded."""
         with self._lock:
             for i, t in enumerate(self._data["open"]):
-                if t["id"] == trade_id:
+                if t["id"] == trade_id and t["status"] == "pending":
+                    trade = dict(self._data["open"].pop(i))
+                    trade["closed_at"]   = _now_iso()
+                    trade["exit_reason"] = "cancelled"
+                    trade["outcome"]     = "cancelled"
+                    self._data["closed"].append(trade)
+                    self._save()
+                    logger.info("Paper order cancelled: %s", trade_id)
+                    return trade
+        return None
+
+    def close_trade(self, trade_id: str, exit_price: float, reason: str) -> Optional[dict]:
+        """Close an OPEN (filled) position, compute P&L, move to closed list."""
+        with self._lock:
+            for i, t in enumerate(self._data["open"]):
+                if t["id"] == trade_id and t["status"] == "open":
                     trade = dict(self._data["open"].pop(i))
                     trade["exit_price"]  = exit_price
                     trade["closed_at"]   = _now_iso()
                     trade["exit_reason"] = reason
 
-                    # P&L
                     entry = trade["entry_price"] or exit_price
                     size  = trade["position_size"] or 0.0
+
                     if trade["direction"] == "long":
                         gross = (exit_price - entry) * size
                     else:
@@ -119,23 +175,37 @@ class PaperTradeStore:
                         trade["direction"], trade["symbol"], exit_price,
                         pnl, r_multiple, trade["outcome"],
                     )
-                    # Write to journal so self-learner can train on it
                     self._write_to_journal(trade)
                     return trade
         return None
 
+    def manual_close(self, trade_id: str) -> Optional[dict]:
+        """
+        Manually act on any active trade:
+          - pending → cancel (no fill, no P&L)
+          - open    → close at current market price
+        """
+        trade = self._find_open(trade_id)
+        if not trade:
+            return None
+        if trade["status"] == "pending":
+            return self.cancel_trade(trade_id)
+        price = get_live_price(trade["symbol"]) or trade.get("current_price") or trade["entry_price"]
+        return self.close_trade(trade_id, price, "manual_close")
+
     def update_prices(self) -> list[dict]:
         """
-        Refresh current_price + unrealized P&L for all open positions.
-        Also auto-closes any position that has hit its SL or TP.
-        Returns list of newly closed trades.
+        Called every 30 s by the background task:
+          1. For PENDING trades — check if entry price was crossed (fill trigger)
+          2. For OPEN trades    — refresh P&L; auto-close on SL or TP hit
+        Returns list of newly closed trades (so the caller can log them).
         """
         closed_this_round: list[dict] = []
-        # snapshot open IDs to avoid mutation during iteration
-        with self._lock:
-            open_ids = [t["id"] for t in self._data["open"]]
 
-        for tid in open_ids:
+        with self._lock:
+            all_ids = [t["id"] for t in self._data["open"]]
+
+        for tid in all_ids:
             trade = self._find_open(tid)
             if trade is None:
                 continue
@@ -144,27 +214,57 @@ class PaperTradeStore:
             if price is None:
                 continue
 
-            # Update unrealized P&L
+            # Always update current price + distance-to-entry for pending
+            with self._lock:
+                for t in self._data["open"]:
+                    if t["id"] == tid:
+                        t["current_price"] = price
+                        if t["status"] == "pending" and t["entry_price"]:
+                            t["entry_distance"] = round(
+                                (price - t["entry_price"]) / t["entry_price"] * 100, 4
+                            )
+                        break
+                self._save()
+
+            # ── 1. Check PENDING → OPEN fill ──────────────────────────────
+            if trade["status"] == "pending":
+                if _entry_triggered(trade["direction"], price, trade["entry_price"]):
+                    with self._lock:
+                        for t in self._data["open"]:
+                            if t["id"] == tid:
+                                t["status"]    = "open"
+                                t["outcome"]   = "open"
+                                t["filled_at"] = _now_iso()
+                                break
+                        self._save()
+                    logger.info(
+                        "Paper order FILLED: %s %s entry=%.4f triggered @ %.4f",
+                        trade["direction"], trade["symbol"],
+                        trade["entry_price"], price,
+                    )
+                # Whether just filled or still pending, no SL/TP check yet
+                continue
+
+            # ── 2. OPEN trade — update unrealized P&L ────────────────────
             entry = trade["entry_price"] or price
             size  = trade["position_size"] or 0.0
+
             if trade["direction"] == "long":
-                unreal = (price - entry) * size
+                unreal     = (price - entry) * size
+                unreal_pct = (price - entry) / entry * 100 if entry else 0.0
             else:
-                unreal = (entry - price) * size
-            unreal_pct = ((price - entry) / entry * 100) if entry else 0.0
-            if trade["direction"] == "short":
-                unreal_pct = -unreal_pct
+                unreal     = (entry - price) * size
+                unreal_pct = (entry - price) / entry * 100 if entry else 0.0
 
             with self._lock:
                 for t in self._data["open"]:
                     if t["id"] == tid:
-                        t["current_price"]  = price
                         t["unrealized_pnl"] = round(unreal, 4)
                         t["unrealized_pct"] = round(unreal_pct, 4)
                         break
                 self._save()
 
-            # Auto-close on SL
+            # ── 3. Auto-close on Stop Loss ────────────────────────────────
             sl = trade.get("stop_price")
             if sl:
                 if trade["direction"] == "long"  and price <= sl:
@@ -178,7 +278,7 @@ class PaperTradeStore:
                         closed_this_round.append(closed)
                     continue
 
-            # Auto-close on first TP hit
+            # ── 4. Auto-close on Take Profit 1 ───────────────────────────
             targets = trade.get("targets") or []
             if targets:
                 tp1 = targets[0]
@@ -195,16 +295,9 @@ class PaperTradeStore:
 
         return closed_this_round
 
-    def manual_close(self, trade_id: str) -> Optional[dict]:
-        """Manually close an open trade at the current market price."""
-        trade = self._find_open(trade_id)
-        if not trade:
-            return None
-        price = get_live_price(trade["symbol"]) or trade.get("current_price") or trade["entry_price"]
-        return self.close_trade(trade_id, price, "manual_close")
-
     @property
     def open_positions(self) -> list[dict]:
+        """All non-closed trades (pending + open)."""
         with self._lock:
             return list(self._data["open"])
 
@@ -215,21 +308,32 @@ class PaperTradeStore:
 
     def summary(self) -> dict:
         closed = self.closed_trades
-        if not closed:
-            return {"total": 0, "wins": 0, "losses": 0, "win_rate": 0,
-                    "total_pnl": 0, "avg_r": 0, "open_count": len(self.open_positions)}
-        wins   = [t for t in closed if t["outcome"] == "win"]
-        losses = [t for t in closed if t["outcome"] == "loss"]
-        pnls   = [t["realized_pnl"] or 0 for t in closed]
-        rs     = [t["realized_r"]   or 0 for t in closed]
+        # Exclude cancelled orders from win/loss stats
+        real = [t for t in closed if t["outcome"] not in ("cancelled",)]
+        open_list = self.open_positions
+        pending = sum(1 for t in open_list if t.get("status") == "pending")
+        active  = sum(1 for t in open_list if t.get("status") == "open")
+
+        if not real:
+            return {
+                "total": 0, "wins": 0, "losses": 0, "win_rate": 0,
+                "total_pnl": 0, "avg_r": 0,
+                "open_count": active, "pending_count": pending,
+            }
+
+        wins   = [t for t in real if t["outcome"] == "win"]
+        losses = [t for t in real if t["outcome"] == "loss"]
+        pnls   = [t["realized_pnl"] or 0 for t in real]
+        rs     = [t["realized_r"]   or 0 for t in real]
         return {
-            "total":      len(closed),
-            "wins":       len(wins),
-            "losses":     len(losses),
-            "win_rate":   round(len(wins) / len(closed), 4),
-            "total_pnl":  round(sum(pnls), 2),
-            "avg_r":      round(sum(rs) / len(rs), 4) if rs else 0,
-            "open_count": len(self.open_positions),
+            "total":         len(real),
+            "wins":          len(wins),
+            "losses":        len(losses),
+            "win_rate":      round(len(wins) / len(real), 4),
+            "total_pnl":     round(sum(pnls), 2),
+            "avg_r":         round(sum(rs) / len(rs), 4) if rs else 0,
+            "open_count":    active,
+            "pending_count": pending,
         }
 
     # ── Internals ─────────────────────────────────────────────────────────────
@@ -253,9 +357,8 @@ class PaperTradeStore:
         self._path.write_text(json.dumps(self._data, indent=2), encoding="utf-8")
 
     def _write_to_journal(self, trade: dict):
-        """Append closed trade to trades.jsonl so the self-learner can read it."""
-        from pathlib import Path as P
-        journal = P("logs/journal/trades.jsonl")
+        """Append a closed (filled) trade to trades.jsonl for self-learning."""
+        journal = Path("logs/journal/trades.jsonl")
         journal.parent.mkdir(parents=True, exist_ok=True)
         record = {
             "event":         "exit",
