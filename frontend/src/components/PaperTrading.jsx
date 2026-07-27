@@ -510,8 +510,9 @@ export default function PaperTrading() {
     }
   }
 
+  // Trades created before the pending-order logic have no status field — treat as open
   const pending   = allOpen.filter(t => t.status === 'pending')
-  const active    = allOpen.filter(t => t.status === 'open')
+  const active    = allOpen.filter(t => (t.status ?? 'open') === 'open')
 
   const tabs = [
     { id: 'pending',  label: `Pending Orders (${pending.length})` },

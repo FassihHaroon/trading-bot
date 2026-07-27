@@ -348,7 +348,17 @@ class PaperTradeStore:
     def _load(self) -> dict:
         if self._path.exists():
             try:
-                return json.loads(self._path.read_text(encoding="utf-8"))
+                data = json.loads(self._path.read_text(encoding="utf-8"))
+                # Migrate trades created before the pending-order logic was added
+                for t in data.get("open", []):
+                    if "status" not in t:
+                        t["status"]         = "open"
+                        t["filled_at"]      = t.get("opened_at")
+                        t["placed_at"]      = t.get("opened_at")
+                        t["entry_distance"] = 0.0
+                    if "placed_at" not in t:
+                        t["placed_at"] = t.get("opened_at")
+                return data
             except Exception:
                 pass
         return {"open": [], "closed": []}
