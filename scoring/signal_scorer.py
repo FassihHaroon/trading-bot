@@ -135,23 +135,29 @@ class SignalScorer:
             return self._no_trade(symbol, ts, strategy_results, reason="No directional strategies valid")
 
         # ── Gate 3: Macro/micro gate (if enabled) ────────────────────────────
+        # Hard rule: 4H and 1D must AGREE on a direction (tf_aligned=True).
+        # If they contradict each other the market is in transition — no edge.
+        # Counter-trend signals (LONG in bearish macro / SHORT in bullish macro)
+        # are allowed but pay a confidence penalty applied later; they need a
+        # much stronger setup to clear the confidence gate.
+        is_counter_trend = False
         if self.sc.macro_micro_gate:
             if not features.tf_aligned:
                 return self._no_trade(
                     symbol, ts, strategy_results,
-                    reason="MACRO_MICRO_GATE_MANDATORY: 4H/1D timeframes not aligned — hard gate FAIL",
+                    reason="MACRO_MICRO_GATE: 4H/1D timeframes not aligned — no clear macro direction",
                 )
-            # Use macro_bias (4h+1d MTF) not context.trend_direction (1h only) —
-            # the 1h trend can be "neutral" while the macro is clearly directional.
             if direction == Direction.LONG and features.macro_bias == TrendDirection.BEARISH:
-                return self._no_trade(
-                    symbol, ts, strategy_results,
-                    reason="MACRO_MICRO_GATE: long signal in bearish macro context blocked",
+                is_counter_trend = True
+                logger.info(
+                    "Counter-trend LONG in bearish macro for %s — "
+                    "applying confidence penalty, raising bar", symbol,
                 )
-            if direction == Direction.SHORT and features.macro_bias == TrendDirection.BULLISH:
-                return self._no_trade(
-                    symbol, ts, strategy_results,
-                    reason="MACRO_MICRO_GATE: short signal in bullish macro context blocked",
+            elif direction == Direction.SHORT and features.macro_bias == TrendDirection.BULLISH:
+                is_counter_trend = True
+                logger.info(
+                    "Counter-trend SHORT in bullish macro for %s — "
+                    "applying confidence penalty, raising bar", symbol,
                 )
 
         # ── Weighted confidence calculation ───────────────────────────────────
@@ -193,8 +199,23 @@ class SignalScorer:
                 f"macro_risk={features.macro_event_risk})"
             )
 
+        # ── Counter-trend penalty ─────────────────────────────────────────────
+        # A counter-trend trade (LONG in bearish macro or SHORT in bullish macro)
+        # requires a notably stronger setup to justify fighting the trend.
+        # Penalty: -0.12 confidence + raised gate (+0.08).
+        # A typical counter-trend long needs raw confidence ≥ 0.75 to survive.
+        counter_trend_gate_raise = 0.0
+        if is_counter_trend:
+            aggregate_confidence = max(0.0, aggregate_confidence - 0.12)
+            counter_trend_gate_raise = 0.08
+            evidence.append(
+                f"counter_trend_penalty=-0.12 "
+                f"(gate_raise=+{counter_trend_gate_raise:.2f}): "
+                f"signal opposes macro bias — higher bar required"
+            )
+
         # ── Final confidence threshold ────────────────────────────────────────
-        required_confidence = self._required_confidence(len(agreed_strategies))
+        required_confidence = self._required_confidence(len(agreed_strategies)) + counter_trend_gate_raise
         if aggregate_confidence < required_confidence:
             return self._no_trade(
                 symbol, ts, strategy_results,
@@ -287,10 +308,17 @@ class SignalScorer:
         """Adjust confidence based on how well the regime supports this trade type."""
         from data.schemas import MarketRegime
         bonus = 0.0
+        # Trend-aligned trades get a small boost
         if direction == Direction.LONG and context.regime == MarketRegime.TRENDING_BULL:
             bonus += 0.05
         elif direction == Direction.SHORT and context.regime == MarketRegime.TRENDING_BEAR:
             bonus += 0.05
+        # Counter-trend trades get an additional regime-level penalty on top of
+        # the macro gate penalty applied earlier — they're fighting the dominant flow
+        elif direction == Direction.LONG and context.regime == MarketRegime.TRENDING_BEAR:
+            bonus -= 0.04   # stacked with the -0.12 gate penalty above
+        elif direction == Direction.SHORT and context.regime == MarketRegime.TRENDING_BULL:
+            bonus -= 0.04
         if context.volume_quality == "confirming":
             bonus += 0.03
         elif context.volume_quality == "diverging":
