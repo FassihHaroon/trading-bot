@@ -89,9 +89,28 @@ async def _price_check_loop():
             logger.warning("Price checker error: %s", exc)
 
 
+async def _keep_alive_loop():
+    """Ping own health endpoint every 14 min to prevent Render free-tier sleep."""
+    import httpx
+    await asyncio.sleep(60)  # let the server fully start first
+    render_url = os.getenv("RENDER_EXTERNAL_URL", "")
+    if not render_url:
+        return  # not running on Render, skip
+    url = f"{render_url}/api/health"
+    while True:
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                await client.get(url)
+            logger.debug("Keep-alive ping sent to %s", url)
+        except Exception:
+            pass
+        await asyncio.sleep(14 * 60)
+
+
 @app.on_event("startup")
 async def startup():
     asyncio.create_task(_price_check_loop())
+    asyncio.create_task(_keep_alive_loop())
     logger.info("Background paper-trade price checker started (30s interval).")
 
 

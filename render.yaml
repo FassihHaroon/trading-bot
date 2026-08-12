@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: trading-bot-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: LIVE_TRADING_ENABLED
+        value: "false"
+      - key: ACCOUNT_EQUITY
+        value: "10000"
+      - key: BINANCE_API_KEY
+        sync: false
+      - key: BINANCE_API_SECRET
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
