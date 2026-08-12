@@ -33,7 +33,7 @@ export default function App() {
       <header className="app-header">
         <div className="header-brand">
           <div className="brand-icon">📈</div>
-          <span className="brand-name">HASHIM BOT</span>
+          <span className="brand-name">TRADING BOT</span>
           <span className="brand-tag">LIVE</span>
         </div>
         <div className="header-status">
