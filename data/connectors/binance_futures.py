@@ -495,7 +495,7 @@ class BinanceFuturesClient:
             {
                 "X-MBX-APIKEY": self._config.api_key,
                 "Accept": "application/json",
-                "User-Agent": "hashim-bot/1.0",
+                "User-Agent": "trading-bot/1.0",
             }
         )
         return session

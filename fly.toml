@@ -1,0 +1,29 @@
+app = "trading-bot-fassih"
+primary_region = "sin"   # Singapore — closest to Binance servers
+
+[build]
+
+[env]
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false   # Keep running 24/7 — critical for price checker
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 25
+    soft_limit = 20
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
+
+# Persistent volume — keeps paper_trades.json and journal alive across deploys
+[[mounts]]
+  source = "trading_bot_logs"
+  destination = "/app/logs"

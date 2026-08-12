@@ -3,13 +3,13 @@
  * Shows a filterable table of all decisions (LONG / SHORT / NO_TRADE).
  * Includes a mini confidence chart using recharts.
  */
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   ResponsiveContainer, BarChart, Bar,
   XAxis, YAxis, Tooltip, Cell,
 } from 'recharts'
 
-const API = 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 function DirectionBadge({ direction }) {
   const map = {
@@ -269,9 +269,8 @@ export default function SignalHistory() {
               </thead>
               <tbody>
                 {filtered.map((sig, i) => (
-                  <>
+                  <React.Fragment key={sig.ts ? `${sig.symbol}-${sig.ts}` : i}>
                     <tr
-                      key={i}
                       style={{ cursor: 'pointer' }}
                       onClick={() => toggleRow(i)}
                     >
@@ -319,15 +318,16 @@ export default function SignalHistory() {
                         </div>
                       </td>
                       <td style={{ maxWidth: 260 }}>
-                        {sig.no_trade_reason ? (
-                          <span style={{ fontSize: 11, color: 'var(--text-muted)', wordBreak: 'break-all' }}>
-                            {sig.no_trade_reason}
-                          </span>
-                        ) : (
-                          <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                        <div>
+                          <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-muted)', display: 'block' }}>
                             {sig.ts ? new Date(sig.ts).toLocaleString() : '—'}
                           </span>
-                        )}
+                          {sig.no_trade_reason && (
+                            <span style={{ fontSize: 10, color: 'var(--text-muted)', opacity: 0.7, display: 'block', marginTop: 2, wordBreak: 'break-word' }}>
+                              {sig.no_trade_reason.replace('SCORED_NO_TRADE: ', '')}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td>
                         <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -338,7 +338,7 @@ export default function SignalHistory() {
 
                     {/* ── Expanded Row Detail ── */}
                     {expandedRow === i && (
-                      <tr key={`${i}-detail`}>
+                      <tr>
                         <td colSpan={8} style={{ padding: '0 16px 16px', background: 'var(--bg-primary)' }}>
                           <div
                             style={{
@@ -353,16 +353,15 @@ export default function SignalHistory() {
                             }}
                           >
                             {[
-                              { label: 'Symbol',    value: sig.symbol },
-                              { label: 'Direction', value: sig.direction },
+                              { label: 'Symbol',     value: sig.symbol },
+                              { label: 'Direction',  value: sig.direction },
                               { label: 'Confidence', value: sig.confidence != null ? `${(sig.confidence * 100).toFixed(1)}%` : '—' },
-                              { label: 'Entry',     value: sig.entry != null ? `$${sig.entry}` : '—' },
-                              { label: 'Stop',      value: sig.stop != null ? `$${sig.stop}` : '—' },
-                              { label: 'R/R',       value: sig.rr != null ? `${sig.rr}R` : '—' },
-                              { label: 'Regime',    value: sig.regime?.replace(/_/g, ' ') },
-                              { label: 'Phase',     value: sig.phase?.replace(/_/g, ' ') },
-                              { label: 'Timestamp', value: sig.ts ? new Date(sig.ts).toLocaleString() : '—' },
-                              { label: 'Paper',     value: sig.is_paper ? 'Yes' : 'No' },
+                              { label: 'Entry',      value: sig.entry != null ? `$${sig.entry}` : null },
+                              { label: 'Stop',       value: sig.stop != null ? `$${sig.stop}` : null },
+                              { label: 'R/R',        value: sig.rr != null && sig.rr > 0 ? `${sig.rr}R` : null },
+                              { label: 'Regime',     value: sig.regime?.replace(/_/g, ' ') },
+                              { label: 'Phase',      value: sig.phase?.replace(/_/g, ' ') },
+                              { label: 'Timestamp',  value: sig.ts ? new Date(sig.ts).toLocaleString() : '—' },
                             ].filter(item => item.value).map(item => (
                               <div key={item.label} className="detail-item" style={{ background: 'var(--bg-card)' }}>
                                 <div className="detail-item-label">{item.label}</div>
@@ -404,7 +403,7 @@ export default function SignalHistory() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>

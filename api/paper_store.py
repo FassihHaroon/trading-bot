@@ -314,6 +314,17 @@ class PaperTradeStore:
 
         return closed_this_round
 
+    def delete_closed(self, trade_id: str) -> bool:
+        """Permanently remove a trade from the closed list (e.g. bad paper trades)."""
+        with self._lock:
+            before = len(self._data["closed"])
+            self._data["closed"] = [t for t in self._data["closed"] if t["id"] != trade_id]
+            if len(self._data["closed"]) < before:
+                self._save()
+                logger.info("Closed trade deleted: %s", trade_id)
+                return True
+        return False
+
     @property
     def open_positions(self) -> list[dict]:
         """All non-closed trades (pending + open)."""

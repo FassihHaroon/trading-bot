@@ -1,5 +1,5 @@
 {
-  "name": "hashim-bot-dashboard",
+  "name": "trading-bot-dashboard",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",

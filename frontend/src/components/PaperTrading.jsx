@@ -10,7 +10,7 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
 
-const API = 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 function fmt(n, d = 2) {
   if (n == null) return '—'
@@ -21,6 +21,22 @@ function fmtPrice(p) {
   if (p == null) return '—'
   const n = Number(p)
   return '$' + (n > 100 ? fmt(n, 2) : fmt(n, 4))
+}
+
+function positionUsdt(t) {
+  const ps = t.position_size
+  const ep = t.entry_price
+  if (!ps || !ep) return null
+  return ps * ep
+}
+
+function effectiveLeverage(t) {
+  const ep = t.entry_price
+  const sl = t.stop_price
+  if (!ep || !sl) return null
+  const dist = Math.abs(ep - sl) / ep
+  if (dist === 0) return null
+  return 1 / dist
 }
 
 function pnlClass(v) {
@@ -78,6 +94,8 @@ function PendingOrdersTable({ orders, onCancel, cancelling }) {
             <th>Entry (Limit)</th>
             <th>Current Price</th>
             <th>Distance to Entry</th>
+            <th>Position USDT</th>
+            <th>Leverage</th>
             <th>Stop Loss</th>
             <th>Take Profit</th>
             <th>Conf</th>
@@ -123,6 +141,16 @@ function PendingOrdersTable({ orders, onCancel, cancelling }) {
                       {dist != null ? needsToMove : ''}
                     </div>
                   </div>
+                </td>
+                <td>
+                  <span className="font-mono" style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {positionUsdt(t) != null ? '$' + fmt(positionUsdt(t), 2) : '—'}
+                  </span>
+                </td>
+                <td>
+                  <span className="font-mono" style={{ fontSize: 12, color: 'var(--accent)' }}>
+                    {effectiveLeverage(t) != null ? effectiveLeverage(t).toFixed(1) + 'x' : '—'}
+                  </span>
                 </td>
                 <td>
                   <span className="font-mono text-red" style={{ fontSize: 12 }}>{fmtPrice(t.stop_price)}</span>
@@ -197,6 +225,8 @@ function OpenPositionsTable({ positions, onClose, closing }) {
             <th>Dir</th>
             <th>Entry (Filled)</th>
             <th>Current Price</th>
+            <th>Position USDT</th>
+            <th>Leverage</th>
             <th>Stop Loss</th>
             <th>Take Profit</th>
             <th>Unrealized P&amp;L</th>
@@ -220,6 +250,23 @@ function OpenPositionsTable({ positions, onClose, closing }) {
               <td>
                 <span className="font-mono" style={{ fontSize: 13, fontWeight: 700 }}>
                   {fmtPrice(t.current_price)}
+                </span>
+              </td>
+              <td>
+                <div>
+                  <span className="font-mono" style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {positionUsdt(t) != null ? '$' + fmt(positionUsdt(t), 2) : '—'}
+                  </span>
+                  {t.risk_amount > 0 && (
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
+                      risk ${fmt(t.risk_amount, 2)}
+                    </div>
+                  )}
+                </div>
+              </td>
+              <td>
+                <span className="font-mono" style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600 }}>
+                  {effectiveLeverage(t) != null ? effectiveLeverage(t).toFixed(1) + 'x' : '—'}
                 </span>
               </td>
               <td>
@@ -288,8 +335,9 @@ function OpenPositionsTable({ positions, onClose, closing }) {
 
 // ── Closed Trades History Table ───────────────────────────────────────────────
 
-function HistoryTable({ trades }) {
+function HistoryTable({ trades, onDelete, deleting }) {
   const [expandedId, setExpandedId] = useState(null)
+  const [confirmId, setConfirmId]   = useState(null)
   const realTrades = trades.filter(t => t.outcome !== 'cancelled')
   const cancelled  = trades.filter(t => t.outcome === 'cancelled')
 
@@ -314,6 +362,8 @@ function HistoryTable({ trades }) {
             <th>Dir</th>
             <th>Entry</th>
             <th>Exit</th>
+            <th>Position USDT</th>
+            <th>Leverage</th>
             <th>Realized P&amp;L</th>
             <th>R Multiple</th>
             <th>Outcome</th>
@@ -341,6 +391,16 @@ function HistoryTable({ trades }) {
                   <span className="font-mono" style={{ fontSize: 12 }}>{fmtPrice(t.exit_price)}</span>
                 </td>
                 <td>
+                  <span className="font-mono" style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {positionUsdt(t) != null ? '$' + fmt(positionUsdt(t), 2) : '—'}
+                  </span>
+                </td>
+                <td>
+                  <span className="font-mono" style={{ fontSize: 12, color: 'var(--accent)' }}>
+                    {effectiveLeverage(t) != null ? effectiveLeverage(t).toFixed(1) + 'x' : '—'}
+                  </span>
+                </td>
+                <td>
                   <span className={`font-mono ${pnlClass(t.realized_pnl)}`} style={{ fontWeight: 700, fontSize: 13 }}>
                     {t.realized_pnl != null
                       ? (t.realized_pnl >= 0 ? '+' : '') + fmt(t.realized_pnl, 2)
@@ -361,26 +421,51 @@ function HistoryTable({ trades }) {
                     {t.closed_at ? new Date(t.closed_at).toLocaleString() : '—'}
                   </span>
                 </td>
-                <td>
-                  <button className="btn btn-secondary btn-sm">
-                    {expandedId === t.id ? '▲' : '▼'}
-                  </button>
+                <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
+                  {confirmId === t.id ? (
+                    <div style={{ display: 'flex', gap: 4 }}>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        disabled={deleting === t.id}
+                        onClick={() => { onDelete(t.id); setConfirmId(null) }}
+                      >
+                        {deleting === t.id ? <span className="spinner" style={{ width: 10, height: 10 }} /> : 'Confirm'}
+                      </button>
+                      <button className="btn btn-secondary btn-sm" onClick={() => setConfirmId(null)}>
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 4 }}>
+                      <button className="btn btn-secondary btn-sm" onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}>
+                        {expandedId === t.id ? '▲' : '▼'}
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        title="Remove this trade record"
+                        onClick={() => setConfirmId(t.id)}
+                        style={{ color: 'var(--text-muted)', fontSize: 12 }}
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
               {expandedId === t.id && (
                 <tr key={`${t.id}-detail`}>
-                  <td colSpan={10} style={{ padding: '0 16px 16px', background: 'var(--bg-primary)' }}>
+                  <td colSpan={12} style={{ padding: '0 16px 16px', background: 'var(--bg-primary)' }}>
                     <div style={{
                       display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
                       gap: 10, paddingTop: 12,
                     }}>
                       {[
-                        { label: 'Confidence',    value: t.confidence ? Math.round(t.confidence * 100) + '%' : '—' },
-                        { label: 'Regime',        value: t.regime?.replace(/_/g, ' ') ?? '—' },
-                        { label: 'Stop Price',    value: fmtPrice(t.stop_price) },
-                        { label: 'Risk Amount',   value: t.risk_amount ? '$' + fmt(t.risk_amount) : '—' },
-                        { label: 'Position Size', value: t.position_size ? (t.position_size * 100).toFixed(2) + '%' : '—' },
-                        { label: 'Strategies',    value: (t.strategies_used || []).join(', ') || '—' },
+                        { label: 'Confidence',     value: t.confidence ? Math.round(t.confidence * 100) + '%' : '—' },
+                        { label: 'Regime',         value: t.regime?.replace(/_/g, ' ') ?? '—' },
+                        { label: 'Stop Price',     value: fmtPrice(t.stop_price) },
+                        { label: 'Risk Amount',    value: t.risk_amount ? '$' + fmt(t.risk_amount) : '—' },
+                        { label: 'Position Units', value: t.position_size ? t.position_size.toFixed(6) + ' units' : '—' },
+                        { label: 'Strategies',     value: (t.strategies_used || []).join(', ') || '—' },
                       ].map(item => (
                         <div key={item.label} className="detail-item">
                           <div className="detail-item-label">{item.label}</div>
@@ -399,7 +484,7 @@ function HistoryTable({ trades }) {
       </table>
       {cancelled.length > 0 && (
         <div style={{ padding: '8px 16px', fontSize: 11, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
-          {cancelled.length} cancelled order(s) shown above (greyed out) — not counted in win rate.
+          {cancelled.length} cancelled order(s) shown above (greyed out) — not counted in win rate. Use 🗑 to remove any bad records.
         </div>
       )}
     </div>
@@ -462,7 +547,8 @@ export default function PaperTrading() {
   const [history, setHistory]       = useState([])
   const [summary, setSummary]       = useState({})
   const [loading, setLoading]       = useState(false)
-  const [acting, setActing]         = useState(null)  // trade_id being cancelled/closed
+  const [acting, setActing]         = useState(null)   // trade_id being cancelled/closed
+  const [deleting, setDeleting]     = useState(null)   // trade_id being deleted from history
   const [lastRefresh, setLastRefresh] = useState(null)
   const [activeTab, setActiveTab]   = useState('pending')
   const timerRef = useRef(null)
@@ -508,6 +594,23 @@ export default function PaperTrading() {
       alert(`Error: ${err.message}`)
     } finally {
       setActing(null)
+    }
+  }
+
+  const handleDelete = async (tradeId) => {
+    setDeleting(tradeId)
+    try {
+      const res = await fetch(`${API}/api/paper-trade/history/${tradeId}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        alert(`Failed: ${body.detail ?? 'Unknown error'}`)
+        return
+      }
+      await fetchAll(true)
+    } catch (err) {
+      alert(`Error: ${err.message}`)
+    } finally {
+      setDeleting(null)
     }
   }
 
@@ -633,7 +736,7 @@ export default function PaperTrading() {
               Written to journal for bot self-learning
             </span>
           </div>
-          <HistoryTable trades={history} />
+          <HistoryTable trades={history} onDelete={handleDelete} deleting={deleting} />
         </div>
       )}
     </div>

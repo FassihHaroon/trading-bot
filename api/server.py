@@ -448,6 +448,15 @@ def paper_history(limit: int = Query(default=100, ge=1, le=500)) -> Dict[str, An
     return {"count": len(closed_sorted), "trades": closed_sorted}
 
 
+@app.delete("/api/paper-trade/history/{trade_id}")
+def paper_delete_closed(trade_id: str) -> Dict[str, Any]:
+    """Delete a closed trade record (e.g. incorrectly-tracked trades)."""
+    deleted = get_store().delete_closed(trade_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail=f"Closed trade '{trade_id}' not found")
+    return {"ok": True, "deleted": trade_id}
+
+
 @app.get("/api/paper-trade/summary")
 def paper_summary_endpoint() -> Dict[str, Any]:
     """Return aggregate performance stats for all closed paper trades."""
