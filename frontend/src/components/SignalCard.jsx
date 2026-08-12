@@ -6,8 +6,7 @@
  *   onPaperTradeOpened: optional callback(trade) called after a paper trade is created
  */
 import { useState } from 'react'
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { authFetch } from '../api.js'
 
 function fmt(n, decimals = 2) {
   if (n == null) return '—'
@@ -165,9 +164,8 @@ function PaperTradeButton({ signal, onPaperTradeOpened }) {
     setLoading(true)
     setStatus(null)
     try {
-      const res = await fetch(`${API}/api/paper-trade/open`, {
+      const res = await authFetch('/api/paper-trade/open', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           symbol:          signal.symbol,
           direction:       signal.direction,

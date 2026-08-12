@@ -9,8 +9,7 @@
  * NO real money, NO real orders.
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { authFetch } from '../api.js'
 
 function fmt(n, d = 2) {
   if (n == null) return '—'
@@ -557,9 +556,9 @@ export default function PaperTrading() {
     if (!quiet) setLoading(true)
     try {
       const [posRes, histRes, sumRes] = await Promise.all([
-        fetch(`${API}/api/paper-trade/positions`),
-        fetch(`${API}/api/paper-trade/history?limit=200`),
-        fetch(`${API}/api/paper-trade/summary`),
+        authFetch('/api/paper-trade/positions'),
+        authFetch('/api/paper-trade/history?limit=200'),
+        authFetch('/api/paper-trade/summary'),
       ])
       const [posData, histData, sumData] = await Promise.all([
         posRes.json(),
@@ -583,7 +582,7 @@ export default function PaperTrading() {
   const handleAction = async (tradeId) => {
     setActing(tradeId)
     try {
-      const res = await fetch(`${API}/api/paper-trade/close/${tradeId}`, { method: 'DELETE' })
+      const res = await authFetch(`/api/paper-trade/close/${tradeId}`, { method: 'DELETE' })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         alert(`Failed: ${body.detail ?? 'Unknown error'}`)
@@ -600,7 +599,7 @@ export default function PaperTrading() {
   const handleDelete = async (tradeId) => {
     setDeleting(tradeId)
     try {
-      const res = await fetch(`${API}/api/paper-trade/history/${tradeId}`, { method: 'DELETE' })
+      const res = await authFetch(`/api/paper-trade/history/${tradeId}`, { method: 'DELETE' })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         alert(`Failed: ${body.detail ?? 'Unknown error'}`)

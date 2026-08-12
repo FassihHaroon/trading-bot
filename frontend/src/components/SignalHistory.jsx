@@ -9,7 +9,7 @@ import {
   XAxis, YAxis, Tooltip, Cell,
 } from 'recharts'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { authFetch } from '../api.js'
 
 function DirectionBadge({ direction }) {
   const map = {
@@ -139,7 +139,7 @@ export default function SignalHistory() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${API}/api/signals/recent?limit=${limit}`)
+      const res = await authFetch(`/api/signals/recent?limit=${limit}`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       const arr = Array.isArray(data) ? data : (data.signals ?? [])

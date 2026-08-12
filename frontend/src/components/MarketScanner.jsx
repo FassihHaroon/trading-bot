@@ -4,8 +4,7 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
 import SignalCard from './SignalCard.jsx'
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { authFetch } from '../api.js'
 
 const DEFAULT_SYMBOLS = [
   'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT',
@@ -77,7 +76,7 @@ export default function MarketScanner() {
 
   // Load available symbols
   useEffect(() => {
-    fetch(`${API}/api/symbols`)
+    authFetch('/api/symbols')
       .then(r => r.ok ? r.json() : null)
       .then(data => {
         const list = Array.isArray(data) ? data : data?.symbols
@@ -93,7 +92,7 @@ export default function MarketScanner() {
 
     try {
       const params = new URLSearchParams({ symbols: selectedSymbols.join(',') })
-      const res = await fetch(`${API}/api/scanner?${params}`)
+      const res = await authFetch(`/api/scanner?${params}`)
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.detail ?? `HTTP ${res.status}`)

@@ -115,7 +115,39 @@ class PaperTradeStore:
 
     # ── Public API ────────────────────────────────────────────────────────────
 
-    def open_trade(self, signal: dict) -> dict:
+    def is_duplicate(self, signal: dict, user_id: str) -> bool:
+        """
+        Return True if this user already has an open/pending trade with the
+        same symbol, direction, entry price, stop, and first target (±0.1%).
+        """
+        def _close(a, b) -> bool:
+            if a is None and b is None:
+                return True
+            if a is None or b is None:
+                return False
+            denom = max(abs(b), 1e-10)
+            return abs(a - b) / denom < 0.001  # within 0.1%
+
+        new_tp1 = (signal.get("targets") or [None])[0]
+        with self._lock:
+            for t in self._data["open"]:
+                if t.get("user_id") != user_id:
+                    continue
+                if t["symbol"] != signal["symbol"]:
+                    continue
+                if t["direction"] != signal["direction"]:
+                    continue
+                if not _close(t.get("entry_price"), signal.get("entry_price")):
+                    continue
+                if not _close(t.get("stop_price"), signal.get("stop_price")):
+                    continue
+                existing_tp1 = (t.get("targets") or [None])[0]
+                if not _close(existing_tp1, new_tp1):
+                    continue
+                return True
+        return False
+
+    def open_trade(self, signal: dict, user_id: str = "default") -> dict:
         """
         Place a paper limit order.
         Fetches the live price to decide if it's already filled:
@@ -125,6 +157,7 @@ class PaperTradeStore:
         trade_id = f"PT_{signal['symbol']}_{int(time.time() * 1000)}"
         entry = signal.get("entry_price") or signal.get("current_price", 0.0)
         live  = get_live_price(signal["symbol"]) or entry
+        user_id = signal.get("_user_id", user_id)  # allow signal dict to carry user_id
 
         fill_dir       = _fill_direction(entry, live)
         already_filled = _entry_triggered(fill_dir, entry, live)
@@ -134,6 +167,7 @@ class PaperTradeStore:
 
         trade = {
             "id":              trade_id,
+            "user_id":         user_id,
             "symbol":          signal["symbol"],
             "direction":       signal["direction"],
             "status":          status,         # "pending" | "open"
@@ -579,11 +613,15 @@ class PaperTradeStore:
         with self._lock:
             return list(self._data["closed"])
 
-    def summary(self) -> dict:
+    def summary(self, user_id: Optional[str] = None) -> dict:
         closed = self.closed_trades
+        if user_id:
+            closed = [t for t in closed if t.get("user_id", "default") == user_id]
         # Exclude cancelled orders from win/loss stats
         real = [t for t in closed if t["outcome"] not in ("cancelled",)]
         open_list = self.open_positions
+        if user_id:
+            open_list = [t for t in open_list if t.get("user_id", "default") == user_id]
         pending = sum(1 for t in open_list if t.get("status") == "pending")
         active  = sum(1 for t in open_list if t.get("status") == "open")
 

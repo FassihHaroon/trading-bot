@@ -18,8 +18,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
 # ── Ensure project root is on the path ──────────────────────────────────────
@@ -34,10 +35,27 @@ from engine.decision_engine import DecisionEngine
 from risk.risk_manager import RiskManager
 from ai.explainer import TradeExplainer
 from api.paper_store import get_store, get_live_price
+from api.auth import authenticate_user, decode_token, register_user
 
 # ── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# ── Auth ─────────────────────────────────────────────────────────────────────
+
+_bearer = HTTPBearer(auto_error=False)
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(_bearer),
+) -> str:
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    username = decode_token(credentials.credentials)
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return username
+
 
 # ── Popular symbols ───────────────────────────────────────────────────────────
 POPULAR_SYMBOLS: List[str] = [
@@ -399,6 +417,34 @@ def recent_signals(limit: int = Query(default=100, ge=1, le=500)) -> Dict[str, A
         raise HTTPException(status_code=500, detail=f"Could not read journal: {exc}") from exc
 
 
+# ── Auth Endpoints (public — no token required) ───────────────────────────────
+
+class AuthRequest(BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/api/auth/register")
+def auth_register(req: AuthRequest) -> Dict[str, Any]:
+    ok, msg = register_user(req.username, req.password)
+    if not ok:
+        raise HTTPException(status_code=400, detail=msg)
+    return {"ok": True, "message": msg}
+
+
+@app.post("/api/auth/login")
+def auth_login(req: AuthRequest) -> Dict[str, Any]:
+    ok, token_or_err = authenticate_user(req.username, req.password)
+    if not ok:
+        raise HTTPException(status_code=401, detail=token_or_err)
+    return {"ok": True, "token": token_or_err, "username": req.username.strip().lower()}
+
+
+@app.get("/api/auth/me")
+def auth_me(username: str = Depends(get_current_user)) -> Dict[str, Any]:
+    return {"ok": True, "username": username}
+
+
 # ── Paper Trading Endpoints ───────────────────────────────────────────────────
 
 @app.get("/api/price/{symbol}")
@@ -416,16 +462,15 @@ def get_price(symbol: str) -> Dict[str, Any]:
 
 
 @app.post("/api/paper-trade/open")
-def paper_open(req: OpenPaperTradeRequest) -> Dict[str, Any]:
-    """
-    Open a simulated paper trade from a bot signal.
-    NO real money, NO real orders. Pure simulation.
-    """
+def paper_open(
+    req: OpenPaperTradeRequest,
+    username: str = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """Open a simulated paper trade. NO real money, NO real orders."""
     direction = req.direction.lower()
     if direction not in ("long", "short"):
         raise HTTPException(status_code=400, detail="direction must be 'long' or 'short'")
 
-    # If no entry price supplied, fetch the live price right now
     entry_price = req.entry_price
     if not entry_price:
         entry_price = get_live_price(req.symbol.upper())
@@ -446,8 +491,14 @@ def paper_open(req: OpenPaperTradeRequest) -> Dict[str, Any]:
         "strategies_used": req.strategies_used,
     }
 
+    if get_store().is_duplicate(signal_dict, username):
+        raise HTTPException(
+            status_code=409,
+            detail=f"A trade for {req.symbol.upper()} {direction} with the same entry/SL/TP is already open.",
+        )
+
     try:
-        trade = get_store().open_trade(signal_dict)
+        trade = get_store().open_trade(signal_dict, user_id=username)
         return {"ok": True, "trade": trade}
     except Exception as exc:
         logger.exception("Failed to open paper trade")
@@ -455,39 +506,52 @@ def paper_open(req: OpenPaperTradeRequest) -> Dict[str, Any]:
 
 
 @app.get("/api/paper-trade/positions")
-def paper_positions() -> Dict[str, Any]:
-    """Return all currently open paper positions."""
-    positions = get_store().open_positions
+def paper_positions(username: str = Depends(get_current_user)) -> Dict[str, Any]:
+    """Return the current user's open paper positions."""
+    all_pos = get_store().open_positions
+    positions = [t for t in all_pos if t.get("user_id", "default") == username]
     return {"count": len(positions), "positions": positions}
 
 
 @app.delete("/api/paper-trade/close/{trade_id}")
-def paper_close(trade_id: str) -> Dict[str, Any]:
-    """Manually close an open paper trade at the current market price."""
-    trade = get_store().manual_close(trade_id)
-    if trade is None:
+def paper_close(
+    trade_id: str,
+    username: str = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """Manually close one of the current user's open paper trades."""
+    trade = get_store()._find_open(trade_id)
+    if trade is None or trade.get("user_id", "default") != username:
         raise HTTPException(status_code=404, detail=f"Open trade '{trade_id}' not found")
-    return {"ok": True, "trade": trade}
+    closed = get_store().manual_close(trade_id)
+    return {"ok": True, "trade": closed}
 
 
 @app.get("/api/paper-trade/history")
-def paper_history(limit: int = Query(default=100, ge=1, le=500)) -> Dict[str, Any]:
-    """Return closed paper trades (most recent first)."""
+def paper_history(
+    limit: int = Query(default=100, ge=1, le=500),
+    username: str = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """Return the current user's closed paper trades (most recent first)."""
     closed = get_store().closed_trades
-    closed_sorted = list(reversed(closed))[:limit]
-    return {"count": len(closed_sorted), "trades": closed_sorted}
+    user_closed = [t for t in reversed(closed) if t.get("user_id", "default") == username][:limit]
+    return {"count": len(user_closed), "trades": user_closed}
 
 
 @app.delete("/api/paper-trade/history/{trade_id}")
-def paper_delete_closed(trade_id: str) -> Dict[str, Any]:
-    """Delete a closed trade record (e.g. incorrectly-tracked trades)."""
-    deleted = get_store().delete_closed(trade_id)
-    if not deleted:
+def paper_delete_closed(
+    trade_id: str,
+    username: str = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """Delete one of the current user's closed trade records."""
+    closed = get_store().closed_trades
+    trade = next((t for t in closed if t["id"] == trade_id), None)
+    if trade is None or trade.get("user_id", "default") != username:
         raise HTTPException(status_code=404, detail=f"Closed trade '{trade_id}' not found")
+    get_store().delete_closed(trade_id)
     return {"ok": True, "deleted": trade_id}
 
 
 @app.get("/api/paper-trade/summary")
-def paper_summary_endpoint() -> Dict[str, Any]:
-    """Return aggregate performance stats for all closed paper trades."""
-    return get_store().summary()
+def paper_summary_endpoint(username: str = Depends(get_current_user)) -> Dict[str, Any]:
+    """Return aggregate performance stats for the current user's closed trades."""
+    return get_store().summary(user_id=username)
