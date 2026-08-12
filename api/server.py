@@ -107,10 +107,21 @@ async def _keep_alive_loop():
         await asyncio.sleep(14 * 60)
 
 
+async def _run_catchup():
+    """Run downtime catch-up after the server has fully booted."""
+    await asyncio.sleep(5)
+    loop = asyncio.get_event_loop()
+    try:
+        await loop.run_in_executor(_executor, get_store().catchup_from_downtime)
+    except Exception as exc:
+        logger.warning("Catch-up failed: %s", exc)
+
+
 @app.on_event("startup")
 async def startup():
     asyncio.create_task(_price_check_loop())
     asyncio.create_task(_keep_alive_loop())
+    asyncio.create_task(_run_catchup())
     logger.info("Background paper-trade price checker started (30s interval).")
 
 

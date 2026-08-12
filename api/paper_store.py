@@ -11,7 +11,7 @@ import json
 import logging
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -20,12 +20,54 @@ import requests
 logger = logging.getLogger(__name__)
 
 _PAPER_FILE = Path("logs/paper_trades.json")
-_BINANCE_PRICE_URL = "https://api.binance.com/api/v3/ticker/price"
+_BINANCE_PRICE_URL  = "https://api.binance.com/api/v3/ticker/price"
+_BINANCE_KLINES_URL = "https://api.binance.com/api/v3/klines"
 _COMMISSION = 0.0004  # 0.04 % per side (Binance taker)
+_MAX_CATCHUP_HOURS = 24
 
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _parse_iso(ts: str) -> datetime:
+    return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+
+
+def _get_klines(symbol: str, start_ms: int, end_ms: int) -> list[list]:
+    """
+    Fetch 1-minute OHLC klines from Binance for the given time range.
+    Handles pagination automatically (Binance limit = 1000 candles per call).
+    Returns list of [open_time_ms, open, high, low, close, ...].
+    """
+    all_klines: list[list] = []
+    current_start = start_ms
+    while current_start < end_ms:
+        try:
+            resp = requests.get(
+                _BINANCE_KLINES_URL,
+                params={
+                    "symbol":    symbol,
+                    "interval":  "1m",
+                    "startTime": current_start,
+                    "endTime":   end_ms,
+                    "limit":     1000,
+                },
+                timeout=10,
+            )
+            resp.raise_for_status()
+            chunk = resp.json()
+        except Exception as exc:
+            logger.warning("klines fetch failed for %s: %s", symbol, exc)
+            break
+        if not chunk:
+            break
+        all_klines.extend(chunk)
+        last_close_time = chunk[-1][6]  # index 6 = close time ms
+        current_start = last_close_time + 1
+        if len(chunk) < 1000:
+            break
+    return all_klines
 
 
 def get_live_price(symbol: str) -> Optional[float]:
@@ -312,7 +354,208 @@ class PaperTradeStore:
                         closed_this_round.append(closed)
                     continue
 
+        with self._lock:
+            self._data["last_checked_at"] = _now_iso()
+            self._save()
+
         return closed_this_round
+
+    def catchup_from_downtime(self) -> None:
+        """
+        Called once on startup. Fetches 1m Binance klines for the period
+        between the last price-check timestamp and now, then replays those
+        candles against every pending/open paper trade so nothing is missed
+        while the server was offline.
+
+        Logic per candle (SL checked before TP — conservative):
+          PENDING → fill when price crosses entry in the required direction
+          OPEN    → close at SL if stop breached, else close at TP if target hit
+        """
+        with self._lock:
+            last_checked = self._data.get("last_checked_at")
+
+        if not last_checked:
+            logger.info("Catch-up: no previous timestamp found — setting baseline.")
+            with self._lock:
+                self._data["last_checked_at"] = _now_iso()
+                self._save()
+            return
+
+        try:
+            last_dt = _parse_iso(last_checked)
+        except Exception:
+            logger.warning("Catch-up: could not parse last_checked_at=%s", last_checked)
+            return
+
+        now_dt = datetime.now(timezone.utc)
+        gap_sec = (now_dt - last_dt).total_seconds()
+
+        if gap_sec < 90:
+            logger.info("Catch-up: gap only %.0fs — skipping.", gap_sec)
+            return
+
+        if gap_sec > _MAX_CATCHUP_HOURS * 3600:
+            logger.warning(
+                "Catch-up: gap %.1fh exceeds limit — capping at %dh.",
+                gap_sec / 3600, _MAX_CATCHUP_HOURS,
+            )
+            last_dt = now_dt - timedelta(hours=_MAX_CATCHUP_HOURS)
+            gap_sec = _MAX_CATCHUP_HOURS * 3600
+
+        logger.info("Catch-up: replaying %.1f minutes of downtime.", gap_sec / 60)
+
+        with self._lock:
+            open_ids = [t["id"] for t in self._data["open"]]
+
+        if not open_ids:
+            logger.info("Catch-up: no open/pending trades — nothing to replay.")
+            with self._lock:
+                self._data["last_checked_at"] = _now_iso()
+                self._save()
+            return
+
+        # Group trade IDs by symbol so we only fetch each symbol's klines once
+        sym_to_ids: dict[str, list[str]] = {}
+        for tid in open_ids:
+            t = self._find_open(tid)
+            if t:
+                sym_to_ids.setdefault(t["symbol"], []).append(tid)
+
+        start_ms = int(last_dt.timestamp() * 1000)
+        end_ms   = int(now_dt.timestamp() * 1000)
+
+        total_closed = 0
+        total_filled = 0
+
+        for symbol, ids in sym_to_ids.items():
+            klines = _get_klines(symbol, start_ms, end_ms)
+            if not klines:
+                logger.warning("Catch-up: no klines returned for %s", symbol)
+                continue
+            logger.info("Catch-up: %d candles fetched for %s (%d trades)", len(klines), symbol, len(ids))
+            for tid in ids:
+                filled, closed = self._simulate_catchup(tid, klines)
+                total_filled += filled
+                total_closed += closed
+
+        logger.info(
+            "Catch-up complete: %d fills, %d closes processed.",
+            total_filled, total_closed,
+        )
+        with self._lock:
+            self._data["last_checked_at"] = _now_iso()
+            self._save()
+
+    def _simulate_catchup(self, trade_id: str, klines: list[list]) -> tuple[int, int]:
+        """
+        Replay historical 1m candles against a single trade.
+        Returns (fills, closes) count — each is 0 or 1 since one trade can
+        fill at most once and close at most once.
+
+        Candle layout (Binance): [open_time, open, high, low, close, ...]
+        """
+        filled = 0
+        closed = 0
+
+        for candle in klines:
+            open_time_ms = candle[0]
+            high  = float(candle[2])
+            low   = float(candle[3])
+            close = float(candle[4])
+            candle_ts = datetime.fromtimestamp(open_time_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+            trade = self._find_open(trade_id)
+            if trade is None:
+                break  # already closed by a previous candle
+
+            entry = trade["entry_price"]
+
+            # ── Step 1: fill pending orders ───────────────────────────────────
+            if trade["status"] == "pending":
+                fill_dir = trade.get("fill_direction") or _fill_direction(
+                    entry, trade.get("placed_live_price", entry)
+                )
+                triggered = (fill_dir == "up"   and high  >= entry) or \
+                            (fill_dir == "down"  and low   <= entry)
+                if triggered:
+                    with self._lock:
+                        for t in self._data["open"]:
+                            if t["id"] == trade_id:
+                                t["status"]    = "open"
+                                t["outcome"]   = "open"
+                                t["filled_at"] = candle_ts
+                                break
+                        self._save()
+                    logger.info(
+                        "Catch-up FILL: %s %s @ %.4f (candle %s)",
+                        trade["direction"], trade["symbol"], entry, candle_ts,
+                    )
+                    filled += 1
+                    trade = self._find_open(trade_id)  # refresh
+                else:
+                    # Update entry distance so UI shows fresh value
+                    with self._lock:
+                        for t in self._data["open"]:
+                            if t["id"] == trade_id:
+                                t["current_price"]  = close
+                                t["entry_distance"] = round((close - entry) / entry * 100, 4)
+                                break
+                    continue  # still pending — check next candle
+
+            # ── Step 2: check SL/TP for open trades ───────────────────────────
+            if trade["status"] != "open":
+                continue
+
+            sl  = trade.get("stop_price")
+            tp1 = (trade.get("targets") or [None])[0]
+            direction = trade["direction"]
+
+            sl_hit = tp_hit = False
+            if direction == "long":
+                sl_hit  = bool(sl  and low  <= sl)
+                tp_hit  = bool(tp1 and high >= tp1)
+            else:  # short
+                sl_hit  = bool(sl  and high >= sl)
+                tp_hit  = bool(tp1 and low  <= tp1)
+
+            # SL checked first (conservative — assume worst case within candle)
+            if sl_hit:
+                exit_px = sl
+                result = self.close_trade(trade_id, exit_px, "stop_loss")
+                if result:
+                    logger.info(
+                        "Catch-up SL: %s %s hit stop %.4f (candle %s, pnl=%.2f)",
+                        direction, trade["symbol"], exit_px, candle_ts,
+                        result.get("realized_pnl", 0),
+                    )
+                    closed += 1
+                break
+            elif tp_hit:
+                exit_px = tp1
+                result = self.close_trade(trade_id, exit_px, "take_profit_1")
+                if result:
+                    logger.info(
+                        "Catch-up TP: %s %s hit target %.4f (candle %s, pnl=%.2f)",
+                        direction, trade["symbol"], exit_px, candle_ts,
+                        result.get("realized_pnl", 0),
+                    )
+                    closed += 1
+                break
+            else:
+                # Still open — update live price to candle close
+                with self._lock:
+                    for t in self._data["open"]:
+                        if t["id"] == trade_id:
+                            t["current_price"] = close
+                            if direction == "long":
+                                t["unrealized_pnl"] = round((close - entry) * (t["position_size"] or 0), 4)
+                                t["unrealized_pct"] = round((close - entry) / entry * 100, 4)
+                            else:
+                                t["unrealized_pnl"] = round((entry - close) * (t["position_size"] or 0), 4)
+                                t["unrealized_pct"] = round((entry - close) / entry * 100, 4)
+                            break
+
+        return filled, closed
 
     def delete_closed(self, trade_id: str) -> bool:
         """Permanently remove a trade from the closed list (e.g. bad paper trades)."""
@@ -399,7 +642,7 @@ class PaperTradeStore:
                 return data
             except Exception:
                 pass
-        return {"open": [], "closed": []}
+        return {"open": [], "closed": [], "last_checked_at": None}
 
     def _save(self):
         self._path.write_text(json.dumps(self._data, indent=2), encoding="utf-8")
