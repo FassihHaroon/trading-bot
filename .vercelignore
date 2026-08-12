@@ -1,0 +1,23 @@
+# Ignore everything except the frontend build output
+api/
+agent/
+ai/
+backtest/
+config/
+data/
+engine/
+execution/
+features/
+journal/
+logs/
+risk/
+scoring/
+tests/
+*.py
+*.toml
+*.yaml
+Dockerfile
+requirements.txt
+keep_alive.py
+start*.bat
+run.txt
