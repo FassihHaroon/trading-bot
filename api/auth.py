@@ -65,8 +65,10 @@ def register_user(username: str, password: str) -> tuple[bool, str]:
         return False, f"Username must be at least {_MIN_USERNAME_LEN} characters"
     if len(password) < _MIN_PASSWORD_LEN:
         return False, f"Password must be at least {_MIN_PASSWORD_LEN} characters"
-    if not username.replace("_", "").replace("-", "").isalnum():
-        return False, "Username may only contain letters, numbers, hyphens, and underscores"
+    # allow email addresses and simple alphanumeric usernames
+    allowed = set("abcdefghijklmnopqrstuvwxyz0123456789_-.@")
+    if not all(c in allowed for c in username):
+        return False, "Username may only contain letters, numbers, and . _ - @ characters"
     with _lock:
         users = _load_users()
         if username in users:
