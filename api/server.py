@@ -68,11 +68,12 @@ POPULAR_SYMBOLS: List[str] = [
 DEFAULT_SCANNER_SYMBOLS: List[str] = POPULAR_SYMBOLS[:15]
 
 # ── Cache ─────────────────────────────────────────────────────────────────────
-CACHE_TTL_SECONDS = 60
-_analysis_cache: Dict[str, Dict[str, Any]] = {}   # symbol -> {result, expires_at}
+CACHE_TTL_SECONDS = 120
+_analysis_cache: Dict[str, Dict[str, Any]] = {}        # with AI explanation
+_scanner_cache:  Dict[str, Dict[str, Any]] = {}        # without AI (fast)
 
 # ── Thread pool ───────────────────────────────────────────────────────────────
-_executor = ThreadPoolExecutor(max_workers=4)
+_executor = ThreadPoolExecutor(max_workers=8)
 
 # ── FastAPI app ───────────────────────────────────────────────────────────────
 app = FastAPI(
@@ -135,12 +136,26 @@ async def _run_catchup():
         logger.warning("Catch-up failed: %s", exc)
 
 
+async def _prewarm_scanner_cache():
+    """Analyse top coins in the background at startup so first scanner request is fast."""
+    await asyncio.sleep(10)  # let the server finish booting first
+    loop = asyncio.get_event_loop()
+    config = _get_scanner_config()
+    for sym in DEFAULT_SCANNER_SYMBOLS[:8]:
+        try:
+            await loop.run_in_executor(_executor, _get_or_run_analysis, sym, config, False)
+            logger.info("Pre-warm cached: %s", sym)
+        except Exception as exc:
+            logger.warning("Pre-warm failed for %s: %s", sym, exc)
+
+
 @app.on_event("startup")
 async def startup():
     asyncio.create_task(_price_check_loop())
     asyncio.create_task(_keep_alive_loop())
     asyncio.create_task(_run_catchup())
-    logger.info("Background paper-trade price checker started (30s interval).")
+    asyncio.create_task(_prewarm_scanner_cache())
+    logger.info("Background tasks started (price checker, keep-alive, catch-up, pre-warm).")
 
 
 # ── Singletons (lazy-initialised) ────────────────────────────────────────────
@@ -218,7 +233,7 @@ class AnalysisResult(BaseModel):
 
 # ── Core analysis function ────────────────────────────────────────────────────
 
-def _run_analysis(symbol: str, config: AgentConfig, cached: bool = False) -> Dict[str, Any]:
+def _run_analysis(symbol: str, config: AgentConfig, cached: bool = False, include_ai: bool = True) -> Dict[str, Any]:
     """
     Run the full analysis pipeline for a single symbol.
     This is a blocking call and must be run in a thread pool.
@@ -231,16 +246,17 @@ def _run_analysis(symbol: str, config: AgentConfig, cached: bool = False) -> Dic
     engine = DecisionEngine(config, risk_manager=risk_manager)
     signal = engine.run(snapshot)
 
-    explainer = TradeExplainer(config)
     ai_explanation: Optional[str] = None
-    try:
-        if signal.is_actionable():
-            ai_explanation = explainer.explain_trade(signal)
-        else:
-            ai_explanation = explainer.explain_no_trade(signal)
-    except Exception as exc:
-        logger.warning("AI explainer failed for %s: %s", symbol, exc)
-        ai_explanation = None
+    if include_ai:
+        explainer = TradeExplainer(config)
+        try:
+            if signal.is_actionable():
+                ai_explanation = explainer.explain_trade(signal)
+            else:
+                ai_explanation = explainer.explain_no_trade(signal)
+        except Exception as exc:
+            logger.warning("AI explainer failed for %s: %s", symbol, exc)
+            ai_explanation = None
 
     # Market context fields
     regime: Optional[str] = None
@@ -298,18 +314,19 @@ def _run_analysis(symbol: str, config: AgentConfig, cached: bool = False) -> Dic
     return result
 
 
-def _get_or_run_analysis(symbol: str, config: AgentConfig) -> Dict[str, Any]:
+def _get_or_run_analysis(symbol: str, config: AgentConfig, include_ai: bool = True) -> Dict[str, Any]:
     """Return cached result if still valid, otherwise run fresh analysis."""
     symbol = symbol.upper()
     now = time.monotonic()
-    cached_entry = _analysis_cache.get(symbol)
+    cache = _analysis_cache if include_ai else _scanner_cache
+    cached_entry = cache.get(symbol)
     if cached_entry and now < cached_entry["expires_at"]:
         result = dict(cached_entry["result"])
         result["cached"] = True
         return result
 
-    result = _run_analysis(symbol, config, cached=False)
-    _analysis_cache[symbol] = {
+    result = _run_analysis(symbol, config, cached=False, include_ai=include_ai)
+    cache[symbol] = {
         "result": result,
         "expires_at": now + CACHE_TTL_SECONDS,
     }
@@ -368,7 +385,7 @@ def scanner(
     config = _get_scanner_config()
 
     futures_map = {
-        _executor.submit(_get_or_run_analysis, sym, config): sym
+        _executor.submit(_get_or_run_analysis, sym, config, False): sym
         for sym in symbol_list
     }
 
