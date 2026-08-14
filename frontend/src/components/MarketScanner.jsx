@@ -108,6 +108,9 @@ export default function MarketScanner() {
     }
   }, [selectedSymbols])
 
+  // Auto-run on mount
+  useEffect(() => { runScan() }, [])  // eslint-disable-line react-hooks/exhaustive-deps
+
   // Auto-refresh
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current)
@@ -350,15 +353,24 @@ export default function MarketScanner() {
       )}
 
       {/* ── Empty / Loading State ── */}
-      {!loading && results.length === 0 && !error && (
+      {!loading && results.length === 0 && !error && lastScan && (
+        <div className="card">
+          <div className="empty-state">
+            <div className="empty-state-icon">⏳</div>
+            <div className="empty-state-title">No actionable signals right now</div>
+            <div className="empty-state-desc">
+              All {selectedSymbols.length} coins were scanned — the bot sees no clear setup at the moment.
+              Market is likely in a ranging or uncertain state. Try again in a few minutes.
+            </div>
+          </div>
+        </div>
+      )}
+      {!loading && results.length === 0 && !error && !lastScan && (
         <div className="card">
           <div className="empty-state">
             <div className="empty-state-icon">📡</div>
-            <div className="empty-state-title">No scan results yet</div>
-            <div className="empty-state-desc">
-              Select the symbols you want to monitor and click Run Scan to analyse them all at once.
-              Results are sorted by opportunity score.
-            </div>
+            <div className="empty-state-title">Scanning…</div>
+            <div className="empty-state-desc">Fetching market data for selected symbols.</div>
           </div>
         </div>
       )}

@@ -376,16 +376,12 @@ def scanner(
     for future in as_completed(futures_map, timeout=180):
         sym = futures_map[future]
         try:
-            result = future.result()
-            # Skip NO_TRADE results for the scanner view
-            if result.get("direction") == Direction.NO_TRADE.value:
-                continue
-            results.append(result)
+            results.append(future.result())
         except Exception as exc:
             logger.warning("Scanner skipped %s: %s", sym, exc)
 
-    # Sort by confidence descending
-    results.sort(key=lambda r: r.get("confidence", 0.0), reverse=True)
+    # Actionable signals first, then by confidence descending
+    results.sort(key=lambda r: (r.get("is_actionable", False), r.get("confidence", 0.0)), reverse=True)
 
     return {
         "count": len(results),
