@@ -29,8 +29,8 @@ from data.schemas import (
     Ticker24h,
 )
 from data.cache import MarketDataCache as SnapshotCache
-from data.connectors.binance_spot import BinanceSpotClient
-from data.connectors.binance_futures import BinanceFuturesClient
+from data.connectors.bybit_spot import BybitSpotClient as BinanceSpotClient
+from data.connectors.bybit_futures import BybitFuturesClient as BinanceFuturesClient
 
 logger = logging.getLogger(__name__)
 

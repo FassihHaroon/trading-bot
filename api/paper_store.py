@@ -20,9 +20,9 @@ import requests
 logger = logging.getLogger(__name__)
 
 _PAPER_FILE = Path("logs/paper_trades.json")
-_BINANCE_PRICE_URL  = "https://api.binance.com/api/v3/ticker/price"
-_BINANCE_KLINES_URL = "https://api.binance.com/api/v3/klines"
-_COMMISSION = 0.0004  # 0.04 % per side (Binance taker)
+_BYBIT_TICKER_URL = "https://api.bybit.com/v5/market/tickers"
+_BYBIT_KLINES_URL = "https://api.bybit.com/v5/market/kline"
+_COMMISSION = 0.0004  # 0.04 % per side
 _MAX_CATCHUP_HOURS = 24
 
 
@@ -36,46 +36,62 @@ def _parse_iso(ts: str) -> datetime:
 
 def _get_klines(symbol: str, start_ms: int, end_ms: int) -> list[list]:
     """
-    Fetch 1-minute OHLC klines from Binance for the given time range.
-    Handles pagination automatically (Binance limit = 1000 candles per call).
-    Returns list of [open_time_ms, open, high, low, close, ...].
+    Fetch 1-minute OHLC klines from Bybit for the given time range.
+    Handles pagination automatically (Bybit limit = 1000 candles per call).
+    Returns list of [open_time_ms, open, high, low, close, volume, turnover].
+    Callers use indices 0 (open_time), 2 (high), 3 (low), 4 (close).
     """
     all_klines: list[list] = []
     current_start = start_ms
     while current_start < end_ms:
         try:
             resp = requests.get(
-                _BINANCE_KLINES_URL,
+                _BYBIT_KLINES_URL,
                 params={
-                    "symbol":    symbol,
-                    "interval":  "1m",
-                    "startTime": current_start,
-                    "endTime":   end_ms,
-                    "limit":     1000,
+                    "category": "linear",
+                    "symbol":   symbol,
+                    "interval": "1",   # 1 minute
+                    "start":    current_start,
+                    "end":      end_ms,
+                    "limit":    1000,
                 },
                 timeout=10,
             )
             resp.raise_for_status()
-            chunk = resp.json()
+            body = resp.json()
+            if body.get("retCode") != 0:
+                logger.warning("Bybit klines error for %s: %s", symbol, body.get("retMsg"))
+                break
+            rows = body["result"]["list"]  # newest-first
         except Exception as exc:
             logger.warning("klines fetch failed for %s: %s", symbol, exc)
             break
-        if not chunk:
+        if not rows:
             break
+        # Reverse to oldest-first so _simulate_catchup sees chronological order
+        chunk = list(reversed(rows))
         all_klines.extend(chunk)
-        last_close_time = chunk[-1][6]  # index 6 = close time ms
-        current_start = last_close_time + 1
-        if len(chunk) < 1000:
+        # Advance past the newest candle's start time + 1 minute
+        last_start = int(chunk[-1][0])
+        current_start = last_start + 60_000
+        if len(rows) < 1000:
             break
     return all_klines
 
 
 def get_live_price(symbol: str) -> Optional[float]:
-    """Fetch current spot price from Binance (no auth required)."""
+    """Fetch current price from Bybit linear perpetuals (no auth required)."""
     try:
-        r = requests.get(_BINANCE_PRICE_URL, params={"symbol": symbol}, timeout=5)
+        r = requests.get(
+            _BYBIT_TICKER_URL,
+            params={"category": "linear", "symbol": symbol},
+            timeout=5,
+        )
         r.raise_for_status()
-        return float(r.json()["price"])
+        body = r.json()
+        if body.get("retCode") != 0:
+            raise RuntimeError(body.get("retMsg"))
+        return float(body["result"]["list"][0]["lastPrice"])
     except Exception as exc:
         logger.warning("price fetch failed for %s: %s", symbol, exc)
         return None
@@ -486,7 +502,7 @@ class PaperTradeStore:
         Returns (fills, closes) count — each is 0 or 1 since one trade can
         fill at most once and close at most once.
 
-        Candle layout (Binance): [open_time, open, high, low, close, ...]
+        Candle layout: [open_time, open, high, low, close, volume, turnover]
         """
         filled = 0
         closed = 0
