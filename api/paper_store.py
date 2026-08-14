@@ -68,12 +68,13 @@ def _get_klines(symbol: str, start_ms: int, end_ms: int) -> list[list]:
             break
         if not rows:
             break
-        # Reverse to oldest-first so _simulate_catchup sees chronological order
-        chunk = list(reversed(rows))
+        # Bybit returns newest-first with all fields as strings. Reverse to
+        # oldest-first and coerce the timestamp to int so callers can do
+        # arithmetic on it (open/high/low/close stay strings — callers float() them).
+        chunk = [[int(r[0]), *r[1:]] for r in reversed(rows)]
         all_klines.extend(chunk)
         # Advance past the newest candle's start time + 1 minute
-        last_start = int(chunk[-1][0])
-        current_start = last_start + 60_000
+        current_start = chunk[-1][0] + 60_000
         if len(rows) < 1000:
             break
     return all_klines
