@@ -3,6 +3,7 @@ services:
     name: trading-bot-api
     runtime: docker
     plan: free
+    region: frankfurt
     healthCheckPath: /api/health
     envVars:
       - key: LIVE_TRADING_ENABLED
